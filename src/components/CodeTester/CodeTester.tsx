@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCodes } from '../../context/CodesContext';
+import { useGame } from '../../context/GameContext';
 import { CODE_LENGTH } from '../../config/codeSymbols';
 import CodeInput from '../CodeInput/CodeInput';
 import './CodeTester.css';
@@ -14,6 +15,7 @@ interface CodeTesterProps {
 const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
   const [code, setCode] = useState<string[]>([]);
   const { codes, foundCodes, markAsFound } = useCodes();
+  const { resetGame } = useGame();
 
   const handleTest = () => {
     if (code.length !== CODE_LENGTH) return;
@@ -22,7 +24,17 @@ const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
     const ufIndex = codes.findIndex((c, i) => c === codeString && !foundCodes[i]);
 
     if (ufIndex !== -1) {
+      const isFinalCode = foundCodes.filter(Boolean).length + 1 === codes.length;
       markAsFound(ufIndex);
+
+      if (isFinalCode) {
+        toast.success('Tous les codes ont été trouvés !');
+        window.alert('Fin de la partie ! Cliquez sur OK pour valider.');
+        resetGame();
+      } else {
+        toast.success('Code valide !');
+      }
+
       toast.success('Code valide !', {
         onOpen: () => new Audio(correctSoundFile).play().catch(() => {})
       });
