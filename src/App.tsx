@@ -1,15 +1,27 @@
 import { Link } from 'react-router-dom';
+import { useTheme } from './theme/theme';
 import './App.css'
 
 function App() {
+  const t = useTheme();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1 data-testid="home-title">Bienvenue dans Escape Box</h1>
+      <header
+        className="App-header"
+        style={{ backgroundColor: t.color.bgInverse, color: t.color.textInverse }}
+      >
+        <h1 data-testid="home-title" style={{ color: t.color.primary }}>
+          Bienvenue dans Escape Box
+        </h1>
         <p data-testid="home-subtitle">Prêt à relever le défi ?</p>
-        <div className="button-container">
-          <Link to="/normal" className="button" data-testid="home-link-normal">Commencer une partie</Link>
-          <Link to="/demo" className="button" data-testid="home-link-demo">Commencer mode démo</Link>
+        <div className="button-container" style={{ gap: t.spacing.lg, marginTop: t.spacing.lg }}>
+          <Link to="/normal" className="button" data-testid="home-link-normal">
+            Commencer une partie
+          </Link>
+          <Link to="/demo" className="button" data-testid="home-link-demo">
+            Commencer mode démo
+          </Link>
         </div>
       </header>
     </div>
