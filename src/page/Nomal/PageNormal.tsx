@@ -1,20 +1,23 @@
 import { Link } from 'react-router-dom';
-import '../../App.css'
 import { useState } from 'react';
+import { useTheme } from '../../theme/theme';
+import '../../App.css'
 import Chrono from '../../components/Chrono/Chrono';
 
 
 function PageNormal() {
   const [gameStarted, setGameStarted] = useState(false);
+  const t = useTheme();
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
       {gameStarted && <Chrono initialTime={3600} />}
-      <h1 data-testid="normal-title">Normal - Page</h1>
+      <h1 data-testid="normal-title" style={{ color: t.color.primary }}>Normal - Page</h1>
       <button
         onClick={() => setGameStarted(true)}
         data-testid="normal-launch-btn"
         className="button"
+        style={{ marginBottom: t.spacing.md }}
       >
         Lancez partie
       </button>
