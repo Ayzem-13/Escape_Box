@@ -24,11 +24,11 @@ export const CONTRIBUTORS: Contributor[] = [
     quote: 'Architecte des indices et des fausses pistes.',
   },
   {
-    name: 'Nakib',
+    name: 'Nakib Mdoiouhoma',
     quote: 'Quand le détail fait la différence.',
   },
   {
-    name: 'Missak',
+    name: 'Missak Mungan',
     quote: 'Le sens du défi, version artisan.',
   },
 
