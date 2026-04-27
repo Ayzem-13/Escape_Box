@@ -12,6 +12,9 @@ export type CodesContextValue = {
   clearCodes: () => void;
   filledCount: number;
   allCodesSet: boolean;
+  foundCodes: boolean[];
+  markAsFound: (index: number) => void;
+  foundCount: number;
 };
 
 export const CodesContext = createContext<CodesContextValue | null>(null);

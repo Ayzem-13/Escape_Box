@@ -9,6 +9,7 @@ import {
 } from './CodesContext';
 
 const emptyCodes = (slotCount: number): Codes => Array.from({ length: slotCount }, () => '');
+const emptyFound = (slotCount: number): boolean[] => Array.from({ length: slotCount }, () => false);
 
 const loadCodes = (mode: GameMode, slotCount: number): Codes => {
   const empty = emptyCodes(slotCount);
@@ -35,6 +36,7 @@ interface CodesProviderProps {
 
 export const CodesProvider = ({ mode, slotCount, children }: CodesProviderProps) => {
   const [codes, setCodes] = useState<Codes>(() => loadCodes(mode, slotCount));
+  const [foundCodes, setFoundCodes] = useState<boolean[]>(() => emptyFound(slotCount));
 
   useEffect(() => {
     localStorage.setItem(codesStorageKey(mode), JSON.stringify(codes));
@@ -61,7 +63,16 @@ export const CodesProvider = ({ mode, slotCount, children }: CodesProviderProps)
     localStorage.removeItem(codesStorageKey(mode));
   }, [mode, slotCount]);
 
+  const markAsFound = useCallback((index: number) => {
+    setFoundCodes((prev) => {
+      const next = prev.slice();
+      next[index] = true;
+      return next;
+    });
+  }, []);
+
   const filledCount = codes.filter((c) => c.length === 4).length;
+  const foundCount = foundCodes.filter(Boolean).length;
 
   const value = useMemo<CodesContextValue>(
     () => ({
@@ -72,8 +83,11 @@ export const CodesProvider = ({ mode, slotCount, children }: CodesProviderProps)
       clearCodes,
       filledCount,
       allCodesSet: filledCount === slotCount,
+      foundCodes,
+      markAsFound,
+      foundCount,
     }),
-    [mode, codes, slotCount, setCodeAt, clearCodes, filledCount],
+    [mode, codes, slotCount, setCodeAt, clearCodes, filledCount, foundCodes, markAsFound, foundCount],
   );
 
   return <CodesContext.Provider value={value}>{children}</CodesContext.Provider>;

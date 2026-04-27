@@ -1,0 +1,33 @@
+.found-codes-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block: 1rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.found-codes-indicator-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.found-codes-indicator-dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: #444;
+  border: 1px solid #666;
+  transition: background-color 0.3s;
+}
+
+.found-codes-indicator-dot[data-found='true'] {
+  background-color: #2ecc71;
+  border-color: #27ae60;
+}
+
+.found-codes-indicator-count {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}

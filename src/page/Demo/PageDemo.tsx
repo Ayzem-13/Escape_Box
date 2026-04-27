@@ -5,6 +5,7 @@ import { CodesProvider } from '../../context/CodesProvider';
 import { useCodes } from '../../context/CodesContext';
 import Chrono from '../../components/Chrono/Chrono';
 import Combinations from '../../components/Combinations/Combinations';
+import FoundCodesIndicator from '../../components/FoundCodesIndicator/FoundCodesIndicator';
 import '../../App.css';
 
 const DemoSetup: React.FC = () => {
@@ -37,10 +38,17 @@ const DemoSetup: React.FC = () => {
 
 const DemoGame: React.FC = () => {
   const t = useTheme();
+  const { markAsFound, foundCount, slotCount } = useCodes();
   return (
     <div data-testid="demo-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
       <div data-testid="demo-timer">
         <Chrono initialTime={900} />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column-reverse', alignItems: 'center', gap: '1rem' }}>
+        <button onClick={() => markAsFound(foundCount)} disabled={foundCount === slotCount}>
+          Simulate Find
+        </button>
+        <FoundCodesIndicator />
       </div>
     </div>
   );

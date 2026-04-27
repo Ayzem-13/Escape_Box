@@ -6,6 +6,7 @@ import { useCodes } from '../../context/CodesContext';
 import Chrono from '../../components/Chrono/Chrono';
 import Combinations from '../../components/Combinations/Combinations';
 import '../../App.css';
+import FoundCodesIndicator from '../../components/FoundCodesIndicator/FoundCodesIndicator';
 
 const NormalSetup: React.FC = () => {
   const t = useTheme();
@@ -42,6 +43,7 @@ const NormalGame: React.FC = () => {
       <div data-testid="normal-timer">
         <Chrono initialTime={3600} />
       </div>
+      <FoundCodesIndicator />
     </div>
   );
 };
