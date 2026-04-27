@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../theme/theme';
+import bipSound from '../../assets/sounds/bip.mp3';
 import './Chrono.css';
 
 interface ChronoProps {
@@ -8,8 +9,10 @@ interface ChronoProps {
 
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const [time, setTime] = useState(initialTime);
+  const [isWarning, setIsWarning] = useState(false);
   const t = useTheme();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const warningInterval = 900; // 15 minutes in seconds
 
   useEffect(() => {
     if (time > 0) {
@@ -17,8 +20,10 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
         setTime(time - 1);
       }, 1000);
 
-      if (time % 900 === 0) {
+      if (time % warningInterval === 0) {
         audioRef.current?.play();
+        setIsWarning(true);
+        setTimeout(() => setIsWarning(false), 3000); // Flash for 3 seconds
       }
 
       return () => clearTimeout(timerId);
@@ -26,7 +31,18 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   }, [time, initialTime]);
 
   useEffect(() => {
-    audioRef.current = new Audio('../assets/sounds/bip.mp3');
+    audioRef.current = new Audio(bipSound);
+  }, []);
+
+  useEffect(() => {
+    const handlePenalty = () => {
+      setTime(prevTime => Math.max(0, prevTime - 60));
+    };
+    
+    window.addEventListener('chrono-penalty', handlePenalty as EventListener);
+    return () => {
+      window.removeEventListener('chrono-penalty', handlePenalty as EventListener);
+    };
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -37,7 +53,7 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
 
   return (
     <div
-      className="chrono-container"
+      className={`chrono-container ${isWarning ? 'warning' : ''}`}
       data-testid="chrono"
       style={{
         backgroundColor: t.color.bgInverse,

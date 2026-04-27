@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ThemeProvider } from './theme/ThemeProvider'
@@ -11,7 +11,7 @@ import PageNormal from './page/Nomal/PageNormal.tsx'
 import PageCredits from './page/Credits/PageCredits.tsx'
 import Layout from './components/Layout/Layout.tsx'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <App />,

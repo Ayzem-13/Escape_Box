@@ -3,9 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:web": "tsc -b && vite build",
+    "build:exe": "tsc -b && vite build && electron-packager . \"Escape Box\" --platform=win32 --arch=x64 --out=release --overwrite --asar --ignore=\"^/(release|src|electron|e2e|test-results|playwright-report|node_modules/(?!react|react-dom|react-router-dom|react-toastify))\" --prune=true",
+    "build:exe:portable": "tsc -b && vite build && electron-builder --win portable",
+    "electron:dev": "vite",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
@@ -19,6 +24,26 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report"
   },
+  "build": {
+    "appId": "com.escapebox.app",
+    "productName": "Escape Box",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": [
+        "dir"
+      ]
+    },
+    "portable": {
+      "artifactName": "EscapeBox-${version}-portable.exe"
+    }
+  },
   "dependencies": {
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
@@ -26,6 +51,7 @@
     "react-toastify": "^11.1.0"
   },
   "devDependencies": {
+    "@electron/packager": "^20.0.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.59.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -38,6 +64,8 @@
     "@vitest/ui": "^4.1.5",
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
+    "electron": "^41.3.0",
+    "electron-builder": "^26.8.1",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
@@ -46,6 +74,8 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.10",
+    "vite-plugin-electron": "^0.29.1",
+    "vite-plugin-electron-renderer": "^0.14.6",
     "vitest": "^4.1.5"
   }
 }
