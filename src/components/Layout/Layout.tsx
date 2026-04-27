@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
+import InfoPopup from '../InfoPopup/InfoPopup';
 import './Layout.css';
 
 const LayoutHeader = () => {
@@ -43,6 +45,29 @@ const LayoutHeader = () => {
   );
 };
 
+const LayoutInfoFab = () => {
+  const { gameStarted } = useGame();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!gameStarted) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="layout-info-fab"
+        aria-label="Informations sur la partie"
+        title="Informations"
+        data-testid="layout-info-btn"
+      >
+        i
+      </button>
+      {isOpen && <InfoPopup onClose={() => setIsOpen(false)} />}
+    </>
+  );
+};
+
 const Layout = () => {
   const t = useTheme();
 
@@ -53,6 +78,7 @@ const Layout = () => {
         <main>
           <Outlet />
         </main>
+        <LayoutInfoFab />
       </div>
     </GameProvider>
   );

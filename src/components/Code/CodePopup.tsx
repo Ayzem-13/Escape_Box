@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCodes } from '../../context/CodesContext';
-import {
-  CODE_CATEGORIES,
-  CODE_CATEGORY_LABEL,
-  CODE_LENGTH,
-  CODE_TOKEN_SETS,
-  type CodeCategory,
-} from '../../config/codeSymbols';
+import { CODE_LENGTH } from '../../config/codeSymbols';
+import CodeInput from '../CodeInput/CodeInput';
 import './CodePopup.css';
 
 interface CodePopupProps {
@@ -15,26 +10,17 @@ interface CodePopupProps {
 }
 
 const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
-  const [code, setLocalCode] = useState<string[]>([]);
-  const [category, setCategory] = useState<CodeCategory>('symbols');
+  const [code, setCode] = useState<string[]>([]);
   const { codes, slotCount, setCodeAt, filledCount } = useCodes();
 
-  const tokens = CODE_TOKEN_SETS[category];
   const nextSlot = codes.findIndex((c) => c.length !== CODE_LENGTH);
   const slotIndex = nextSlot === -1 ? slotCount - 1 : nextSlot;
   const isFull = filledCount >= slotCount;
   const canSave = !isFull && code.length === CODE_LENGTH;
 
-  const handleTokenClick = (token: string) => {
-    if (code.length < CODE_LENGTH) {
-      setLocalCode([...code, token]);
-    }
-  };
-
   const handleSave = () => {
     if (!canSave) return;
-    const codeString = code.join('');
-    setCodeAt(slotIndex, codeString);
+    setCodeAt(slotIndex, code.join(''));
     toast.success(
       slotCount === 1
         ? 'Combinaison enregistrée.'
@@ -42,8 +28,6 @@ const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
     );
     onClose();
   };
-
-  const handleClear = () => setLocalCode([]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
@@ -68,54 +52,12 @@ const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
       <div className="popup-content">
         <h2 className="popup-title">{heading}</h2>
 
-        <div className="code-display">
-          {Array(CODE_LENGTH).fill(null).map((_, index) => (
-            <div
-              key={index}
-              className="code-slot"
-              data-active={index === code.length && !isFull}
-              data-filled={Boolean(code[index])}
-            >
-              {code[index] || ''}
-            </div>
-          ))}
-        </div>
-
-        <div className="code-tabs" role="tablist" aria-label="Catégorie de symboles">
-          {CODE_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              role="tab"
-              aria-selected={cat === category}
-              onClick={() => setCategory(cat)}
-              disabled={isFull}
-              data-testid={`code-tab-${cat}`}
-              className="code-tab"
-            >
-              {CODE_CATEGORY_LABEL[cat]}
-            </button>
-          ))}
-        </div>
-
-        <div className="token-grid" data-category={category} data-testid={`code-grid-${category}`}>
-          {tokens.map((token) => (
-            <button
-              key={token}
-              type="button"
-              onClick={() => handleTokenClick(token)}
-              disabled={isFull || code.length >= CODE_LENGTH}
-              className="token-btn"
-            >
-              {token}
-            </button>
-          ))}
-        </div>
+        <CodeInput code={code} onChange={setCode} disabled={isFull} />
 
         <div className="popup-actions">
           <button
             type="button"
-            onClick={handleClear}
+            onClick={() => setCode([])}
             disabled={code.length === 0}
             data-testid="popup-clear"
             className="popup-btn popup-btn--ghost"

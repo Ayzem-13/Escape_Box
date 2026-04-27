@@ -1,0 +1,113 @@
+.code-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.code-input-display {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.code-input-slot {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.code-input-slot[data-active='true'] {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.code-input-slot[data-filled='true'] {
+  border-color: var(--color-primary);
+}
+
+.code-input-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.code-input-tab {
+  background: transparent;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.code-input-tab:hover:not(:disabled) {
+  background-color: var(--color-primary-soft);
+}
+
+.code-input-tab[aria-selected='true'] {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.code-input-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.code-input-grid {
+  display: grid;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.code-input-grid[data-category='symbols'] {
+  grid-template-columns: repeat(4, 44px);
+}
+
+.code-input-grid[data-category='letters'] {
+  grid-template-columns: repeat(7, 44px);
+}
+
+.code-input-grid[data-category='numbers'] {
+  grid-template-columns: repeat(5, 44px);
+}
+
+.code-input-token {
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-base), transform var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.code-input-token:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.code-input-token:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.code-input-token:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
