@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
 import PageDemo from '../page/Demo/PageDemo'
-import { codesStorageKey, type CodesTuple } from '../context/CodesContext'
+import { codesStorageKey, type Codes } from '../context/CodesContext'
 import { renderWithRouter } from './renderWithRouter'
 
-const FILLED_CODES: CodesTuple = ['▲▲▲▲', '■■■■', '●●●●']
-const seedCodes = (codes: CodesTuple) =>
+const FILLED_CODE: Codes = ['▲▲▲▲']
+const seedCodes = (codes: Codes) =>
   localStorage.setItem(codesStorageKey('demo'), JSON.stringify(codes))
 
 describe('DemoMode', () => {
@@ -20,12 +20,11 @@ describe('DemoMode', () => {
       expect(screen.getByTestId('demo-reset-btn')).toHaveTextContent('Réinitialiser')
     })
 
-    it('affiche l\'indicateur 0/3 et 3 dots vides', () => {
+    it('affiche l\'indicateur 0/1 et un seul dot vide', () => {
       renderWithRouter(<PageDemo />)
-      expect(screen.getByTestId('code-count')).toHaveTextContent('0/3')
+      expect(screen.getByTestId('code-count')).toHaveTextContent('0/1')
       expect(screen.getByTestId('code-dot-0')).toHaveAttribute('data-filled', 'false')
-      expect(screen.getByTestId('code-dot-1')).toHaveAttribute('data-filled', 'false')
-      expect(screen.getByTestId('code-dot-2')).toHaveAttribute('data-filled', 'false')
+      expect(screen.queryByTestId('code-dot-1')).not.toBeInTheDocument()
     })
 
     it('"DEMARRER PARTIE" et "Réinitialiser" sont désactivés', () => {
@@ -40,29 +39,29 @@ describe('DemoMode', () => {
     })
   })
 
-  describe('avec 3 combinaisons pré-remplies (localStorage)', () => {
-    it('affiche 3/3, désactive "Définir" et active "DEMARRER PARTIE" et "Réinitialiser"', () => {
-      seedCodes(FILLED_CODES)
+  describe('avec la combinaison pré-remplie (localStorage)', () => {
+    it('affiche 1/1, désactive "Définir" et active "DEMARRER PARTIE" et "Réinitialiser"', () => {
+      seedCodes(FILLED_CODE)
       renderWithRouter(<PageDemo />)
-      expect(screen.getByTestId('code-count')).toHaveTextContent('3/3')
+      expect(screen.getByTestId('code-count')).toHaveTextContent('1/1')
       expect(screen.getByTestId('demo-define-btn')).toBeDisabled()
       expect(screen.getByTestId('demo-reset-btn')).toBeEnabled()
       expect(screen.getByTestId('demo-start-btn')).toBeEnabled()
     })
 
-    it('le bouton "Réinitialiser" remet le compteur à 0/3', () => {
-      seedCodes(FILLED_CODES)
+    it('le bouton "Réinitialiser" remet le compteur à 0/1', () => {
+      seedCodes(FILLED_CODE)
       renderWithRouter(<PageDemo />)
       fireEvent.click(screen.getByTestId('demo-reset-btn'))
-      expect(screen.getByTestId('code-count')).toHaveTextContent('0/3')
+      expect(screen.getByTestId('code-count')).toHaveTextContent('0/1')
       expect(screen.getByTestId('demo-start-btn')).toBeDisabled()
     })
   })
 
-  describe('après clic sur "DEMARRER PARTIE" (combinaisons remplies)', () => {
+  describe('après clic sur "DEMARRER PARTIE" (combinaison remplie)', () => {
     beforeEach(() => {
       vi.useFakeTimers()
-      seedCodes(FILLED_CODES)
+      seedCodes(FILLED_CODE)
     })
 
     afterEach(() => {

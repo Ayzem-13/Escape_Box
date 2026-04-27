@@ -14,10 +14,11 @@ const Combinations: React.FC<CombinationsProps> = ({
   testIdPrefix,
   resetToastMessage = 'Combinaisons réinitialisées.',
 }) => {
-  const { mode, allCodesSet, filledCount, clearCodes } = useCodes();
+  const { mode, slotCount, allCodesSet, filledCount, clearCodes } = useCodes();
   const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
 
   const prefix = testIdPrefix ?? mode;
+  const resetLabel = slotCount === 1 ? 'Réinitialiser la combinaison' : 'Réinitialiser les combinaisons';
 
   const handleReset = () => {
     clearCodes();
@@ -43,7 +44,7 @@ const Combinations: React.FC<CombinationsProps> = ({
           className="button"
           disabled={filledCount === 0}
         >
-          Réinitialiser les combinaisons
+          {resetLabel}
         </button>
       </div>
 

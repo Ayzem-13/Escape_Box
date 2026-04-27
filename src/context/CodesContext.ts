@@ -1,13 +1,14 @@
 import { createContext, useContext } from 'react';
 
 export type Code = string;
-export type CodesTuple = [Code, Code, Code];
+export type Codes = Code[];
 export type GameMode = 'demo' | 'normal';
 
 export type CodesContextValue = {
   mode: GameMode;
-  codes: CodesTuple;
-  setCodeAt: (index: 0 | 1 | 2, code: Code) => void;
+  codes: Codes;
+  slotCount: number;
+  setCodeAt: (index: number, code: Code) => void;
   clearCodes: () => void;
   filledCount: number;
   allCodesSet: boolean;

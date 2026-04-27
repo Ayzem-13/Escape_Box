@@ -3,26 +3,27 @@ import { useCodes } from '../../context/CodesContext';
 import './CodeIndicator.css';
 
 const CodeIndicator: React.FC = () => {
-  const { codes, filledCount } = useCodes();
+  const { codes, slotCount, filledCount } = useCodes();
+  const label = slotCount === 1 ? 'combinaison enregistrée' : 'combinaisons enregistrées';
 
   return (
     <div
       className="code-indicator"
       data-testid="code-indicator"
-      aria-label={`${filledCount} sur 3 combinaisons définies`}
+      aria-label={`${filledCount} sur ${slotCount} ${label}`}
     >
       <div className="code-indicator-dots">
-        {([0, 1, 2] as const).map((i) => (
+        {Array.from({ length: slotCount }).map((_, i) => (
           <span
             key={i}
             className="code-indicator-dot"
             data-testid={`code-dot-${i}`}
-            data-filled={codes[i].length === 4}
+            data-filled={codes[i]?.length === 4}
           />
         ))}
       </div>
       <p className="code-indicator-count" data-testid="code-count">
-        {filledCount}/3 combinaisons enregistrées
+        {filledCount}/{slotCount} {label}
       </p>
     </div>
   );
