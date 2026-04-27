@@ -24,9 +24,9 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   };
 
   return (
-    <div className="chrono-container" data-testid="chrono">
-      <div className="chrono-display" data-testid="chrono-display">{formatTime(time)}</div>
-    </div>  
+    <div className="chrono-container">
+      <div className="chrono-display">{formatTime(time)}</div>
+    </div>
   );
 };
 
