@@ -14,6 +14,7 @@ function Normal() {
       <button
         onClick={() => setGameStarted(true)}
         data-testid="normal-launch-btn"
+        className="button"
       >
         Lancez partie
       </button>

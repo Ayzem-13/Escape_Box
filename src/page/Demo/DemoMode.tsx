@@ -27,7 +27,7 @@ const DemoMode: React.FC = () => {
       </div>
       <p data-testid="demo-duration">Durée de la partie: 15 minutes</p>
       <div style={{ margin: '20px' }}>
-        <button onClick={() => setGameStarted(true)} data-testid="demo-start-btn">DEMARRER PARTIE</button>
+        <button onClick={() => setGameStarted(true)} data-testid="demo-start-btn" className="button">DEMARRER PARTIE</button>
       </div>
       <div style={{ margin: '20px' }}>
         <Link to="/" className="button" data-testid="demo-back-link">RETOUR AU MENU</Link>
