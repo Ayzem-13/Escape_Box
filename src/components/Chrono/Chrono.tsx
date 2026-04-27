@@ -29,6 +29,17 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
     audioRef.current = new Audio('../assets/sounds/bip.mp3');
   }, []);
 
+  useEffect(() => {
+    const handlePenalty = () => {
+      setTime(prevTime => Math.max(0, prevTime - 60));
+    };
+    
+    window.addEventListener('chrono-penalty', handlePenalty as EventListener);
+    return () => {
+      window.removeEventListener('chrono-penalty', handlePenalty as EventListener);
+    };
+  }, []);
+
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;

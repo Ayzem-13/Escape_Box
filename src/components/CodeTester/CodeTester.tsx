@@ -25,7 +25,8 @@ const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
     } else if (codes.includes(codeString)) {
       toast.info('Ce code a déjà été trouvé !');
     } else {
-      toast.error('Code incorrect.');
+      toast.error('Code incorrect ! -1 min ⏱️');
+      window.dispatchEvent(new CustomEvent('chrono-penalty'));
     }
     
     setCode([]);
