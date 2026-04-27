@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import DemoMode from './DemoMode.tsx'
-import Normal from './normal.tsx'
+import DemoMode from './components/Demo/DemoMode.tsx'
+import Normal from './components/Nomal/normal.tsx'
 
 const router = createBrowserRouter([
   {

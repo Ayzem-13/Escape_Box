@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './App.css';
-import Timer from './components/Timer';
+import '../../App.css';
+import Timer from '../Timer/Timer';
 
 const DemoMode: React.FC = () => {
   const [gameStarted, setGameStarted] = useState(false);

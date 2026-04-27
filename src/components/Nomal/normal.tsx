@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import './App.css'
+import '../../App.css'
 import React, { useState } from 'react';
-import Chrono from './Chrono';
+import Chrono from '../Chrono/Chrono';
 
 
 function Normal() {
