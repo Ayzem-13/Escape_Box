@@ -26,11 +26,6 @@ const LayoutHeader = () => {
           gap: t.spacing.sm,
         }}
       >
-        {!gameStarted && (
-          <button onClick={() => setIsCodePopupOpen(true)} className="button">
-            Définir le code
-          </button>
-        )}
         {gameStarted && (
           <button
             onClick={resetGame}
@@ -49,7 +44,6 @@ const LayoutHeader = () => {
           RETOUR AU MENU
         </Link>
       </div>
-      {isCodePopupOpen && <CodePopup onClose={() => setIsCodePopupOpen(false)} />}
     </>
   );
 };

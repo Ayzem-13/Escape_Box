@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../theme/theme';
+import { useGame } from '../../context/GameContext';
 import './CodePopup.css';
 
 interface CodePopupProps {
@@ -9,18 +10,20 @@ interface CodePopupProps {
 const symbols = ['▲', '▼', '■', '●', '◆', '►', '◄', '▪'];
 
 const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
-  const [code, setCode] = useState<string[]>([]);
+  const [code, setLocalCode] = useState<string[]>([]);
   const t = useTheme();
+  const { setCode } = useGame();
 
   const handleSymbolClick = (symbol: string) => {
     if (code.length < 4) {
-      setCode([...code, symbol]);
+      setLocalCode([...code, symbol]);
     }
   };
 
   const handleSave = () => {
     if (code.length === 4) {
-      localStorage.setItem('userCode', JSON.stringify(code));
+      const codeString = code.join('');
+      setCode(codeString);
       onClose();
     } else {
       alert('Veuillez sélectionner un code à 4 symboles.');
@@ -28,7 +31,7 @@ const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
   };
 
   const handleClear = () => {
-    setCode([]);
+    setLocalCode([]);
   };
 
   return (

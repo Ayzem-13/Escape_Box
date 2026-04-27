@@ -4,6 +4,8 @@ export type GameContextValue = {
   gameStarted: boolean;
   startGame: () => void;
   resetGame: () => void;
+  code: string | null;
+  setCode: (code: string) => void;  
 };
 
 export const GameContext = createContext<GameContextValue | null>(null);
