@@ -8,12 +8,17 @@ import './index.css'
 import App from './App.tsx'
 import PageDemo from './page/Demo/PageDemo.tsx'
 import PageNormal from './page/Nomal/PageNormal.tsx'
+import PageCredits from './page/Credits/PageCredits.tsx'
 import Layout from './components/Layout/Layout.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+  },
+  {
+    path: '/credits',
+    element: <PageCredits />,
   },
   {
     element: <Layout />,

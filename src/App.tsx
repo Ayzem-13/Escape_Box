@@ -23,6 +23,15 @@ function App() {
             Commencer mode démo
           </Link>
         </div>
+
+        <Link
+          to="/credits"
+          className="button"
+          data-testid="home-credits-link"
+          style={{ marginTop: t.spacing.xl }}
+        >
+          Crédits
+        </Link>
       </header>
     </div>
   )

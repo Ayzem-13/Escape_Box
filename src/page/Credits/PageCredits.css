@@ -1,0 +1,275 @@
+.credits-page {
+  min-height: 100vh;
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ────────────── Hero ────────────── */
+
+.credits-hero {
+  position: relative;
+  padding: clamp(40px, 8vw, 96px) var(--spacing-md) clamp(48px, 10vw, 120px);
+  text-align: center;
+  background:
+    radial-gradient(ellipse at top, var(--color-primary-soft), transparent 60%),
+    var(--color-bg-inverse);
+  overflow: hidden;
+}
+
+.credits-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-primary),
+    transparent
+  );
+  opacity: 0.4;
+}
+
+.credits-hero-eyebrow {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+  animation: credits-fade-in 600ms 100ms both ease;
+}
+
+.credits-hero-title {
+  margin: 0;
+  font-size: clamp(2.4rem, 8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    135deg,
+    var(--color-white) 0%,
+    var(--color-primary) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: credits-fade-up 700ms 200ms both ease;
+}
+
+.credits-hero-tagline {
+  margin: var(--spacing-md) auto 0;
+  max-width: 480px;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: var(--color-text-inverse);
+  opacity: 0.7;
+  font-style: italic;
+  font-weight: 300;
+  animation: credits-fade-up 700ms 350ms both ease;
+}
+
+/* ────────────── Grid ────────────── */
+
+.credits-section {
+  flex: 1;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.credits-section-heading {
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 var(--spacing-lg);
+}
+
+.credits-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.credits-card {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+  animation: credits-card-in 600ms both ease;
+}
+
+.credits-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-primary-hover)
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base);
+}
+
+.credits-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary);
+}
+
+.credits-card:hover::before {
+  transform: scaleX(1);
+}
+
+.credits-card-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-hover)
+  );
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 4px 12px var(--color-primary-soft);
+}
+
+.credits-card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.credits-card-role {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.credits-card-quote {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  font-style: italic;
+  position: relative;
+  padding: 0 var(--spacing-sm);
+}
+
+.credits-card-quote::before,
+.credits-card-quote::after {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-style: normal;
+  opacity: 0.6;
+}
+
+.credits-card-quote::before { content: '“'; margin-right: 4px; }
+.credits-card-quote::after  { content: '”'; margin-left: 4px; }
+
+/* ────────────── Footer ────────────── */
+
+.credits-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl) var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-bg-inverse);
+}
+
+.credits-footer-back {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-base), transform var(--transition-fast);
+  box-shadow: 0 4px 12px var(--color-primary-soft);
+}
+
+.credits-footer-back:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+
+.credits-footer-back:active { transform: translateY(0); }
+
+.credits-footer-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-inverse);
+  opacity: 0.4;
+  letter-spacing: 0.05em;
+}
+
+/* ────────────── Animations ────────────── */
+
+@keyframes credits-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes credits-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes credits-card-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .credits-grid { grid-template-columns: 1fr; }
+}
