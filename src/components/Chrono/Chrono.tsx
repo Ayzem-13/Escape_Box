@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../theme/theme';
 import './Chrono.css';
 
@@ -9,15 +9,25 @@ interface ChronoProps {
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const [time, setTime] = useState(initialTime);
   const t = useTheme();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (time > 0) {
       const timerId = setTimeout(() => {
         setTime(time - 1);
       }, 1000);
+
+      if (time % 900 === 0) {
+        audioRef.current?.play();
+      }
+
       return () => clearTimeout(timerId);
     }
-  }, [time]);
+  }, [time, initialTime]);
+
+  useEffect(() => {
+    audioRef.current = new Audio('../assets/sounds/bip.mp3');
+  }, []);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
