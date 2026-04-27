@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../theme/theme';
+import bipSound from '../../assets/sounds/bip.mp3';
 import './Chrono.css';
 
 interface ChronoProps {
@@ -17,7 +18,7 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
         setTime(time - 1);
       }, 1000);
 
-      if (time % 900 === 0) {
+      if (time % 1 === 0) {
         audioRef.current?.play();
       }
 
@@ -26,7 +27,7 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   }, [time, initialTime]);
 
   useEffect(() => {
-    audioRef.current = new Audio('../assets/sounds/bip.mp3');
+    audioRef.current = new Audio(bipSound);
   }, []);
 
   const formatTime = (seconds: number) => {
