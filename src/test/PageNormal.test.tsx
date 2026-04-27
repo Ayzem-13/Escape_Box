@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
-import Normal from '../page/Nomal/normal'
+import PageNormal from '../page/Nomal/PageNormal'
 import { renderWithRouter } from './renderWithRouter'
 
 describe('Normal (mode partie classique)', () => {
   describe('rendu initial', () => {
     it('affiche le titre, le bouton "Lancez partie" et le lien retour', () => {
-      renderWithRouter(<Normal />)
+      renderWithRouter(<PageNormal />)
 
       expect(screen.getByTestId('normal-title')).toHaveTextContent('Normal - Page')
       expect(screen.getByTestId('normal-launch-btn')).toHaveTextContent('Lancez partie')
@@ -16,7 +16,7 @@ describe('Normal (mode partie classique)', () => {
     })
 
     it('n\'affiche pas le chrono tant que la partie n\'a pas démarré', () => {
-      renderWithRouter(<Normal />)
+      renderWithRouter(<PageNormal />)
       expect(screen.queryByTestId('chrono')).not.toBeInTheDocument()
     })
   })
@@ -31,14 +31,14 @@ describe('Normal (mode partie classique)', () => {
     })
 
     it('affiche le chrono à 60:00 (1h)', () => {
-      renderWithRouter(<Normal />)
+      renderWithRouter(<PageNormal />)
       fireEvent.click(screen.getByTestId('normal-launch-btn'))
 
       expect(screen.getByTestId('chrono-display')).toHaveTextContent('60:00')
     })
 
     it('le chrono décrémente après 1 seconde', () => {
-      renderWithRouter(<Normal />)
+      renderWithRouter(<PageNormal />)
       fireEvent.click(screen.getByTestId('normal-launch-btn'))
 
       act(() => {
@@ -49,7 +49,7 @@ describe('Normal (mode partie classique)', () => {
     })
 
     it('garde le titre et le lien retour visibles', () => {
-      renderWithRouter(<Normal />)
+      renderWithRouter(<PageNormal />)
       fireEvent.click(screen.getByTestId('normal-launch-btn'))
 
       expect(screen.getByTestId('normal-title')).toBeInTheDocument()

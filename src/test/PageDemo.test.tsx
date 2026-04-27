@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
-import DemoMode from '../page/Demo/DemoMode'
+import PageDemo from '../page/Demo/PageDemo'
 import { renderWithRouter } from './renderWithRouter'
 
 describe('DemoMode', () => {
   describe('écran initial', () => {
     it('affiche le titre, l\'input clé, la durée et les boutons', () => {
-      renderWithRouter(<DemoMode />)
+      renderWithRouter(<PageDemo />)
 
       expect(screen.getByTestId('demo-title')).toHaveTextContent('MODE DEMO')
       expect(screen.getByTestId('demo-key-input')).toBeInTheDocument()
@@ -16,7 +16,7 @@ describe('DemoMode', () => {
     })
 
     it('n\'affiche pas l\'écran de jeu', () => {
-      renderWithRouter(<DemoMode />)
+      renderWithRouter(<PageDemo />)
       expect(screen.queryByTestId('demo-game-screen')).not.toBeInTheDocument()
     })
   })
@@ -31,7 +31,7 @@ describe('DemoMode', () => {
     })
 
     it('affiche l\'écran de jeu avec le timer à 15:00 et masque le formulaire', () => {
-      renderWithRouter(<DemoMode />)
+      renderWithRouter(<PageDemo />)
       fireEvent.click(screen.getByTestId('demo-start-btn'))
 
       expect(screen.getByTestId('demo-game-screen')).toBeInTheDocument()
@@ -41,7 +41,7 @@ describe('DemoMode', () => {
     })
 
     it('affiche un nouveau lien "RETOUR AU MENU" sur l\'écran de jeu', () => {
-      renderWithRouter(<DemoMode />)
+      renderWithRouter(<PageDemo />)
       fireEvent.click(screen.getByTestId('demo-start-btn'))
 
       const back = screen.getByTestId('demo-back-link-game')
@@ -50,7 +50,7 @@ describe('DemoMode', () => {
     })
 
     it('le timer décrémente après 1 seconde', () => {
-      renderWithRouter(<DemoMode />)
+      renderWithRouter(<PageDemo />)
       fireEvent.click(screen.getByTestId('demo-start-btn'))
       expect(screen.getByTestId('demo-timer')).toHaveTextContent('15:00')
 
