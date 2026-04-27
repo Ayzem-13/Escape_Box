@@ -49,7 +49,7 @@ const DemoGame: React.FC = () => {
 const PageDemo: React.FC = () => {
   const { gameStarted, session } = useGame();
   return (
-    <CodesProvider mode="demo" key={session}>
+    <CodesProvider mode="demo" slotCount={1} key={session}>
       {gameStarted ? <DemoGame /> : <DemoSetup />}
     </CodesProvider>
   );

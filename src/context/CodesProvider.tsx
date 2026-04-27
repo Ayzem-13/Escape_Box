@@ -3,36 +3,38 @@ import {
   CodesContext,
   codesStorageKey,
   type Code,
+  type Codes,
   type CodesContextValue,
-  type CodesTuple,
   type GameMode,
 } from './CodesContext';
 
-const EMPTY_CODES: CodesTuple = ['', '', ''];
+const emptyCodes = (slotCount: number): Codes => Array.from({ length: slotCount }, () => '');
 
-const isCodesTuple = (value: unknown): value is CodesTuple =>
-  Array.isArray(value) &&
-  value.length === 3 &&
-  value.every((c) => typeof c === 'string');
-
-const loadCodes = (mode: GameMode): CodesTuple => {
+const loadCodes = (mode: GameMode, slotCount: number): Codes => {
+  const empty = emptyCodes(slotCount);
   try {
     const raw = localStorage.getItem(codesStorageKey(mode));
-    if (!raw) return [...EMPTY_CODES] as CodesTuple;
+    if (!raw) return empty;
     const parsed = JSON.parse(raw);
-    return isCodesTuple(parsed) ? parsed : ([...EMPTY_CODES] as CodesTuple);
+    if (!Array.isArray(parsed)) return empty;
+    const out = empty.slice();
+    for (let i = 0; i < Math.min(parsed.length, slotCount); i++) {
+      if (typeof parsed[i] === 'string') out[i] = parsed[i];
+    }
+    return out;
   } catch {
-    return [...EMPTY_CODES] as CodesTuple;
+    return empty;
   }
 };
 
-type CodesProviderProps = {
+interface CodesProviderProps {
   mode: GameMode;
+  slotCount: number;
   children: ReactNode;
-};
+}
 
-export const CodesProvider = ({ mode, children }: CodesProviderProps) => {
-  const [codes, setCodes] = useState<CodesTuple>(() => loadCodes(mode));
+export const CodesProvider = ({ mode, slotCount, children }: CodesProviderProps) => {
+  const [codes, setCodes] = useState<Codes>(() => loadCodes(mode, slotCount));
 
   useEffect(() => {
     localStorage.setItem(codesStorageKey(mode), JSON.stringify(codes));
@@ -40,24 +42,24 @@ export const CodesProvider = ({ mode, children }: CodesProviderProps) => {
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === codesStorageKey(mode)) setCodes(loadCodes(mode));
+      if (e.key === codesStorageKey(mode)) setCodes(loadCodes(mode, slotCount));
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
-  }, [mode]);
+  }, [mode, slotCount]);
 
-  const setCodeAt = useCallback((index: 0 | 1 | 2, code: Code) => {
+  const setCodeAt = useCallback((index: number, code: Code) => {
     setCodes((prev) => {
-      const next = [...prev] as CodesTuple;
+      const next = prev.slice();
       next[index] = code;
       return next;
     });
   }, []);
 
   const clearCodes = useCallback(() => {
-    setCodes([...EMPTY_CODES] as CodesTuple);
+    setCodes(emptyCodes(slotCount));
     localStorage.removeItem(codesStorageKey(mode));
-  }, [mode]);
+  }, [mode, slotCount]);
 
   const filledCount = codes.filter((c) => c.length === 4).length;
 
@@ -65,12 +67,13 @@ export const CodesProvider = ({ mode, children }: CodesProviderProps) => {
     () => ({
       mode,
       codes,
+      slotCount,
       setCodeAt,
       clearCodes,
       filledCount,
-      allCodesSet: filledCount === 3,
+      allCodesSet: filledCount === slotCount,
     }),
-    [mode, codes, setCodeAt, clearCodes, filledCount],
+    [mode, codes, slotCount, setCodeAt, clearCodes, filledCount],
   );
 
   return <CodesContext.Provider value={value}>{children}</CodesContext.Provider>;

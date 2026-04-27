@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
 import PageNormal from '../page/Nomal/PageNormal'
-import { codesStorageKey, type CodesTuple } from '../context/CodesContext'
+import { codesStorageKey, type Codes } from '../context/CodesContext'
 import { renderWithRouter } from './renderWithRouter'
 
-const FILLED_CODES: CodesTuple = ['▲▲▲▲', '■■■■', '●●●●']
-const seedCodes = (codes: CodesTuple) =>
+const FILLED_CODES: Codes = ['▲▲▲▲', '■■■■', '●●●●']
+const seedCodes = (codes: Codes) =>
   localStorage.setItem(codesStorageKey('normal'), JSON.stringify(codes))
 
 describe('Normal (mode partie classique)', () => {

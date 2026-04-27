@@ -49,7 +49,7 @@ const NormalGame: React.FC = () => {
 const PageNormal: React.FC = () => {
   const { gameStarted, session } = useGame();
   return (
-    <CodesProvider mode="normal" key={session}>
+    <CodesProvider mode="normal" slotCount={3} key={session}>
       {gameStarted ? <NormalGame /> : <NormalSetup />}
     </CodesProvider>
   );
