@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../App.css';
-import Chrono from '../Chrono/Chrono';
+import Chrono from '../../components/Chrono/Chrono';
 
 const DemoMode: React.FC = () => {
   const [gameStarted, setGameStarted] = useState(false);

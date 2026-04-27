@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
-import Normal from '../components/Nomal/normal'
+import Normal from '../page/Nomal/normal'
 import { renderWithRouter } from './renderWithRouter'
 
 describe('Normal (mode partie classique)', () => {

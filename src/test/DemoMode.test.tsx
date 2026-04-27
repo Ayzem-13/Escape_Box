@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
-import DemoMode from '../components/Demo/DemoMode'
+import DemoMode from '../page/Demo/DemoMode'
 import { renderWithRouter } from './renderWithRouter'
 
 describe('DemoMode', () => {
