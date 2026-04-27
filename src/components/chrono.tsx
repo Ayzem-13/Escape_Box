@@ -3,19 +3,20 @@ import './Chrono.css';
 
 interface ChronoProps {
   initialTime: number; // in seconds
+  isRunning?: boolean;
 }
 
-const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
+const Chrono: React.FC<ChronoProps> = ({ initialTime, isRunning = true }) => {
   const [time, setTime] = useState(initialTime);
 
   useEffect(() => {
-    if (time > 0) {
+    if (time > 0 && isRunning) {
       const timerId = setTimeout(() => {
         setTime(time - 1);
       }, 1000);
       return () => clearTimeout(timerId);
     }
-  }, [time]);
+  }, [time, isRunning]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
