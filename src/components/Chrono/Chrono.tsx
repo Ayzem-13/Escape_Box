@@ -9,8 +9,10 @@ interface ChronoProps {
 
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const [time, setTime] = useState(initialTime);
+  const [isWarning, setIsWarning] = useState(false);
   const t = useTheme();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const warningInterval = 900; // 15 minutes in seconds
 
   useEffect(() => {
     if (time > 0) {
@@ -18,8 +20,10 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
         setTime(time - 1);
       }, 1000);
 
-      if (time % 1 === 0) {
+      if (time % warningInterval === 0) {
         audioRef.current?.play();
+        setIsWarning(true);
+        setTimeout(() => setIsWarning(false), 3000); // Flash for 3 seconds
       }
 
       return () => clearTimeout(timerId);
@@ -49,7 +53,7 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
 
   return (
     <div
-      className="chrono-container"
+      className={`chrono-container ${isWarning ? 'warning' : ''}`}
       data-testid="chrono"
       style={{
         backgroundColor: t.color.bgInverse,
