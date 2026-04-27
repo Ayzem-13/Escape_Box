@@ -1,40 +1,38 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useTheme } from '../../theme/theme';
 import { useCodes } from '../../context/CodesContext';
+import {
+  CODE_CATEGORIES,
+  CODE_CATEGORY_LABEL,
+  CODE_LENGTH,
+  CODE_TOKEN_SETS,
+  type CodeCategory,
+} from '../../config/codeSymbols';
 import './CodePopup.css';
 
 interface CodePopupProps {
   onClose: () => void;
 }
 
-const symbols = ['▲', '▼', '■', '●', '◆', '►', '◄', '▪'];
-
 const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
   const [code, setLocalCode] = useState<string[]>([]);
-  const t = useTheme();
+  const [category, setCategory] = useState<CodeCategory>('symbols');
   const { codes, slotCount, setCodeAt, filledCount } = useCodes();
 
-  const nextSlot = codes.findIndex((c) => c.length !== 4);
+  const tokens = CODE_TOKEN_SETS[category];
+  const nextSlot = codes.findIndex((c) => c.length !== CODE_LENGTH);
   const slotIndex = nextSlot === -1 ? slotCount - 1 : nextSlot;
   const isFull = filledCount >= slotCount;
+  const canSave = !isFull && code.length === CODE_LENGTH;
 
-  const handleSymbolClick = (symbol: string) => {
-    if (code.length < 4) {
-      setLocalCode([...code, symbol]);
+  const handleTokenClick = (token: string) => {
+    if (code.length < CODE_LENGTH) {
+      setLocalCode([...code, token]);
     }
   };
 
   const handleSave = () => {
-    if (isFull) {
-      toast.warn(
-        slotCount === 1
-          ? 'La combinaison est déjà enregistrée.'
-          : `Les ${slotCount} combinaisons sont déjà enregistrées.`,
-      );
-      return;
-    }
-    if (code.length !== 4) return;
+    if (!canSave) return;
     const codeString = code.join('');
     setCodeAt(slotIndex, codeString);
     toast.success(
@@ -45,8 +43,10 @@ const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
     onClose();
   };
 
-  const handleClear = () => {
-    setLocalCode([]);
+  const handleClear = () => setLocalCode([]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose();
   };
 
   const heading = isFull
@@ -58,66 +58,89 @@ const CodePopup: React.FC<CodePopupProps> = ({ onClose }) => {
       : `Combinaison ${slotIndex + 1} sur ${slotCount}`;
 
   return (
-    <div className="popup-overlay" style={{ backgroundColor: t.color.overlay }}>
-      <div
-        className="popup-content"
-        style={{
-          backgroundColor: t.color.surface,
-          color: t.color.text,
-          borderRadius: t.radius.lg,
-          padding: t.spacing.lg,
-          borderColor: t.color.primary,
-          boxShadow: t.shadow.lg,
-        }}
-      >
-        <h2 style={{ color: t.color.primary }}>{heading}</h2>
-        <div className="code-display" style={{ marginBottom: t.spacing.lg }}>
-          {Array(4).fill(null).map((_, index) => (
+    <div
+      className="popup-overlay"
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Définir une combinaison"
+    >
+      <div className="popup-content">
+        <h2 className="popup-title">{heading}</h2>
+
+        <div className="code-display">
+          {Array(CODE_LENGTH).fill(null).map((_, index) => (
             <div
               key={index}
               className="code-slot"
-              style={{
-                borderColor: t.color.borderSoft,
-                color: t.color.text,
-                backgroundColor: t.color.bg,
-                borderRadius: t.radius.sm,
-              }}
+              data-active={index === code.length && !isFull}
+              data-filled={Boolean(code[index])}
             >
               {code[index] || ''}
             </div>
           ))}
         </div>
-        <div className="symbol-grid" style={{ gap: t.spacing.sm, marginBottom: t.spacing.lg }}>
-          {symbols.map((symbol) => (
+
+        <div className="code-tabs" role="tablist" aria-label="Catégorie de symboles">
+          {CODE_CATEGORIES.map((cat) => (
             <button
-              key={symbol}
-              onClick={() => handleSymbolClick(symbol)}
+              key={cat}
+              type="button"
+              role="tab"
+              aria-selected={cat === category}
+              onClick={() => setCategory(cat)}
               disabled={isFull}
-              style={{
-                backgroundColor: t.color.primary,
-                color: t.color.white,
-                border: 'none',
-                borderRadius: t.radius.md,
-                padding: t.spacing.sm,
-                cursor: isFull ? 'not-allowed' : 'pointer',
-                opacity: isFull ? 0.5 : 1,
-                transition: `background-color ${t.transition.base}`,
-              }}
+              data-testid={`code-tab-${cat}`}
+              className="code-tab"
             >
-              {symbol}
+              {CODE_CATEGORY_LABEL[cat]}
             </button>
           ))}
         </div>
-        <div className="popup-buttons" style={{ display: 'flex', justifyContent: 'center', gap: t.spacing.sm }}>
-          <button onClick={handleClear} data-testid="popup-clear">Effacer</button>
+
+        <div className="token-grid" data-category={category} data-testid={`code-grid-${category}`}>
+          {tokens.map((token) => (
+            <button
+              key={token}
+              type="button"
+              onClick={() => handleTokenClick(token)}
+              disabled={isFull || code.length >= CODE_LENGTH}
+              className="token-btn"
+            >
+              {token}
+            </button>
+          ))}
+        </div>
+
+        <div className="popup-actions">
           <button
-            onClick={handleSave}
-            disabled={isFull || code.length !== 4}
-            data-testid="popup-save"
+            type="button"
+            onClick={handleClear}
+            disabled={code.length === 0}
+            data-testid="popup-clear"
+            className="popup-btn popup-btn--ghost"
           >
-            Sauvegarder
+            Effacer
           </button>
-          <button onClick={onClose} data-testid="popup-close">Fermer</button>
+          <div className="popup-actions-right">
+            <button
+              type="button"
+              onClick={onClose}
+              data-testid="popup-close"
+              className="popup-btn popup-btn--ghost"
+            >
+              Fermer
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={!canSave}
+              data-testid="popup-save"
+              className="popup-btn popup-btn--primary"
+            >
+              Sauvegarder
+            </button>
+          </div>
         </div>
       </div>
     </div>
