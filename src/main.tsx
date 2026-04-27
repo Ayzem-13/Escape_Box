@@ -1,10 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { ThemeProvider } from './theme/ThemeProvider'
 import './index.css'
 import App from './App.tsx'
-import DemoMode from './components/Demo/DemoMode.tsx'
-import Normal from './components/Nomal/normal.tsx'
+import PageDemo from './page/Demo/PageDemo.tsx'
+import PageNormal from './page/Nomal/PageNormal.tsx'
+import Layout from './components/Layout/Layout.tsx'
 
 const router = createBrowserRouter([
   {
@@ -12,17 +14,24 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: '/demo',
-    element: <DemoMode />,
-  },
-  {
-    path: '/normal',
-    element: <Normal />,
-  },
+    element: <Layout />,
+    children: [
+      {
+        path: '/demo',
+        element: <PageDemo />,
+      },
+      {
+        path: '/normal',
+        element: <PageNormal />,
+      },
+    ]
+  }
 ])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </StrictMode>,
 )

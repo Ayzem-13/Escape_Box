@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../../theme/theme';
 import './Chrono.css';
 
 interface ChronoProps {
@@ -7,6 +8,7 @@ interface ChronoProps {
 
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const [time, setTime] = useState(initialTime);
+  const t = useTheme();
 
   useEffect(() => {
     if (time > 0) {
@@ -24,8 +26,24 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   };
 
   return (
-    <div className="chrono-container">
-      <div className="chrono-display">{formatTime(time)}</div>
+    <div
+      className="chrono-container"
+      data-testid="chrono"
+      style={{
+        backgroundColor: t.color.bgInverse,
+        color: t.color.textInverse,
+        borderColor: t.color.primary,
+        boxShadow: t.shadow.md,
+        borderRadius: t.radius.lg,
+      }}
+    >
+      <div
+        className="chrono-display"
+        data-testid="chrono-display"
+        style={{ color: t.color.primary, fontFamily: t.font.mono }}
+      >
+        {formatTime(time)}
+      </div>
     </div>
   );
 };
