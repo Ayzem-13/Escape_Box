@@ -10,15 +10,16 @@ function Normal() {
   return (
     <div className="App">
       {gameStarted && <Chrono initialTime={3600} />}
-      <h1>Normal - Page</h1>
+      <h1 data-testid="normal-title">Normal - Page</h1>
       <button
         onClick={() => setGameStarted(true)}
+        data-testid="normal-launch-btn"
       >
         Lancez partie
       </button>
       <br />
 
-      <Link to="/" className="button">Page d'accueil</Link>
+      <Link to="/" className="button" data-testid="normal-back-link">Page d'accueil</Link>
     </div>
   );
 }
