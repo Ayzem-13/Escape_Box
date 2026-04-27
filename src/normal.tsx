@@ -1,11 +1,18 @@
 import { Link } from 'react-router-dom';
+import './App.css'
+import React, { useState } from 'react';
+import Chrono from './Chrono';
 
-export default function Normal() {
+
+function Normal() {
+  const [gameStarted, setGameStarted] = useState(false);
+
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="App">
+      {gameStarted && <Chrono initialTime={3600} />}
       <h1>Normal - Page</h1>
       <button
-        onClick={() => alert('Partie lancée')}
+        onClick={() => setGameStarted(true)}
       >
         Lancez partie
       </button>
@@ -15,3 +22,5 @@ export default function Normal() {
     </div>
   );
 }
+
+export default Normal
