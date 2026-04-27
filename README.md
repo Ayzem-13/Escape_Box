@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# Escape Box
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un jeu de type "Escape Box" interactif développé avec React, TypeScript et Vite.
 
-Currently, two official plugins are available:
+## 🌟 Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Plusieurs modes de jeu :** Mode Normal et Mode Démo pour s'adapter aux différents besoins.
+- **Système de code secret :** Une interface contextuelle (popup) permettant aux joueurs de sélectionner un code de 4 symboles géométriques (▲, ▼, ■, ●, etc.).
+- **Persistance des données :** Le code secret sélectionné est stocké dans le `localStorage` du navigateur.
+- **Interface globale :** Accès rapide aux fonctionnalités clés (comme la définition du code) depuis un menu flottant disponible sur les écrans de jeu.
 
-## React Compiler
+## 🛠️ Technologies utilisées
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) - Bibliothèque UI
+- [TypeScript](https://www.typescriptlang.org/) - Typage statique
+- [Vite](https://vitejs.dev/) - Outil de build ultra-rapide
+- [React Router](https://reactrouter.com/) - Gestion de la navigation
 
-## Expanding the ESLint configuration
+## 🚀 Installation et lancement
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Cloner le projet** (si ce n'est pas déjà fait)
+2. **Installer les dépendances :**
+   ```bash
+   npm install
+   ```
+3. **Lancer le serveur de développement :**
+   ```bash
+   npm run dev
+   ```
+4. Ouvrir le navigateur à l'adresse indiquée (généralement `http://localhost:5173`).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📁 Structure du projet
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `src/components/Layout/` : Gère l'affichage global et les éléments persistants de l'écran (ex: bouton de code).
+- `src/components/Code/` : Contient la logique et l'interface de la popup de saisie du code secret à 4 symboles.
+- `src/components/Nomal/` & `src/components/Demo/` : Contiennent les différentes vues selon le mode de jeu choisi.
+- `src/App.tsx` : Point d'entrée de l'interface qui agit comme menu principal.
+- `src/main.tsx` : Configuration du routage avec `react-router-dom`.
