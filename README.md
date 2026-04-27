@@ -6,7 +6,8 @@ Un jeu de type "Escape Box" interactif développé avec React, TypeScript et Vit
 
 - **Plusieurs modes de jeu :** Mode Normal et Mode Démo pour s'adapter aux différents besoins.
 - **Système de code secret :** Une interface contextuelle (popup) permettant aux joueurs de sélectionner un code de 4 symboles géométriques (▲, ▼, ■, ●, etc.).
-- **Chronomètre & Combinaisons :** Suivi du temps de la partie et affichage des combinaisons testées.
+- **Validation de code interactive :** En cours de jeu, les utilisateurs peuvent tester des combinaisons avec des retours visuels (toast) et sonores (succès/échec).
+- **Chronomètre & Pénalités :** Suivi dynamique du temps de la partie. Une pénalité de -1 minute s'applique instantanément en cas de code incorrect.
 - **Persistance des données :** Le code secret sélectionné et certains états sont stockés dans le `localStorage` du navigateur.
 - **Interface globale :** Accès rapide aux fonctionnalités clés (comme la définition du code) depuis un menu flottant disponible sur les écrans de jeu.
 
@@ -56,11 +57,15 @@ Voici les commandes principales pour le développement :
 │   └── *.spec.ts            # Fichiers de test E2E (scénarios)
 ├── public/                  # Assets statiques distribués tels quels
 └── src/
+    ├── assets/              # Fichiers médias statiques (images, effets sonores)
     ├── components/          # Composants React isolés et réutilisables
-    │   ├── Chrono/          # Gestion et affichage du temps
-    │   ├── Code/            # Popup clavier et logique de saisie
-    │   ├── CodeIndicator/   # Indicateurs visuels
-    │   ├── Combinations/    # Tableaux/historiques des combinaisons
+    │   ├── Chrono/          # Gestion du temps et des pénalités
+    │   ├── Code/            # Popup pour la définition initiale des codes
+    │   ├── CodeIndicator/   # Indicateurs visuels pour le menu pre-game
+    │   ├── CodeInput/       # Saisie de symboles et clavier interactif interactif
+    │   ├── CodeTester/      # Interface In-Game pour tester des codes, sons et pénalités
+    │   ├── Combinations/    # Interface de setup de la partie
+    │   ├── FoundCodesIndicator/ # Indicateur in-game des codes valides et trouvés
     │   └── Layout/          # Layout de base de l'application
     ├── context/             # Gestion des états globaux
     │   ├── CodesContext     # Contexte de gestion des codes saisis
