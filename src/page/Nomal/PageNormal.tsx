@@ -5,6 +5,7 @@ import { CodesProvider } from '../../context/CodesProvider';
 import { useCodes } from '../../context/CodesContext';
 import Chrono from '../../components/Chrono/Chrono';
 import Combinations from '../../components/Combinations/Combinations';
+import CodeTester from '../../components/CodeTester/CodeTester';
 import '../../App.css';
 import FoundCodesIndicator from '../../components/FoundCodesIndicator/FoundCodesIndicator';
 
@@ -43,6 +44,7 @@ const NormalGame: React.FC = () => {
       <div data-testid="normal-timer">
         <Chrono initialTime={3600} />
       </div>
+      <CodeTester testIdPrefix="normal" />
       <FoundCodesIndicator />
     </div>
   );
