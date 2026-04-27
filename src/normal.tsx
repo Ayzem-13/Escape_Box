@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Normal() {
   return (
@@ -11,12 +11,7 @@ export default function Normal() {
       </button>
       <br />
 
-      <button
-            onClick={() => alert('Retour à la page d\'accueil')}
-            //@todo mettre le lien de la page d'accueil
-      >
-        Page d'accueil
-      </button>
+      <Link to="/" className="button">Page d'accueil</Link>
     </div>
   );
 }

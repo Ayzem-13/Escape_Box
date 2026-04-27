@@ -1,10 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-interface DemoModeProps {
-  onBackToMenu: () => void;
-}
-
-const DemoMode: React.FC<DemoModeProps> = ({ onBackToMenu }) => {
+const DemoMode: React.FC = () => {
   return (
     <div style={{ textAlign: 'center', paddingTop: '50px' }}>
       <h1>MODE DEMO</h1>
@@ -16,7 +13,7 @@ const DemoMode: React.FC<DemoModeProps> = ({ onBackToMenu }) => {
         <button>DEMARRER PARTIE</button>
       </div>
       <div style={{ margin: '20px' }}>
-        <button onClick={onBackToMenu}>RETOUR AU MENU</button>
+        <Link to="/" className="button">RETOUR AU MENU</Link>
       </div>
     </div>
   );

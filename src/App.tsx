@@ -1,15 +1,8 @@
-import { useState } from 'react'
-import Normal from './normal'
+import { Link } from 'react-router-dom';
 import './App.css'
-import DemoMode from './DemoMode';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [isDemoMode, setDemoMode] = useState(false);
 
-  if (isDemoMode) {
-    return <DemoMode onBackToMenu={() => setDemoMode(false)} />;
-  }
 
   return (
     <div className="App">
@@ -17,8 +10,8 @@ function App() {
         <h1>Bienvenue dans Escape Box</h1>
         <p>Prêt à relever le défi ?</p>
         <div className="button-container">
-          <button className="button">Commencer une partie</button>
-          <button className="button">Commencer mode démo</button>
+          <Link to="/normal" className="button">Commencer une partie</Link>
+          <Link to="/demo" className="button">Commencer mode démo</Link>
         </div>
       </header>
     </div>
