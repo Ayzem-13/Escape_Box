@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../App.css';
-import Timer from '../Timer/Timer';
+import Chrono from '../Chrono/Chrono';
 
 const DemoMode: React.FC = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -9,7 +9,7 @@ const DemoMode: React.FC = () => {
   if (gameStarted) {
     return (
       <div>
-        <Timer minutes={15} />
+        {gameStarted && <Chrono initialTime={900} />}
         <div style={{ textAlign: 'center', margin: '20px' }}>
           <Link to="/" className="button">RETOUR AU MENU</Link>
         </div>
