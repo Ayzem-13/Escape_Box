@@ -4,6 +4,8 @@ import { useCodes } from '../../context/CodesContext';
 import { CODE_LENGTH } from '../../config/codeSymbols';
 import CodeInput from '../CodeInput/CodeInput';
 import './CodeTester.css';
+import correctSoundFile from '../../assets/sounds/Correct.mp3';
+import falseSoundFile from '../../assets/sounds/False.mp3';
 
 interface CodeTesterProps {
   testIdPrefix?: string;
@@ -21,11 +23,15 @@ const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
 
     if (ufIndex !== -1) {
       markAsFound(ufIndex);
-      toast.success('Code valide !');
+      toast.success('Code valide !', {
+        onOpen: () => new Audio(correctSoundFile).play().catch(() => {})
+      });
     } else if (codes.includes(codeString)) {
       toast.info('Ce code a déjà été trouvé !');
     } else {
-      toast.error('Code incorrect ! -1 min ⏱️');
+      toast.error('Code incorrect ! -1 min ⏱️', {
+        onOpen: () => new Audio(falseSoundFile).play().catch(() => {})
+      });
       window.dispatchEvent(new CustomEvent('chrono-penalty'));
     }
     
