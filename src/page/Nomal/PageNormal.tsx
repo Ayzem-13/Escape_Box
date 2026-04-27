@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import '../../App.css'
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Chrono from '../../components/Chrono/Chrono';
 
 
-function Normal() {
+function PageNormal() {
   const [gameStarted, setGameStarted] = useState(false);
 
   return (
@@ -25,4 +25,4 @@ function Normal() {
   );
 }
 
-export default Normal
+export default PageNormal

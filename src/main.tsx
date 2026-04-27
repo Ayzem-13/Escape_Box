@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import DemoMode from './page/Demo/DemoMode.tsx'
-import Normal from './page/Nomal/normal.tsx'
+import PageDemo from './page/Demo/PageDemo.tsx'
+import PageNormal from './page/Nomal/PageNormal.tsx'
 import Layout from './components/Layout/Layout.tsx'
 
 const router = createBrowserRouter([
@@ -17,11 +17,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/demo',
-        element: <DemoMode />,
+        element: <PageDemo />,
       },
       {
         path: '/normal',
-        element: <Normal />,
+        element: <PageNormal />,
       },
     ]
   }
