@@ -1,36 +1,71 @@
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
+import { GameProvider } from '../../context/GameProvider';
+import { useGame } from '../../context/GameContext';
 import CodePopup from '../Code/CodePopup';
 import './Layout.css';
 
-const Layout = () => {
-  const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
+const LayoutHeader = () => {
   const t = useTheme();
-
-  const handleOpenCodePopup = () => {
-    setIsCodePopupOpen(true);
-  };
-
-  const handleCloseCodePopup = () => {
-    setIsCodePopupOpen(false);
-  };
+  const { gameStarted, resetGame } = useGame();
+  const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
 
   return (
-    <div style={{ backgroundColor: t.color.bg, color: t.color.text, minHeight: '100vh' }}>
-          <div className="layout-header" style={{ top: t.spacing.sm, right: t.spacing.sm, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}} >
-        <button onClick={handleOpenCodePopup} className="button">
-          Définir le code
-        </button>
-        <div style={{ textAlign: 'center', margin: '10px 0' }}>
-            <Link to="/" className="button" data-testid="demo-back-link-game">RETOUR AU MENU</Link>
-        </div>
+    <>
+      <div
+        className="layout-header"
+        style={{
+          top: t.spacing.sm,
+          left: t.spacing.sm,
+          right: 'auto',
+          width: 'fit-content',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          gap: t.spacing.sm,
+        }}
+      >
+        {!gameStarted && (
+          <button onClick={() => setIsCodePopupOpen(true)} className="button">
+            Définir le code
+          </button>
+        )}
+        {gameStarted && (
+          <button
+            onClick={resetGame}
+            className="button"
+            data-testid="layout-stop-btn"
+          >
+            ARRÊTER LA PARTIE
+          </button>
+        )}
+        <Link
+          to="/"
+          className="button"
+          data-testid="layout-back-link"
+          onClick={resetGame}
+        >
+          RETOUR AU MENU
+        </Link>
       </div>
-      <main>
-        <Outlet />
-      </main>
-      {isCodePopupOpen && <CodePopup onClose={handleCloseCodePopup} />}
-    </div>
+      {isCodePopupOpen && <CodePopup onClose={() => setIsCodePopupOpen(false)} />}
+    </>
+  );
+};
+
+const Layout = () => {
+  const t = useTheme();
+
+  return (
+    <GameProvider>
+      <div style={{ backgroundColor: t.color.bg, color: t.color.text, minHeight: '100vh' }}>
+        <LayoutHeader />
+        <main>
+          <Outlet />
+        </main>
+      </div>
+    </GameProvider>
   );
 };
 

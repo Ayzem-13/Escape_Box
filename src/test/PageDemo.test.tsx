@@ -5,14 +5,12 @@ import { renderWithRouter } from './renderWithRouter'
 
 describe('DemoMode', () => {
   describe('écran initial', () => {
-    it('affiche le titre, l\'input clé, la durée et les boutons', () => {
+    it('affiche le titre, la durée et le bouton de démarrage', () => {
       renderWithRouter(<PageDemo />)
 
       expect(screen.getByTestId('demo-title')).toHaveTextContent('MODE DEMO')
-      expect(screen.getByTestId('demo-key-input')).toBeInTheDocument()
       expect(screen.getByTestId('demo-duration')).toHaveTextContent('15 minutes')
       expect(screen.getByTestId('demo-start-btn')).toHaveTextContent('DEMARRER PARTIE')
-      expect(screen.getByTestId('demo-back-link')).toHaveAttribute('href', '/')
     })
 
     it('n\'affiche pas l\'écran de jeu', () => {
@@ -37,16 +35,7 @@ describe('DemoMode', () => {
       expect(screen.getByTestId('demo-game-screen')).toBeInTheDocument()
       expect(screen.getByTestId('demo-timer')).toHaveTextContent('15:00')
       expect(screen.queryByTestId('demo-title')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('demo-key-input')).not.toBeInTheDocument()
-    })
-
-    it('affiche un nouveau lien "RETOUR AU MENU" sur l\'écran de jeu', () => {
-      renderWithRouter(<PageDemo />)
-      fireEvent.click(screen.getByTestId('demo-start-btn'))
-
-      const back = screen.getByTestId('demo-back-link-game')
-      expect(back).toHaveAttribute('href', '/')
-      expect(back).toHaveTextContent('RETOUR AU MENU')
+      expect(screen.queryByTestId('demo-start-btn')).not.toBeInTheDocument()
     })
 
     it('le timer décrémente après 1 seconde', () => {
