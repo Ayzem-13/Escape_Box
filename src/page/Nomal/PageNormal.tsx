@@ -19,8 +19,6 @@ function PageNormal() {
         Lancez partie
       </button>
       <br />
-
-      <Link to="/" className="button" data-testid="normal-back-link">Page d'accueil</Link>
     </div>
   );
 }
