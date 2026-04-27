@@ -1,16 +1,37 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, act, fireEvent } from '@testing-library/react'
 import PageDemo from '../page/Demo/PageDemo'
+import { codesStorageKey, type CodesTuple } from '../context/CodesContext'
 import { renderWithRouter } from './renderWithRouter'
 
+const FILLED_CODES: CodesTuple = ['▲▲▲▲', '■■■■', '●●●●']
+const seedCodes = (codes: CodesTuple) =>
+  localStorage.setItem(codesStorageKey('demo'), JSON.stringify(codes))
+
 describe('DemoMode', () => {
-  describe('écran initial', () => {
-    it('affiche le titre, la durée et le bouton de démarrage', () => {
+  describe('écran initial — aucune combinaison', () => {
+    it('affiche le titre, la durée et les boutons', () => {
       renderWithRouter(<PageDemo />)
 
       expect(screen.getByTestId('demo-title')).toHaveTextContent('MODE DEMO')
       expect(screen.getByTestId('demo-duration')).toHaveTextContent('15 minutes')
+      expect(screen.getByTestId('demo-define-btn')).toHaveTextContent('Définir la combinaison')
       expect(screen.getByTestId('demo-start-btn')).toHaveTextContent('DEMARRER PARTIE')
+      expect(screen.getByTestId('demo-reset-btn')).toHaveTextContent('Réinitialiser')
+    })
+
+    it('affiche l\'indicateur 0/3 et 3 dots vides', () => {
+      renderWithRouter(<PageDemo />)
+      expect(screen.getByTestId('code-count')).toHaveTextContent('0/3')
+      expect(screen.getByTestId('code-dot-0')).toHaveAttribute('data-filled', 'false')
+      expect(screen.getByTestId('code-dot-1')).toHaveAttribute('data-filled', 'false')
+      expect(screen.getByTestId('code-dot-2')).toHaveAttribute('data-filled', 'false')
+    })
+
+    it('"DEMARRER PARTIE" et "Réinitialiser" sont désactivés', () => {
+      renderWithRouter(<PageDemo />)
+      expect(screen.getByTestId('demo-start-btn')).toBeDisabled()
+      expect(screen.getByTestId('demo-reset-btn')).toBeDisabled()
     })
 
     it('n\'affiche pas l\'écran de jeu', () => {
@@ -19,9 +40,29 @@ describe('DemoMode', () => {
     })
   })
 
-  describe('après clic sur "DEMARRER PARTIE"', () => {
+  describe('avec 3 combinaisons pré-remplies (localStorage)', () => {
+    it('affiche 3/3, désactive "Définir" et active "DEMARRER PARTIE" et "Réinitialiser"', () => {
+      seedCodes(FILLED_CODES)
+      renderWithRouter(<PageDemo />)
+      expect(screen.getByTestId('code-count')).toHaveTextContent('3/3')
+      expect(screen.getByTestId('demo-define-btn')).toBeDisabled()
+      expect(screen.getByTestId('demo-reset-btn')).toBeEnabled()
+      expect(screen.getByTestId('demo-start-btn')).toBeEnabled()
+    })
+
+    it('le bouton "Réinitialiser" remet le compteur à 0/3', () => {
+      seedCodes(FILLED_CODES)
+      renderWithRouter(<PageDemo />)
+      fireEvent.click(screen.getByTestId('demo-reset-btn'))
+      expect(screen.getByTestId('code-count')).toHaveTextContent('0/3')
+      expect(screen.getByTestId('demo-start-btn')).toBeDisabled()
+    })
+  })
+
+  describe('après clic sur "DEMARRER PARTIE" (combinaisons remplies)', () => {
     beforeEach(() => {
       vi.useFakeTimers()
+      seedCodes(FILLED_CODES)
     })
 
     afterEach(() => {

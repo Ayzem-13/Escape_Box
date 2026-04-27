@@ -1,46 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme } from '../../theme/theme';
 import { useGame } from '../../context/GameContext';
-import '../../App.css';
+import { CodesProvider } from '../../context/CodesProvider';
+import { useCodes } from '../../context/CodesContext';
 import Chrono from '../../components/Chrono/Chrono';
-import CodePopup from '../../components/Code/CodePopup';
+import Combinations from '../../components/Combinations/Combinations';
+import '../../App.css';
 
-const PageDemo: React.FC = () => {
+const DemoSetup: React.FC = () => {
   const t = useTheme();
-  const { gameStarted, startGame, code } = useGame();
-  const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
-  
-  if (gameStarted) {
-    return (
-      <div data-testid="demo-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
-        <div data-testid="demo-timer">
-          <Chrono initialTime={900} />
-        </div>
-      </div>
-    );
-  }
+  const { startGame } = useGame();
+  const { allCodesSet } = useCodes();
 
   return (
     <div className="App" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
       <h1 data-testid="demo-title" style={{ color: t.color.primary }}>MODE DEMO</h1>
       <p data-testid="demo-duration">Durée de la partie: 15 minutes</p>
-      {!gameStarted && (
-        <button onClick={() => setIsCodePopupOpen(true)} className="button">
-          Définir la combinaison
-        </button>
-      )}
-      {isCodePopupOpen && <CodePopup onClose={() => setIsCodePopupOpen(false)} />}
-      <div style={{ margin: t.spacing.lg }}>
-        <button
-          onClick={startGame}
-          data-testid="demo-start-btn"
-          className="button"
-          disabled={!code}
-        >
-          DEMARRER PARTIE
-        </button>
+
+      <Combinations
+        testIdPrefix="demo"
+        resetToastMessage="Combinaisons réinitialisées (mode démo)."
+      />
+
+      <button
+        onClick={startGame}
+        data-testid="demo-start-btn"
+        className="button"
+        disabled={!allCodesSet}
+        style={{ marginTop: t.spacing.md }}
+      >
+        DEMARRER PARTIE
+      </button>
+    </div>
+  );
+};
+
+const DemoGame: React.FC = () => {
+  const t = useTheme();
+  return (
+    <div data-testid="demo-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
+      <div data-testid="demo-timer">
+        <Chrono initialTime={900} />
       </div>
     </div>
+  );
+};
+
+const PageDemo: React.FC = () => {
+  const { gameStarted, session } = useGame();
+  return (
+    <CodesProvider mode="demo" key={session}>
+      {gameStarted ? <DemoGame /> : <DemoSetup />}
+    </CodesProvider>
   );
 };
 

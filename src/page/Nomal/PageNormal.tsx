@@ -1,47 +1,58 @@
+import React from 'react';
 import { useTheme } from '../../theme/theme';
 import { useGame } from '../../context/GameContext';
-import '../../App.css'
+import { CodesProvider } from '../../context/CodesProvider';
+import { useCodes } from '../../context/CodesContext';
 import Chrono from '../../components/Chrono/Chrono';
-import { useState } from 'react';
-import CodePopup from '../../components/Code/CodePopup';
+import Combinations from '../../components/Combinations/Combinations';
+import '../../App.css';
 
-
-function PageNormal() {
+const NormalSetup: React.FC = () => {
   const t = useTheme();
-  const { gameStarted, startGame } = useGame();
-  const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
-
-  if (gameStarted) {
-    return (
-      <div data-testid="normal-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
-        <div data-testid="normal-timer">
-          <Chrono initialTime={3600} />
-        </div>
-      </div>
-    );
-  }
+  const { startGame } = useGame();
+  const { allCodesSet } = useCodes();
 
   return (
     <div className="App" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
       <h1 data-testid="normal-title" style={{ color: t.color.primary }}>MODE NORMAL</h1>
       <p data-testid="normal-duration">Durée de la partie: 60 minutes</p>
-      {!gameStarted && (
-        <button onClick={() => setIsCodePopupOpen(true)} className="button">
-          Définir la combinaison
-        </button>
-      )}
-      {isCodePopupOpen && <CodePopup onClose={() => setIsCodePopupOpen(false)} />}
-      <div style={{ margin: t.spacing.lg }}>
-        <button
-          onClick={startGame}
-          data-testid="normal-start-btn"
-          className="button"
-        >
-          DEMARRER PARTIE
-        </button>
+
+      <Combinations
+        testIdPrefix="normal"
+        resetToastMessage="Combinaisons réinitialisées (mode normal)."
+      />
+
+      <button
+        onClick={startGame}
+        data-testid="normal-start-btn"
+        className="button"
+        disabled={!allCodesSet}
+        style={{ marginTop: t.spacing.md }}
+      >
+        DEMARRER PARTIE
+      </button>
+    </div>
+  );
+};
+
+const NormalGame: React.FC = () => {
+  const t = useTheme();
+  return (
+    <div data-testid="normal-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
+      <div data-testid="normal-timer">
+        <Chrono initialTime={3600} />
       </div>
     </div>
   );
 };
 
-export default PageNormal
+const PageNormal: React.FC = () => {
+  const { gameStarted, session } = useGame();
+  return (
+    <CodesProvider mode="normal" key={session}>
+      {gameStarted ? <NormalGame /> : <NormalSetup />}
+    </CodesProvider>
+  );
+};
+
+export default PageNormal;

@@ -1,50 +1,45 @@
-import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
-import CodePopup from '../Code/CodePopup';
 import './Layout.css';
 
 const LayoutHeader = () => {
   const t = useTheme();
   const { gameStarted, resetGame } = useGame();
-  const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
 
   return (
-    <>
-      <div
-        className="layout-header"
-        style={{
-          top: t.spacing.sm,
-          left: t.spacing.sm,
-          right: 'auto',
-          width: 'fit-content',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: t.spacing.sm,
-        }}
-      >
-        {gameStarted && (
-          <button
-            onClick={resetGame}
-            className="button"
-            data-testid="layout-stop-btn"
-          >
-            ARRÊTER LA PARTIE
-          </button>
-        )}
-        <Link
-          to="/"
-          className="button"
-          data-testid="layout-back-link"
+    <div
+      className="layout-header"
+      style={{
+        top: t.spacing.sm,
+        left: t.spacing.sm,
+        right: 'auto',
+        width: 'fit-content',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: t.spacing.sm,
+      }}
+    >
+      {gameStarted && (
+        <button
           onClick={resetGame}
+          className="button"
+          data-testid="layout-stop-btn"
         >
-          RETOUR AU MENU
-        </Link>
-      </div>
-    </>
+          ARRÊTER LA PARTIE
+        </button>
+      )}
+      <Link
+        to="/"
+        className="button"
+        data-testid="layout-back-link"
+        onClick={resetGame}
+      >
+        RETOUR AU MENU
+      </Link>
+    </div>
   );
 };
 
