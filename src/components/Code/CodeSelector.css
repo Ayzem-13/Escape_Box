@@ -1,0 +1,84 @@
+/* Code Selector Component Styles */
+
+.code-selector {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.code-selector-trigger {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #f5f5f5;
+  border: 2px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.code-selector-trigger:hover:not(:disabled) {
+  background-color: #efefef;
+  border-color: #999;
+}
+
+.code-selector-trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.code-selector-value {
+  flex: 1;
+  text-align: left;
+}
+
+.code-selector-arrow {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.code-selector-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.code-selector-list li {
+  padding: 0;
+}
+
+.code-selector-option {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.code-selector-option:hover {
+  background-color: #f0f0f0;
+}
+
+.code-selector-option--selected {
+  background-color: #e8f4f8;
+  font-weight: bold;
+  color: #0066cc;
+}

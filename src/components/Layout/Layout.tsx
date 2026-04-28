@@ -4,6 +4,7 @@ import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
+import MusicSelector from '../MusicSelector/MusicSelector';
 import './Layout.css';
 
 const LayoutHeader = () => {
@@ -45,9 +46,34 @@ const LayoutHeader = () => {
   );
 };
 
+const LayoutMusicFab = () => {
+  const [isMusicOpen, setIsMusicOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsMusicOpen(true)}
+        className="layout-music-fab"
+        aria-label="Sélectionner une musique"
+        title="Musique"
+        data-testid="layout-music-btn"
+      >
+        ♪
+      </button>
+      {isMusicOpen && (
+        <MusicSelector
+          onClose={() => setIsMusicOpen(false)}
+          onSelect={(music, file) => console.log('Musique sélectionnée:', music, 'Fichier:', file)}
+        />
+      )}
+    </>
+  );
+};
+
 const LayoutInfoFab = () => {
   const { gameStarted } = useGame();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   if (!gameStarted) return null;
 
@@ -55,7 +81,7 @@ const LayoutInfoFab = () => {
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsInfoOpen(true)}
         className="layout-info-fab"
         aria-label="Informations sur la partie"
         title="Informations"
@@ -63,7 +89,7 @@ const LayoutInfoFab = () => {
       >
         i
       </button>
-      {isOpen && <InfoPopup onClose={() => setIsOpen(false)} />}
+      {isInfoOpen && <InfoPopup onClose={() => setIsInfoOpen(false)} />}
     </>
   );
 };
@@ -78,6 +104,7 @@ const Layout = () => {
         <main>
           <Outlet />
         </main>
+        <LayoutMusicFab />
         <LayoutInfoFab />
       </div>
     </GameProvider>
