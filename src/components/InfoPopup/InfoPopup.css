@@ -135,9 +135,11 @@
   padding: 8px 16px;
   border-radius: var(--radius-md);
   font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   cursor: pointer;
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: #0a0608;
   border: 1.5px solid var(--color-primary);
   transition: background-color var(--transition-base);
 }

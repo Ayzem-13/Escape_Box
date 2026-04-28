@@ -68,9 +68,10 @@ describe('Layout — bouton musique', () => {
     expect(stored[0].file).toBe(MUSIC_OPTIONS[0].file)
   })
 
-  it('démarre la lecture de la première musique après validation', () => {
+  it('démarre la lecture de la première musique au démarrage de la partie après validation', () => {
     renderLayout()
     pickAndValidate(MUSIC_OPTIONS[0].file)
+    fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
     const audio = playSpy.mock.contexts[
       playSpy.mock.contexts.length - 1
@@ -78,12 +79,13 @@ describe('Layout — bouton musique', () => {
     expect(audio.src).toContain(MUSIC_OPTIONS[0].file.split('/').pop()!)
   })
 
-  it('charge la sélection sauvegardée au montage et la joue', () => {
+  it('charge la sélection sauvegardée et la joue au démarrage de la partie', () => {
     const seeded = [
       { label: MUSIC_OPTIONS[0].label, file: MUSIC_OPTIONS[0].file },
     ]
     localStorage.setItem(SAVED_KEY, JSON.stringify(seeded))
     renderLayout()
+    fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
   })
 
