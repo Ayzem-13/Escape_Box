@@ -5,8 +5,9 @@ import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
-import { SELECTED_MUSIC_KEY } from '../BackgroundMusic/BackgroundMusic';
 import './Layout.css';
+
+const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -47,55 +48,75 @@ const LayoutHeader = () => {
   );
 };
 
-const stopPreview = (audio: HTMLAudioElement | null) => {
-  if (!audio) return;
-  audio.pause();
-  audio.currentTime = 0;
-};
-
 const LayoutMusicFab = () => {
-  const { gameStarted } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
-  const previewRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playlistIndex, setPlaylistIndex] = useState(0);
 
+  // Interface pour les musiques sélectionnées
+  interface SelectedMusic {
+    label: string;
+    file: string;
+  }
+
+  // Charger les musiques sauvegardées au montage
   useEffect(() => {
-    const audio = new Audio();
-    audio.loop = true;
-    audio.volume = 0.4;
-    audio.preload = 'auto';
-    previewRef.current = audio;
-    return () => {
-      stopPreview(audio);
-      audio.src = '';
-      previewRef.current = null;
-    };
+    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
+    if (savedMusics && audioRef.current) {
+      try {
+        const musics: SelectedMusic[] = JSON.parse(savedMusics);
+        if (musics.length > 0) {
+          audioRef.current.src = musics[0].file;
+          audioRef.current.play().catch(() => {
+            // L'autoplay peut être bloqué par le navigateur
+          });
+          setPlaylistIndex(0);
+        }
+      } catch (e) {
+        console.error('Erreur lors du chargement des musiques sauvegardées', e);
+      }
+    }
   }, []);
 
-  if (gameStarted) return null;
+  const handleMusicSelect = (musics: SelectedMusic[]) => {
+    if (musics.length === 0) return;
 
-  const handleMusicSelect = (_musicLabel: string, musicFile: string) => {
-    try {
-      localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
-    } catch {
-      // ignore (private mode / quota)
+    // Sauvegarder dans localStorage
+    localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
+
+    // Jouer la première musique
+    if (audioRef.current) {
+      audioRef.current.src = musics[0].file;
+      audioRef.current.play().catch(() => {
+        // L'autoplay peut être bloqué par le navigateur
+      });
+      setPlaylistIndex(0);
     }
-    const audio = previewRef.current;
-    if (audio) {
-      audio.src = musicFile;
-      const result = audio.play();
-      if (result && typeof result.catch === 'function') {
-        result.catch(() => {});
+  };
+
+  // Passer à la musique suivante quand la musique actuelle finit
+  const handleMusicEnd = () => {
+    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
+    if (savedMusics && audioRef.current) {
+      try {
+        const musics: SelectedMusic[] = JSON.parse(savedMusics);
+        const nextIndex = (playlistIndex + 1) % musics.length;
+        audioRef.current.src = musics[nextIndex].file;
+        audioRef.current.play().catch(() => {});
+        setPlaylistIndex(nextIndex);
+      } catch (e) {
+        console.error('Erreur lors de la lecture de la musique suivante', e);
       }
     }
   };
 
   const handleClose = () => {
-    stopPreview(previewRef.current);
     setIsMusicOpen(false);
   };
 
   return (
     <>
+      <audio ref={audioRef} onEnded={handleMusicEnd} />
       <button
         type="button"
         onClick={() => setIsMusicOpen(true)}

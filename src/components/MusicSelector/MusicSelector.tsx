@@ -1,18 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
 import './MusicSelector.css';
 
+interface SelectedMusic {
+  label: string;
+  file: string;
+}
+
 interface MusicSelectorProps {
   onClose: () => void;
-  onSelect: (music: string, file: string) => void;
+  onSelect: (musics: SelectedMusic[]) => void;
 }
 
 const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
+  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>([null, null, null]);
+  const [isValidated, setIsValidated] = useState(false);
 
-  const handleSelect = (label: string, file: string) => {
-    setSelectedMusic(label);
-    onSelect(label, file);
+  // Charger les musiques sauvegardées
+  useEffect(() => {
+    const saved = localStorage.getItem('escapeBoxSelectedMusics');
+    if (saved) {
+      try {
+        const musics: SelectedMusic[] = JSON.parse(saved);
+        // Remplir les dropdowns avec les musiques sauvegardées
+        const newSelected = [null, null, null] as (SelectedMusic | null)[];
+        musics.forEach((music, index) => {
+          if (index < 3) {
+            newSelected[index] = music;
+          }
+        });
+        setSelectedMusics(newSelected);
+      } catch (e) {
+        console.error('Erreur lors du chargement des musiques sauvegardées', e);
+      }
+    }
+  }, []);
+
+  const handleMusicChange = (index: number, label: string, file: string) => {
+    const newSelected = [...selectedMusics];
+    newSelected[index] = { label, file };
+    setSelectedMusics(newSelected);
+  };
+
+  const handleRemoveMusic = (index: number) => {
+    const newSelected = [...selectedMusics];
+    newSelected[index] = null;
+    setSelectedMusics(newSelected);
+  };
+
+  const handleValidate = () => {
+    // Filtrer les musiques non vides
+    const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
+    
+    if (musicsToSave.length === 0) return;
+    
+    // Sauvegarder dans localStorage
+    localStorage.setItem('escapeBoxSelectedMusics', JSON.stringify(musicsToSave));
+    
+    // Appeler le callback
+    onSelect(musicsToSave);
+    
+    setIsValidated(true);
+    
+    // Fermer après 2 secondes
+    setTimeout(() => {
+      onClose();
+    }, 2000);
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -25,41 +78,100 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-label="Sélectionner une musique"
+      aria-label="Sélectionner les musiques"
     >
       <div className="music-selector-content">
-        <h2 className="music-selector-title">Sélectionnez une ambiance musicale</h2>
-
-        {selectedMusic && (
+        <h2 className="music-selector-title">Sélectionnez jusqu'à 3 musiques</h2>
+        
+        {isValidated && (
           <div className="music-selector-validation" data-testid="music-validation">
-            ✓ Aperçu : {selectedMusic}
+            ✓ Musiques sélectionnées avec succès !
           </div>
         )}
-
-        <div className="music-selector-options">
-          {MUSIC_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={`music-selector-option ${
-                selectedMusic === option.label ? 'music-selector-option--selected' : ''
-              }`}
-              onClick={() => handleSelect(option.label, option.file)}
-              data-testid={`music-option-${option.id}`}
-            >
-              <span className="music-selector-option-name">{option.label}</span>
-            </button>
+        
+        {/* Dropdowns pour les 3 musiques */}
+        <div className="music-selector-dropdowns">
+          {selectedMusics.map((selectedMusic, index) => (
+            <div key={index} className="music-selector-dropdown-group">
+              <label className="music-selector-dropdown-label">
+                Musique {index + 1}
+              </label>
+              <div className="music-selector-dropdown-wrapper">
+                <select
+                  className="music-selector-dropdown"
+                  value={selectedMusic ? selectedMusic.file : ''}
+                  onChange={(e) => {
+                    const option = MUSIC_OPTIONS.find((m) => m.file === e.target.value);
+                    if (option) {
+                      handleMusicChange(index, option.label, option.file);
+                    } else {
+                      handleRemoveMusic(index);
+                    }
+                  }}
+                  disabled={isValidated}
+                  data-testid={`music-dropdown-${index}`}
+                >
+                  <option value="">-- Aucune musique --</option>
+                  {MUSIC_OPTIONS.map((option) => (
+                    <option key={option.id} value={option.file}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {selectedMusic && (
+                  <button
+                    type="button"
+                    className="music-selector-dropdown-clear"
+                    onClick={() => handleRemoveMusic(index)}
+                    data-testid={`music-remove-${index}`}
+                    aria-label={`Supprimer ${selectedMusic.label}`}
+                    disabled={isValidated}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="music-selector-close"
-          data-testid="music-selector-close"
-        >
-          Fermer
-        </button>
+        {/* Résumé des musiques sélectionnées */}
+        {selectedMusics.some((m) => m !== null) && (
+          <div className="music-selector-summary">
+            <h3 className="music-selector-summary-title">Résumé de la sélection</h3>
+            <ol className="music-selector-summary-list">
+              {selectedMusics.map((music, index) =>
+                music ? (
+                  <li key={index} className="music-selector-summary-item">
+                    {music.label}
+                  </li>
+                ) : null
+              )}
+            </ol>
+          </div>
+        )}
+
+        {/* Boutons d'action */}
+        <div className="music-selector-actions">
+          <button
+            type="button"
+            onClick={onClose}
+            className="music-selector-close"
+            data-testid="music-selector-close"
+            disabled={isValidated}
+          >
+            {isValidated ? 'Fermeture...' : 'Annuler'}
+          </button>
+          <button
+            type="button"
+            onClick={handleValidate}
+            className="music-selector-validate"
+            data-testid="music-selector-validate"
+            disabled={selectedMusics.every((m) => m === null) || isValidated}
+          >
+            Valider
+          </button>
+        </div>
       </div>
     </div>
   );
