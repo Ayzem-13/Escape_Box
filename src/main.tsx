@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import './Toast.css'
 import '@fontsource/cinzel/500.css'
 import '@fontsource/cinzel/700.css'
 import '@fontsource/im-fell-english-sc/400.css'
@@ -49,7 +50,7 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <RouterProvider router={router} />
       <ToastContainer
-        position="bottom-right"
+        position="top-center"
         autoClose={3000}
         theme="dark"
         toastClassName="escape-toast"

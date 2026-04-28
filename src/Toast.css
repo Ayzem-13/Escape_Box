@@ -29,3 +29,36 @@
     opacity: 1;
   }
 }
+
+/* react-toastify mobile sizing — keep it small at the top */
+.Toastify__toast-container {
+  z-index: 3000;
+}
+
+@media (max-width: 600px) {
+  .Toastify__toast-container--top-center,
+  .Toastify__toast-container {
+    width: auto !important;
+    max-width: calc(100vw - 16px);
+    left: 50% !important;
+    right: auto !important;
+    top: 8px !important;
+    bottom: auto !important;
+    transform: translateX(-50%);
+    padding: 0;
+  }
+
+  .Toastify__toast {
+    margin-bottom: 6px;
+    min-height: auto;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .Toastify__toast-body {
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}

@@ -13,3 +13,4 @@ export { default as CheckIcon } from './CheckIcon';
 export { default as AncientTombIcon } from './AncientTombIcon';
 export { default as HauntedManorIcon } from './HauntedManorIcon';
 export { default as SecretLabIcon } from './SecretLabIcon';
+export { default as SettingsIcon } from './SettingsIcon';

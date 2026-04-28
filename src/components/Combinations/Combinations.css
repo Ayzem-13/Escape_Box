@@ -13,6 +13,13 @@
   margin-top: var(--spacing-md);
 }
 
+.combinations-music-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .defined-combination {
   margin-top: 20px;
   padding: 14px 20px;
@@ -46,4 +53,40 @@
   font-weight: bold;
   color: var(--color-primary);
   box-shadow: 0 0 8px var(--color-primary-soft);
+}
+
+@media (max-width: 600px) {
+  .combinations {
+    gap: 4px;
+  }
+
+  .combinations-actions {
+    margin-top: 4px;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .combinations-actions .button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .defined-combination {
+    margin-top: 8px;
+    padding: 8px 12px;
+  }
+
+  .defined-combination p {
+    margin: 0 0 6px;
+    font-size: 0.9rem;
+  }
+
+  .defined-codes {
+    gap: 6px;
+  }
+
+  .defined-code {
+    padding: 4px 10px;
+    font-size: 0.95em;
+  }
 }

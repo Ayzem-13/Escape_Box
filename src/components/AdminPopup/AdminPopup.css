@@ -8,7 +8,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
+  padding: var(--spacing-md);
+  box-sizing: border-box;
 }
 
 .admin-popup-content {
@@ -44,4 +46,23 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .admin-popup-overlay {
+    background: rgba(0, 0, 0, 0.96);
+    backdrop-filter: blur(8px);
+  }
+
+  .admin-popup-content {
+    padding: 1.25rem;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .admin-input {
+    width: 100%;
+    max-width: 220px;
+    font-size: 1.6rem;
+  }
 }
