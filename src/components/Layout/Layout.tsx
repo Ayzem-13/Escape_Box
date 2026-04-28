@@ -14,7 +14,7 @@ import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import { AmbientDecorations } from '../../theme/decorations';
-import { InfoIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
+import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
 import '../../theme/ambient/index.css';
 import './Layout.css';
@@ -80,6 +80,7 @@ const LayoutHeader = () => {
 };
 
 const LayoutMusicFab = () => {
+  const { gameStarted } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playlistIndex, setPlaylistIndex] = useState(0);
@@ -138,17 +139,19 @@ const LayoutMusicFab = () => {
   return (
     <>
       <audio ref={audioRef} onEnded={handleMusicEnd} />
-      <button
-        type="button"
-        onClick={() => setIsMusicOpen(true)}
-        className="layout-music-fab"
-        aria-label="Sélectionner une musique"
-        title="Musique"
-        data-testid="layout-music-btn"
-      >
-        <MusicIcon size={22} />
-      </button>
-      {isMusicOpen && (
+      {!gameStarted && (
+        <button
+          type="button"
+          onClick={() => setIsMusicOpen(true)}
+          className="layout-music-fab"
+          aria-label="Sélectionner une musique"
+          title="Musique"
+          data-testid="layout-music-btn"
+        >
+          <MusicIcon size={22} />
+        </button>
+      )}
+      {isMusicOpen && !gameStarted && (
         <MusicSelector
           onClose={handleClose}
           onSelect={handleMusicSelect}
@@ -234,7 +237,7 @@ const LayoutAdminSpyFab = () => {
         title="Voir les codes"
         data-testid="layout-spy-btn"
       >
-        🔒
+        <LockIcon size={22} />
       </button>
       {isSpyOpen && <AdminSpyPopup onClose={() => setIsSpyOpen(false)} />}
     </>
