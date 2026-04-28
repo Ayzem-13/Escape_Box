@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
+import MusicSelector from '../MusicSelector/MusicSelector';
 import './Layout.css';
+
+const SELECTED_MUSIC_KEY = 'escapeBoxSelectedMusic';
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -45,9 +48,60 @@ const LayoutHeader = () => {
   );
 };
 
+const LayoutMusicFab = () => {
+  const [isMusicOpen, setIsMusicOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Charger la musique sauvegardée au montage
+  useEffect(() => {
+    const savedMusicFile = localStorage.getItem(SELECTED_MUSIC_KEY);
+    if (savedMusicFile && audioRef.current) {
+      audioRef.current.src = savedMusicFile;
+      audioRef.current.play().catch(() => {
+        // L'autoplay peut être bloqué par le navigateur
+      });
+    }
+  }, []);
+
+  const handleMusicSelect = (_musicLabel: string, musicFile: string) => {
+    // Sauvegarder dans localStorage
+    localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
+    
+    // Jouer la musique
+    if (audioRef.current) {
+      audioRef.current.src = musicFile;
+      audioRef.current.play().catch(() => {
+        // L'autoplay peut être bloqué par le navigateur
+      });
+    }
+  };
+
+  return (
+    <>
+      <audio ref={audioRef} loop />
+      <button
+        type="button"
+        onClick={() => setIsMusicOpen(true)}
+        className="layout-music-fab"
+        aria-label="Sélectionner une musique"
+        title="Musique"
+        data-testid="layout-music-btn"
+      >
+        ♪
+      </button>
+      {isMusicOpen && (
+        <MusicSelector
+          onClose={() => setIsMusicOpen(false)}
+          onSelect={handleMusicSelect}
+        />
+      )}
+    </>
+  );
+};
+
 const LayoutInfoFab = () => {
   const { gameStarted } = useGame();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   if (!gameStarted) return null;
 
@@ -55,7 +109,7 @@ const LayoutInfoFab = () => {
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsInfoOpen(true)}
         className="layout-info-fab"
         aria-label="Informations sur la partie"
         title="Informations"
@@ -63,7 +117,7 @@ const LayoutInfoFab = () => {
       >
         i
       </button>
-      {isOpen && <InfoPopup onClose={() => setIsOpen(false)} />}
+      {isInfoOpen && <InfoPopup onClose={() => setIsInfoOpen(false)} />}
     </>
   );
 };
@@ -78,6 +132,7 @@ const Layout = () => {
         <main>
           <Outlet />
         </main>
+        <LayoutMusicFab />
         <LayoutInfoFab />
       </div>
     </GameProvider>
