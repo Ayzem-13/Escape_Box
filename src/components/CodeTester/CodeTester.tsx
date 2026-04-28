@@ -24,7 +24,7 @@ const playSound = (audio: HTMLAudioElement | null) => {
 const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
   const [code, setCode] = useState<string[]>([]);
   const { codes, foundCodes, markAsFound } = useCodes();
-  const { resetGame } = useGame();
+  const { setGameResult } = useGame();
   const correctAudioRef = useRef<HTMLAudioElement | null>(null);
   const falseAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -54,9 +54,7 @@ const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
       toast.success('Code valide !');
 
       if (isFinalCode) {
-        toast.success('Tous les codes ont été trouvés !');
-        window.alert('Fin de la partie ! Cliquez sur OK pour valider.');
-        resetGame();
+        setGameResult('won');
       }
     } else if (codes.includes(codeString)) {
       toast.info('Ce code a déjà été trouvé !');

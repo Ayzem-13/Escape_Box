@@ -1,11 +1,15 @@
 import { createContext, useContext } from 'react';
 
+export type GameResult = 'won' | 'lost' | null;
+
 export type GameContextValue = {
   gameStarted: boolean;
   startGame: () => void;
   resetGame: () => void;
   restartGame: () => void;
   session: number;
+  gameResult: GameResult;
+  setGameResult: (result: GameResult) => void;
 };
 
 export const GameContext = createContext<GameContextValue | null>(null);

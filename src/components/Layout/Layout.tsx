@@ -14,6 +14,7 @@ import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import LayoutVolumeFab from '../VolumeControl/VolumeControl';
+import GameResultPopup from '../GameResultPopup/GameResultPopup';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
 import '../../theme/ambient/index.css';
@@ -270,6 +271,7 @@ const LayoutInner = () => {
         <LayoutVolumeFab />
         <LayoutInfoFab />
         <LayoutAdminSpyFab />
+        <GameResultPopup />
       </div>
     </GameProvider>
   );

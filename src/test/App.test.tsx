@@ -16,7 +16,7 @@ describe('App (page d\'accueil)', () => {
 
     const link = screen.getByTestId('home-link-normal')
     expect(link).toHaveAttribute('href', '/normal')
-    expect(link).toHaveTextContent('Commencer une partie')
+    expect(link).toHaveTextContent('Commencer (mode normal)')
   })
 
   it('affiche le lien vers /demo avec le bon libellé', () => {
@@ -24,7 +24,7 @@ describe('App (page d\'accueil)', () => {
 
     const link = screen.getByTestId('home-link-demo')
     expect(link).toHaveAttribute('href', '/demo')
-    expect(link).toHaveTextContent('Commencer mode démo')
+    expect(link).toHaveTextContent('Commencer (mode démo)')
   })
 
   it('affiche le lien vers /tutos avec le bon libellé', () => {
