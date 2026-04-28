@@ -60,7 +60,6 @@ const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
       toast.info('Ce code a déjà été trouvé !');
     } else {
       playSound(falseAudioRef.current);
-      toast.error('Code incorrect ! -1 min ⏱️');
       window.dispatchEvent(new CustomEvent('chrono-penalty'));
     }
 
