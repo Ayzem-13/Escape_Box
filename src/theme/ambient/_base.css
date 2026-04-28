@@ -1,0 +1,307 @@
+/* =============================================================
+   AMBIENT — base partagée
+   Scène, animations communes, interactions, chrono/popup/toast
+   neutres (chaque thème surcharge ensuite via son fichier).
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=UnifrakturMaguntia&family=Share+Tech+Mono&family=IM+Fell+English+SC&family=Orbitron:wght@500;700&display=swap');
+
+/* ============================================================
+   1. SCÈNE
+   ============================================================ */
+
+/* Pas de scrollbar visible sur les pages thématiques */
+html[data-escape-theme] { scrollbar-width: none; }
+html[data-escape-theme] ::-webkit-scrollbar { display: none; }
+html[data-escape-theme] body { overflow-x: hidden; }
+
+.escape-ambient {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  background: transparent;
+  --corner-size: clamp(70px, 12vw, 160px);
+  display: flex;
+  flex-direction: column;
+}
+
+.escape-ambient > * {
+  position: relative;
+  z-index: 2;
+}
+
+.escape-ambient::before,
+.escape-ambient::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.escape-ambient::before { z-index: 0; }
+.escape-ambient::after  { z-index: 1; }
+
+.escape-ambient main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(70px, 12vh, 110px) clamp(16px, 4vw, 32px) clamp(80px, 12vh, 110px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.escape-ambient .App {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2.5vh, 24px);
+}
+
+.escape-ambient .App p {
+  margin: 0;
+  opacity: 0.85;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+}
+
+/* ============================================================
+   2. DÉCORS D'ANGLE (SVG injectés par <AmbientDecorations />)
+   ============================================================ */
+.escape-ambient .ambient-corner {
+  position: fixed;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+  animation: ambient-fade-in 900ms ease both;
+}
+.escape-ambient .ambient-corner.tl { top: 0;    left: 0;  }
+.escape-ambient .ambient-corner.tr { top: 0;    right: 0; transform: scaleX(-1); }
+.escape-ambient .ambient-corner.bl { bottom: 0; left: 0;  transform: scaleY(-1); }
+.escape-ambient .ambient-corner.br { bottom: 0; right: 0; transform: scale(-1, -1); }
+
+/* ============================================================
+   3. BOUTONS — base + interactions
+   ============================================================ */
+.escape-ambient .button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  width: clamp(240px, 60vw, 420px);
+  min-height: 56px;
+  padding: clamp(12px, 2.2vh, 18px) clamp(20px, 4vw, 36px);
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  border-radius: 10px;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease,
+    filter 200ms ease;
+}
+
+/* Boutons du header (Retour au menu / Arrêter la partie) : compacts */
+.escape-ambient .layout-header .button {
+  width: auto;
+  min-height: 0;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  border-radius: 8px;
+}
+
+/* Effet "shine" qui balaie le bouton au hover */
+.escape-ambient .button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: translateX(-100%) skewX(-20deg);
+  pointer-events: none;
+}
+.escape-ambient .button:hover:not(:disabled)::before {
+  animation: ambient-shine 700ms ease;
+}
+
+.escape-ambient .button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.03);
+  filter: brightness(1.12);
+}
+.escape-ambient .button:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  filter: brightness(0.95);
+}
+
+/* Tokens / boutons-symboles : feedback game-pad */
+.escape-ambient .code-input-token,
+.escape-ambient .code-input-tab {
+  transition:
+    transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+.escape-ambient .code-input-token:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.08);
+  filter: brightness(1.18);
+}
+.escape-ambient .code-input-token:active:not(:disabled) {
+  transform: scale(0.9);
+  filter: brightness(0.85);
+}
+
+.escape-ambient .code-input-slot[data-active='true'] {
+  animation: ambient-pulse-glow 1.6s ease-in-out infinite;
+}
+
+/* ============================================================
+   4. CHRONO — base (chaque thème surcharge)
+   ============================================================ */
+.escape-ambient .chrono-container {
+  background: var(--color-bg);
+  border: 1px solid var(--color-primary);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  padding: 10px 22px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 18px var(--color-primary-soft),
+    var(--shadow-md);
+}
+.escape-ambient .chrono-display {
+  font-family: inherit;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 12px var(--color-primary-soft);
+}
+.escape-ambient .chrono-container.warning {
+  animation: chronoWarning 1s ease-in-out infinite;
+}
+
+/* ============================================================
+   5. INFO POPUP — fond clair pour la lisibilité du morse/césar
+   ============================================================ */
+.escape-ambient .info-popup-page {
+  background: #f4ecd6;
+  border-color: var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+.escape-ambient .info-popup-image {
+  filter: none;
+}
+
+/* ============================================================
+   6. TOASTS — base (chaque thème surcharge)
+   ============================================================ */
+.Toastify__toast {
+  background: var(--color-bg, #1a0f04) !important;
+  color: var(--color-text, #f5e9c8) !important;
+  border: 1px solid var(--color-primary, #d4a857) !important;
+  border-radius: var(--radius-md, 6px) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 0 24px var(--color-primary-soft, rgba(212, 168, 87, 0.3)),
+    0 12px 28px rgba(0, 0, 0, 0.7) !important;
+  font-family: inherit !important;
+  backdrop-filter: blur(2px);
+}
+.Toastify__toast-body { color: var(--color-text, #f5e9c8) !important; }
+.Toastify__close-button {
+  color: var(--color-text, #f5e9c8) !important;
+  opacity: 0.6;
+}
+.Toastify__close-button:hover { opacity: 1; }
+.Toastify__progress-bar {
+  background: var(--color-primary, #d4a857) !important;
+  height: 3px !important;
+}
+.Toastify__toast-icon svg {
+  fill: var(--color-primary, #d4a857) !important;
+}
+
+/* Liseré sémantique pour distinguer les types de toast */
+.Toastify__toast--success { border-left: 4px solid #4caf50 !important; }
+.Toastify__toast--error   { border-left: 4px solid #e53935 !important; }
+.Toastify__toast--warning { border-left: 4px solid #ff9800 !important; }
+.Toastify__toast--info    { border-left: 4px solid var(--color-primary, #d4a857) !important; }
+
+/* ============================================================
+   7. ANIMATIONS communes
+   ============================================================ */
+@keyframes ambient-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 0.85; }
+}
+@keyframes ambient-fade-up {
+  from { opacity: 0; transform: translateY(18px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+@keyframes ambient-pop-in {
+  0%   { opacity: 0; transform: scale(0.88) translateY(10px); filter: blur(6px); }
+  60%  { opacity: 1; transform: scale(1.03) translateY(0);    filter: blur(0); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0); }
+}
+@keyframes ambient-shine {
+  0%   { transform: translateX(-100%) skewX(-20deg); }
+  100% { transform: translateX(220%)  skewX(-20deg); }
+}
+@keyframes ambient-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-soft), inset 0 0 0 0 transparent; }
+  50%      { box-shadow: 0 0 0 10px transparent, inset 0 0 12px var(--color-primary-soft); }
+}
+@keyframes ambient-floor-haze {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.85; }
+}
+@keyframes chronoWarning {
+  0%, 100% {
+    box-shadow: 0 0 18px var(--color-primary-soft), var(--shadow-md);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 36px var(--color-primary), 0 0 60px var(--color-primary-soft);
+    transform: scale(1.04);
+  }
+}
+
+/* Cascade d'entrée */
+.escape-ambient main { animation: ambient-fade-up 520ms ease both; }
+.escape-ambient h1,
+.escape-ambient h2 { animation: ambient-fade-up 700ms ease both; }
+.escape-ambient .button { animation: ambient-fade-up 560ms ease both; }
+.escape-ambient main .button:nth-child(2) { animation-delay: 60ms; }
+.escape-ambient main .button:nth-child(3) { animation-delay: 120ms; }
+.escape-ambient .popup-content { animation: ambient-pop-in 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ============================================================
+   8. ACCESSIBILITÉ — réduit le mouvement si demandé
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .escape-ambient::before,
+  .escape-ambient::after,
+  .escape-ambient .button::before,
+  .escape-ambient .button::after,
+  .escape-ambient main,
+  .escape-ambient h1,
+  .escape-ambient h2,
+  .escape-ambient .button,
+  .escape-ambient .popup-content,
+  .escape-ambient .ambient-corner,
+  .escape-ambient .code-input-slot[data-active='true'],
+  .escape-ambient .chrono-container.warning {
+    animation: none !important;
+  }
+}

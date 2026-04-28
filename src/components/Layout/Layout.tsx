@@ -1,20 +1,42 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { ThemeContext, themeToCssVars, useTheme } from '../../theme/theme';
-import { availableThemes, type ThemeKey } from '../../theme/themes';
+import {
+  availableThemes,
+  DEFAULT_THEME_KEY,
+  THEME_LABELS,
+  type ThemeKey,
+} from '../../theme/themes';
 import { GameThemeContext, useGameTheme } from '../../theme/GameThemeContext';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
+import { AmbientDecorations } from '../../theme/decorations';
+import { InfoIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
+import { THEME_ICONS } from '../../theme/themeIcons';
+import '../../theme/ambient/index.css';
 import './Layout.css';
 
 const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
+const THEME_PER_MODE_KEY = 'escapeBoxThemePerMode';
 
-const THEME_LABELS: Record<ThemeKey, string> = {
-  light: '☀️ Blue Sky',
-  dark: '🌙 Midnight',
-  nature: '🌿 Forest',
+const isThemeKey = (value: unknown): value is ThemeKey =>
+  typeof value === 'string' && value in availableThemes;
+
+const loadThemePerMode = (): Record<string, ThemeKey> => {
+  try {
+    const raw = localStorage.getItem(THEME_PER_MODE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const out: Record<string, ThemeKey> = {};
+    for (const [route, value] of Object.entries(parsed)) {
+      if (isThemeKey(value)) out[route] = value;
+    }
+    return out;
+  } catch {
+    return {};
+  }
 };
 
 const LayoutHeader = () => {
@@ -133,7 +155,7 @@ const LayoutMusicFab = () => {
         title="Musique"
         data-testid="layout-music-btn"
       >
-        ♪
+        <MusicIcon size={22} />
       </button>
       {isMusicOpen && (
         <MusicSelector
@@ -162,19 +184,23 @@ const LayoutThemeFab = () => {
         title="Thème"
         data-testid="layout-theme-btn"
       >
-        🎨
+        <PaletteIcon size={22} />
       </button>
       {isOpen && (
         <div className="layout-theme-dropdown">
-          {(Object.keys(availableThemes) as ThemeKey[]).map((key) => (
-            <button
-              key={key}
-              className={key === themeKey ? 'active' : ''}
-              onClick={() => { setThemeKey(key); setIsOpen(false); }}
-            >
-              {THEME_LABELS[key]}
-            </button>
-          ))}
+          {(Object.keys(availableThemes) as ThemeKey[]).map((key) => {
+            const Icon = THEME_ICONS[key];
+            return (
+              <button
+                key={key}
+                className={key === themeKey ? 'active' : ''}
+                onClick={() => { setThemeKey(key); setIsOpen(false); }}
+              >
+                <Icon size={18} />
+                <span>{THEME_LABELS[key]}</span>
+              </button>
+            );
+          })}
         </div>
       )}
     </>
@@ -197,18 +223,19 @@ const LayoutInfoFab = () => {
         title="Informations"
         data-testid="layout-info-btn"
       >
-        i
+        <InfoIcon size={22} />
       </button>
       {isInfoOpen && <InfoPopup onClose={() => setIsInfoOpen(false)} />}
     </>
   );
 };
 
-const LayoutInner = () => {
+const LayoutInner = ({ themeKey }: { themeKey: ThemeKey }) => {
   const t = useTheme();
   return (
     <GameProvider>
-      <div style={{ backgroundColor: t.color.bg, color: t.color.text, minHeight: '100vh' }}>
+      <AmbientDecorations themeKey={themeKey} />
+      <div style={{ color: t.color.text, minHeight: '100vh' }}>
         <LayoutHeader />
         <main>
           <Outlet />
@@ -223,13 +250,27 @@ const LayoutInner = () => {
 
 const Layout = () => {
   const location = useLocation();
-  const [themeKey, setThemeKey] = useState<ThemeKey>('light');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Reset theme independently for each route
-  useEffect(() => {
-    setThemeKey('light');
-  }, [location.pathname]);
+  // Theme is stored per route so each mode keeps its own theme
+  const [themePerMode, setThemePerMode] = useState<Record<string, ThemeKey>>(
+    () => loadThemePerMode(),
+  );
+
+  const themeKey: ThemeKey =
+    themePerMode[location.pathname] ?? DEFAULT_THEME_KEY;
+
+  const setThemeKey = (key: ThemeKey) => {
+    setThemePerMode((prev) => {
+      const next = { ...prev, [location.pathname]: key };
+      try {
+        localStorage.setItem(THEME_PER_MODE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  };
 
   const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
 
@@ -243,13 +284,26 @@ const Layout = () => {
     }
   }, [theme]);
 
+  // Mark <html> with the active theme so html/body bg matches the ambiance
+  // (fixes the black band above the page). Cleanup on unmount restores home.
+  useEffect(() => {
+    document.documentElement.dataset.escapeTheme = themeKey;
+    return () => {
+      delete document.documentElement.dataset.escapeTheme;
+    };
+  }, [themeKey]);
+
   const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey]);
 
   return (
     <GameThemeContext.Provider value={gameThemeValue}>
       <ThemeContext.Provider value={theme}>
-        <div ref={containerRef} style={{ minHeight: '100vh' }}>
-          <LayoutInner />
+        <div
+          ref={containerRef}
+          className="escape-ambient"
+          data-theme={themeKey}
+        >
+          <LayoutInner themeKey={themeKey} />
         </div>
       </ThemeContext.Provider>
     </GameThemeContext.Provider>
