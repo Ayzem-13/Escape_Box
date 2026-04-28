@@ -8,7 +8,7 @@ interface InfoPopupProps {
   onClose: () => void;
 }
 
-type PageId = 'morse' | 'caesar';
+type PageId = 'morse' | 'caesar' | 'morse-alphabet';
 
 interface PageMeta {
   id: PageId;
@@ -21,6 +21,11 @@ const PAGES: PageMeta[] = [
     id: 'morse',
     title: 'Code morse international',
     subtitle: 'Référence pour décoder les indices de la partie.',
+  },
+  {
+    id: 'morse-alphabet',
+    title: 'Alphabet en Code Morse',
+    subtitle: 'Manuscrit avec l\'équivalent morse pour chaque lettre et chiffre.',
   },
   {
     id: 'caesar',
@@ -37,6 +42,60 @@ const MorsePage: React.FC = () => (
     data-testid="info-popup-morse-image"
   />
 );
+
+const morseAlphabet = [
+  { char: 'A', morse: '·—' },
+  { char: 'B', morse: '—···' },
+  { char: 'C', morse: '—·—·' },
+  { char: 'D', morse: '—··' },
+  { char: 'E', morse: '·' },
+  { char: 'F', morse: '··—·' },
+  { char: 'G', morse: '——·' },
+  { char: 'H', morse: '····' },
+  { char: 'I', morse: '··' },
+  { char: 'J', morse: '·———' },
+  { char: 'K', morse: '—·—' },
+  { char: 'L', morse: '·—··' },
+  { char: 'M', morse: '——' },
+  { char: 'N', morse: '—·' },
+  { char: 'O', morse: '———' },
+  { char: 'P', morse: '·——·' },
+  { char: 'Q', morse: '——·—' },
+  { char: 'R', morse: '·—·' },
+  { char: 'S', morse: '···' },
+  { char: 'T', morse: '—' },
+  { char: 'U', morse: '··—' },
+  { char: 'V', morse: '···—' },
+  { char: 'W', morse: '·——' },
+  { char: 'X', morse: '—··—' },
+  { char: 'Y', morse: '—·——' },
+  { char: 'Z', morse: '——··' },
+  { char: '0', morse: '————— ' },
+  { char: '1', morse: '·———— ' },
+  { char: '2', morse: '··——— ' },
+  { char: '3', morse: '···—— ' },
+  { char: '4', morse: '····— ' },
+  { char: '5', morse: '····· ' },
+  { char: '6', morse: '—···· ' },
+  { char: '7', morse: '——··· ' },
+  { char: '8', morse: '———·· ' },
+  { char: '9', morse: '————· ' },
+];
+
+const MorseAlphabet: React.FC = () => {
+  return (
+    <div className="morse-alphabet-container">
+      <div className="morse-alphabet-grid">
+        {morseAlphabet.map((item) => (
+          <div key={item.char} className="morse-alphabet-item">
+            <div className="morse-letter">{item.char}</div>
+            <div className="morse-code">{item.morse}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const InfoPopup: React.FC<InfoPopupProps> = ({ onClose }) => {
   const [pageIndex, setPageIndex] = useState(0);
@@ -64,7 +123,9 @@ const InfoPopup: React.FC<InfoPopupProps> = ({ onClose }) => {
         <p className="info-popup-subtitle">{page.subtitle}</p>
 
         <div className="info-popup-page" data-testid={`info-page-${page.id}`}>
-          {page.id === 'morse' ? <MorsePage /> : <CaesarChart />}
+          {page.id === 'morse' && <MorsePage />}
+          {page.id === 'morse-alphabet' && <MorseAlphabet />}
+          {page.id === 'caesar' && <CaesarChart />}
         </div>
 
         <div className="info-popup-pagination" role="navigation" aria-label="Pagination des aides">
