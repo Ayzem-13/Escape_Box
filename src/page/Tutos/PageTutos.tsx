@@ -21,13 +21,6 @@ const TUTORIAL_STEPS = [
     },
 ];
 
-const TEAM_ROLES = [
-    'Analyste: lit les indices et reformule les hypothèses clairement.',
-    'Testeur: saisit les combinaisons et valide les retours du système.',
-    'Archiviste: note chaque tentative pour éviter de répéter les mêmes erreurs.',
-    'Gardien du temps: annonce les paliers du chrono et relance l\'équipe.',
-];
-
 const PageTutos: React.FC = () => {
     return (
         <div className="tutos-page" data-testid="tutos-page">
