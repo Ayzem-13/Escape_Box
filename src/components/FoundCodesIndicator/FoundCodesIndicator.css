@@ -21,14 +21,32 @@
   background-position: center;
   background-size: contain;
   opacity: 0.2;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, background-image 0.3s;
 }
 
 .found-codes-indicator-dot[data-found='true'] {
+  background-image: url('/silhouette-de-trou-de-serrure-trouve.png');
   opacity: 1;
 }
 
 .found-codes-indicator-count {
   margin: 0;
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .found-codes-indicator {
+    margin-block: 4px;
+    font-size: 0.8rem;
+  }
+
+  .found-codes-indicator-dots {
+    gap: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .found-codes-indicator-dot {
+    width: 18px;
+    height: 18px;
+  }
 }

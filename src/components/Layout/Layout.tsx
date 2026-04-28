@@ -283,7 +283,7 @@ const LayoutInnerContent = () => {
 
   return (
     <MusicSelectorContext.Provider value={musicCtx}>
-      <div style={{ color: t.color.text, minHeight: '100vh' }}>
+      <div className="layout-shell" style={{ color: t.color.text, minHeight: '100vh' }}>
         <LayoutHeader />
         <main>
           <Outlet />

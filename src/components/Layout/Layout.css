@@ -10,9 +10,15 @@
 }
 
 @media (max-width: 600px) {
+  .layout-header {
+    gap: 4px;
+  }
+
   .layout-header .button {
-    padding: 10px 16px;
-    font-size: 0.85rem;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    margin: 0;
+    letter-spacing: 0;
   }
 }
 
@@ -181,5 +187,14 @@
   .layout-header {
     top: 8px;
     left: 8px;
+  }
+
+  /* Clear the fixed layout-header (RETOUR/RECOMMENCER/ARRÊTER) and the chrono */
+  main {
+    padding-top: 80px;
+    padding-bottom: 56px;
+    padding-left: 8px;
+    padding-right: 8px;
+    box-sizing: border-box;
   }
 }

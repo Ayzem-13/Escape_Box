@@ -36,29 +36,39 @@
 }
 
 @media (max-width: 600px) {
+  .Toastify__toast-container--top-right,
   .Toastify__toast-container--top-center,
   .Toastify__toast-container {
-    width: auto !important;
-    max-width: calc(100vw - 16px);
-    left: 50% !important;
-    right: auto !important;
+    width: 70vw !important;
+    max-width: 280px;
+    left: auto !important;
+    right: 8px !important;
     top: 8px !important;
     bottom: auto !important;
-    transform: translateX(-50%);
+    transform: none;
     padding: 0;
+    pointer-events: none;
   }
 
   .Toastify__toast {
     margin-bottom: 6px;
     min-height: auto;
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    padding: 6px 10px;
+    font-size: 0.8rem;
     border-radius: 8px;
+    pointer-events: auto;
+    opacity: 0.95;
   }
 
   .Toastify__toast-body {
     padding: 0;
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .Toastify__close-button {
+    align-self: center;
+    padding: 0 4px;
   }
 }

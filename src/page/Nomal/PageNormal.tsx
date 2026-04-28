@@ -43,8 +43,8 @@ const NormalGame: React.FC = () => {
       <div data-testid="normal-timer">
         <Chrono initialTime={3600} />
       </div>
-      <CodeTester testIdPrefix="normal" />
       <FoundCodesIndicator />
+      <CodeTester testIdPrefix="normal" />
     </div>
   );
 };
