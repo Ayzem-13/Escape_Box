@@ -102,6 +102,76 @@ Voici les commandes principales pour le développement et la compilation :
 ## 🧪 Qualité et Tests
 
 L'application est fortement testée pour assurer la fiabilité du fonctionnement :
-- **Tests Unitaires/Intégration (`src/test/`) :** Vérifient les composants individuellement (ex: calculs du `Chrono.tsx`, comportement du routage avec `renderWithRouter.tsx`).
-- **Tests E2E (`e2e/`) :** Les scénarios critiques (tests des modes normal de la homepage au jeu complété) sont valides via Playwright simulant un véritable navigateur.
+- **Tests Unitaires/Intégration (`src/test/`) :** Vérifient les composants individuellement (ex: calculs du `Chrono.tsx`, comportement du routage avec `renderWithRouter.tsx`). L'isolation des tests exige un "wrapper" spécifique : `renderWithRouter.tsx`, car les composants dépendent intimement du GameContext et du MemoryRouter pour simuler la navigation.
+- **Tests E2E (`e2e/`) :** Les scénarios critiques (tests des modes normal de la homepage au jeu complété) sont valides via Playwright simulant un véritable navigateur. Architecture **Page Object Model (POM)** dans le dossier `pages/` (ex: `HomePage.ts`, `DemoModePage.ts`).
+
+---
+
+## � Fonctionnement du Jeu (Game Flow)
+
+Le cycle de vie d'une session d'Escape Box se divise en deux étapes majeures : la configuration par le Game Master, et la résolution par les Joueurs.
+
+1. **Préparation (Game Master) :** 
+   - Sur l'écran d'accueil, le GM choisit le mode de difficulté (Normal ou Démo).
+   - Via l'interface, il définit la combinaison secrète de 4 symboles (le "Code Maître").
+   - Il sélectionne son thème visuel (bouton Palette 🎨) et configure l'ambiance musicale via une fenêtre modale 🎵 permettant de programmer 4 pistes audios (et de les pré-écouter).
+2. **Lancement :** Le chronomètre (habituellement de 60 minutes) est déclenché. Le menu de musique disparaît, le lecteur audio démarre automatiquement la première piste, et l'interface se concentre sur le pavé de saisie pour les joueurs.
+3. **Phase de Résolution (Joueurs) :** Les joueurs recourent aux indices locaux pour déduire les codes et les testent sur l'interface numérique.
+4. **Validation et Sanctions :**
+   - 🎯 **Correct :** Feedback sonore positif, et animation visuelle.
+   - ❌ **Incorrect :** Alerte vibrante (Toast CSS), bruitage d'erreur, et application d'une **pénalité immédiate de time-out (-1 minute)** diminuant le temps restant.
+5. **Surveillance (Game Master) :** En cours de jeu, le GM peut cliquer secrètement sur l'icône "Espion" (🔒) pour consulter les mots de passe attendus.
+6. **Fin de partie :** Le jeu s'arrête soit quand le but est atteint, soit quand le chrono tombe à zéro, ou si le GM force l'arrêt.
+
+## ✅ État Actuel du Développement (Ce qui fonctionne)
+
+L'application est mature concernant les mécaniques fondamentales. Voici ce qui est totalement opérationnel aujourd'hui :
+
+- ✔️ **Routage et Modes :** Navigation SPA fluide entre Accueil, Normal, Démo et Crédits.
+- ✔️ **Moteur du Chronomètre :** Calculation robuste via dérive du temps (delta). Les pénalités s'y appliquent de façon asynchrone sans bloquer l'affichage.
+- ✔️ **Coffre-Fort & Inputs :** Clavier virtuel fonctionnel incluant le support des symboles atypiques (▲, ▼) et un retour UX instantané.
+- ✔️ **Moteur Audio Avancé :** Lecture des sons UI, ainsi qu'une file d'attente musicale gérée entièrement en dehors du système de rendu React (via `HTMLAudioElement` en référence) basculant automatiquement les pistes à la fin de leur lecture.
+- ✔️ **Persistance :** Sauvegarde immédiate du thème, des musiques et des codes via le cache du navigateur `localStorage`.
+- ✔️ **Builds Web & Desktop :** Le projet se déploie sans erreur côté Vite (navigateur) et côté Electron (génération avec succès d'un setup `.exe` et portable).
+- ✔️ **Tests unitaires :** L'intégralité de cette logique est validée par des tests automatisés Vitest / Playwright.
+
+---
+
+## �🏗️ Architecture et Documentation Technique
+
+Cette section détaille les choix techniques.
+
+### 1. Gestion de l'État (State Management)
+
+Plutôt que d'utiliser une librairie externe complexe (Redux, Zustand), l'application s'appuie nativement sur l'**API Context de React** divisée par domaine métier pour limiter les re-rendus inutiles :
+
+- **`GameContext`** gère l'état global et le cycle de vie d'une partie (`gameStarted` : Indique si le chronomètre est en route, Fonctions `startGame()` et `resetGame()`).
+- **`CodesContext`** gère le système de coffre-fort et les énigmes (Stockage du code secret défini par le Game Master en début de session, gestion des codes trouvés par les joueurs, fonctions de validation).
+- **`GameThemeContext` & `ThemeContext`** servent de moteur de thèmes dynamique (Définit les variables CSS via `ThemeContext.Provider`, permet de basculer entre différents thèmes).
+
+### 2. Composants Cœurs & Cycle de Jeu
+
+- **`Layout` et FABs (Floating Action Buttons)** : Le Layout enveloppe le `Outlet` (la vue courante) et instancie `LayoutMusicFab`, `LayoutThemeFab`, et `LayoutAdminSpyFab`.
+- **`Chrono` (Gestion du Temps)** : S'appuie sur un calcul des deltas de temps et gère une logique d'application de **pénalités immédiates (-1 minute)** lors d'échecs de saisie de code.
+- **`CodeTester` & `CodeInput`** : Interface de saisie joueur composée de 4 symboles. Déclenche un retour sonore (succès/échec) et ajoute les visuels de validation.
+- **`MusicSelector`** : Système de gestion de bande-son d'ambiance avec **pré-écoute intégrée**.
+
+### 3. Gestion Audio et Multimédia
+
+Toute l'audio du jeu utilise l'objet natif `Audio` du navigateur, manipulé au travers de `useRef<HTMLAudioElement>` pour éviter des re-rendus React à chaque fraction de seconde lue.
+La logique d'itération de la playlist réside dans le `Layout`. À l'événement `onEnded`, l'index de la piste active s'incrémente et la piste suivante est lancée.
+Effets sonores d'action (SFX) instanciés localement dans les composants d'interaction (bips, avertissements, validations).
+
+### 4. Persistance des Données (Storage)
+
+L'application utilise le `localStorage` de l'API Web et stocke sous forme de JSON les clés suivantes :
+- `escapeBoxCodeSystem` : Le ou les codes générés par le Game Master.
+- `escapeBoxSelectedMusics` : La playlist des musiques choisies.
+- `escapeBoxThemePerMode` : Le thème préféré de l'utilisateur par mode de jeu.
+
+### 5. Spécificités Electron (Build Bureau)
+
+Le portage de l'app de bureau repose sur le dossier `/electron` :
+- `main.ts` : Crée la `BrowserWindow`, gère les événements au niveau de l'OS.
+- `preload.ts` : Expose une API sécurisée (Context Isolation).
 
