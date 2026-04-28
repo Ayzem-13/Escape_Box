@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCodes } from '../../context/CodesContext';
 import { useGame } from '../../context/GameContext';
@@ -12,41 +12,60 @@ interface CodeTesterProps {
   testIdPrefix?: string;
 }
 
+const playSound = (audio: HTMLAudioElement | null) => {
+  if (!audio) return;
+  audio.currentTime = 0;
+  const result = audio.play();
+  if (result && typeof result.catch === 'function') {
+    result.catch(() => {});
+  }
+};
+
 const CodeTester: React.FC<CodeTesterProps> = ({ testIdPrefix = 'tester' }) => {
   const [code, setCode] = useState<string[]>([]);
   const { codes, foundCodes, markAsFound } = useCodes();
   const { resetGame } = useGame();
+  const correctAudioRef = useRef<HTMLAudioElement | null>(null);
+  const falseAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    correctAudioRef.current = new Audio(correctSoundFile);
+    falseAudioRef.current = new Audio(falseSoundFile);
+    correctAudioRef.current.preload = 'auto';
+    falseAudioRef.current.preload = 'auto';
+    return () => {
+      correctAudioRef.current?.pause();
+      falseAudioRef.current?.pause();
+      correctAudioRef.current = null;
+      falseAudioRef.current = null;
+    };
+  }, []);
 
   const handleTest = () => {
     if (code.length !== CODE_LENGTH) return;
-    
+
     const codeString = code.join('');
     const ufIndex = codes.findIndex((c, i) => c === codeString && !foundCodes[i]);
 
     if (ufIndex !== -1) {
       const isFinalCode = foundCodes.filter(Boolean).length + 1 === codes.length;
       markAsFound(ufIndex);
+      playSound(correctAudioRef.current);
+      toast.success('Code valide !');
 
       if (isFinalCode) {
         toast.success('Tous les codes ont été trouvés !');
         window.alert('Fin de la partie ! Cliquez sur OK pour valider.');
         resetGame();
-      } else {
-        toast.success('Code valide !');
       }
-
-      toast.success('Code valide !', {
-        onOpen: () => new Audio(correctSoundFile).play().catch(() => {})
-      });
     } else if (codes.includes(codeString)) {
       toast.info('Ce code a déjà été trouvé !');
     } else {
-      toast.error('Code incorrect ! -1 min ⏱️', {
-        onOpen: () => new Audio(falseSoundFile).play().catch(() => {})
-      });
+      playSound(falseAudioRef.current);
+      toast.error('Code incorrect ! -1 min ⏱️');
       window.dispatchEvent(new CustomEvent('chrono-penalty'));
     }
-    
+
     setCode([]);
   };
 

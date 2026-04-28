@@ -88,7 +88,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
             ✓ Musiques sélectionnées avec succès !
           </div>
         )}
-
+        
         {/* Dropdowns pour les 3 musiques */}
         <div className="music-selector-dropdowns">
           {selectedMusics.map((selectedMusic, index) => (

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
@@ -110,6 +110,10 @@ const LayoutMusicFab = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsMusicOpen(false);
+  };
+
   return (
     <>
       <audio ref={audioRef} onEnded={handleMusicEnd} />
@@ -125,7 +129,7 @@ const LayoutMusicFab = () => {
       </button>
       {isMusicOpen && (
         <MusicSelector
-          onClose={() => setIsMusicOpen(false)}
+          onClose={handleClose}
           onSelect={handleMusicSelect}
         />
       )}
