@@ -32,3 +32,25 @@
   background-color: #26214A;
   color: white;
 }
+
+@media (max-width: 600px) {
+  .code-tester {
+    gap: 6px;
+    padding: 8px;
+    margin: 4px 0;
+  }
+
+  .code-tester-title {
+    font-size: 1rem;
+  }
+
+  .code-tester-actions {
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .code-tester-actions .button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}

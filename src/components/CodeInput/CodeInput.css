@@ -123,3 +123,56 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+@media (max-width: 600px) {
+  .code-input {
+    gap: 6px;
+  }
+
+  .code-input-display {
+    gap: 6px;
+  }
+
+  .code-input-slot {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    border-width: 1.5px;
+  }
+
+  .code-input-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .code-input-tab {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border-width: 1px;
+  }
+
+  .code-input-grid {
+    gap: 4px;
+  }
+
+  .code-input-grid[data-category='symbols'],
+  .code-input-grid[data-category='numbers'],
+  .code-input-grid[data-category='roman_numerals'] {
+    grid-template-columns: repeat(5, 36px);
+  }
+
+  .code-input-grid[data-category='letters'] {
+    grid-template-columns: repeat(7, 36px);
+  }
+
+  .code-input-token {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .code-input-grid[data-category='symbols'] .code-input-token {
+    font-size: 1.05rem;
+  }
+}
