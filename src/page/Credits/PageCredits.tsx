@@ -14,13 +14,21 @@ const getInitials = (name: string): string =>
 const PageCredits: React.FC = () => {
   return (
     <div className="credits-page" data-testid="credits-page">
+      <Link
+        to="/"
+        className="credits-back-button"
+        data-testid="credits-page-back-link"
+      >
+        ← Retour à l'accueil
+      </Link>
+
       <section className="credits-hero">
         <p className="credits-hero-eyebrow">L'équipe</p>
         <h1 className="credits-hero-title" data-testid="credits-page-title">
           Crédits
         </h1>
         <p className="credits-hero-tagline">{CREDITS_TAGLINE}</p>
-        <p className="credits-hero-tagline">Initiative ludopedagogique par Thierry Secqueville, Esimed 2026</p>
+        <p className="credits-hero-tagline">Initiative ludopédagogique par Thierry Secqueville, Esimed 2026</p>
       </section>
 
       <section className="credits-section">
@@ -126,13 +134,6 @@ const PageCredits: React.FC = () => {
       </section>
 
       <footer className="credits-footer">
-        <Link
-          to="/"
-          className="credits-footer-back"
-          data-testid="credits-page-back-link"
-        >
-          ← Retour à l'accueil
-        </Link>
         <p className="credits-footer-meta">Escape Box · {new Date().getFullYear()}</p>
       </footer>
     </div>
