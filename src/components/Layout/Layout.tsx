@@ -91,29 +91,32 @@ const LayoutMusicFab = () => {
 
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
-    if (savedMusics && audioRef.current) {
+    
+    if (gameStarted && savedMusics && audioRef.current) {
       try {
         const musics: SelectedMusic[] = JSON.parse(savedMusics);
         if (musics.length > 0) {
           audioRef.current.src = musics[0].file;
           audioRef.current.play().catch(() => {});
+          const handler = setTimeout(() => {
+            setPlaylistIndex(0);
+          }, 0);
+          return () => clearTimeout(handler);
         }
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
       }
+    } else if (!gameStarted && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
-  }, []);
+  }, [gameStarted]);
 
   const handleMusicSelect = (musics: SelectedMusic[]) => {
     if (musics.length === 0) return;
 
     localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
-
-    if (audioRef.current) {
-      audioRef.current.src = musics[0].file;
-      audioRef.current.play().catch(() => {});
-      setPlaylistIndex(0);
-    }
+    setPlaylistIndex(0);
   };
 
   const handleMusicEnd = () => {
