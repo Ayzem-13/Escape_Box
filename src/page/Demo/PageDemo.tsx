@@ -7,7 +7,6 @@ import Chrono from '../../components/Chrono/Chrono';
 import Combinations from '../../components/Combinations/Combinations';
 import FoundCodesIndicator from '../../components/FoundCodesIndicator/FoundCodesIndicator';
 import CodeTester from '../../components/CodeTester/CodeTester';
-import BackgroundMusic from '../../components/BackgroundMusic/BackgroundMusic';
 import '../../App.css';
 
 const DemoSetup: React.FC = () => {
@@ -42,7 +41,6 @@ const DemoGame: React.FC = () => {
   const t = useTheme();
   return (
     <div data-testid="demo-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
-      <BackgroundMusic />
       <div data-testid="demo-timer">
         <Chrono initialTime={900} />
       </div>
