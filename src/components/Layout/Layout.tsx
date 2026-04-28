@@ -8,6 +8,7 @@ import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
+import LayoutVolumeFab from '../VolumeControl/VolumeControl';
 import './Layout.css';
 
 const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
@@ -235,6 +236,7 @@ const LayoutInner = () => {
         </main>
         <LayoutThemeFab />
         <LayoutMusicFab />
+        <LayoutVolumeFab />
         <LayoutInfoFab />
         <LayoutAdminSpyFab />
       </div>
