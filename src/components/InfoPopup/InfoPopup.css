@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   padding: var(--spacing-md);
-  z-index: 1500;
+  z-index: 2000;
   animation: info-popup-fade 150ms ease;
 }
 
@@ -393,4 +393,11 @@
 @keyframes info-popup-pop {
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  .info-popup-overlay {
+    background-color: rgba(0, 0, 0, 0.96);
+    backdrop-filter: blur(8px);
+  }
 }

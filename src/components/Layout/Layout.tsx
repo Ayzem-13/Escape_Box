@@ -10,10 +10,12 @@ import {
 import { GameThemeContext, useGameTheme } from '../../theme/GameThemeContext';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
+import { MusicSelectorContext } from '../../context/MusicSelectorContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import LayoutVolumeFab from '../VolumeControl/VolumeControl';
+import SettingsFab from '../SettingsFab/SettingsFab';
 import GameResultPopup from '../GameResultPopup/GameResultPopup';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
@@ -89,20 +91,20 @@ const LayoutHeader = () => {
   );
 };
 
-const LayoutMusicFab = () => {
+interface SelectedMusic {
+  label: string;
+  file: string;
+}
+
+const useMusicEngine = () => {
   const { gameStarted } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playlistIndex, setPlaylistIndex] = useState(0);
 
-  interface SelectedMusic {
-    label: string;
-    file: string;
-  }
-
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
-    
+
     if (gameStarted && savedMusics && audioRef.current) {
       try {
         const musics: SelectedMusic[] = JSON.parse(savedMusics);
@@ -125,7 +127,6 @@ const LayoutMusicFab = () => {
 
   const handleMusicSelect = (musics: SelectedMusic[]) => {
     if (musics.length === 0) return;
-
     localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
     setPlaylistIndex(0);
   };
@@ -145,17 +146,27 @@ const LayoutMusicFab = () => {
     }
   };
 
-  const handleClose = () => {
-    setIsMusicOpen(false);
+  return {
+    audioRef,
+    handleMusicEnd,
+    handleMusicSelect,
+    isMusicOpen,
+    setIsMusicOpen,
+    gameStarted,
   };
+};
+
+const LayoutMusicFab = () => {
+  const { gameStarted } = useGame();
+
+  if (gameStarted) return null;
 
   return (
-    <>
-      <audio ref={audioRef} onEnded={handleMusicEnd} />
-      {!gameStarted && (
+    <MusicSelectorContext.Consumer>
+      {({ openSelector }) => (
         <button
           type="button"
-          onClick={() => setIsMusicOpen(true)}
+          onClick={openSelector}
           className="layout-music-fab"
           aria-label="Sélectionner une musique"
           title="Musique"
@@ -164,13 +175,7 @@ const LayoutMusicFab = () => {
           <MusicIcon size={22} />
         </button>
       )}
-      {isMusicOpen && !gameStarted && (
-        <MusicSelector
-          onClose={handleClose}
-          onSelect={handleMusicSelect}
-        />
-      )}
-    </>
+    </MusicSelectorContext.Consumer>
   );
 };
 
@@ -257,10 +262,27 @@ const LayoutAdminSpyFab = () => {
   );
 };
 
-const LayoutInner = () => {
+const LayoutInnerContent = () => {
   const t = useTheme();
+  const {
+    audioRef,
+    handleMusicEnd,
+    handleMusicSelect,
+    isMusicOpen,
+    setIsMusicOpen,
+    gameStarted,
+  } = useMusicEngine();
+
+  const musicCtx = useMemo(
+    () => ({
+      openSelector: () => setIsMusicOpen(true),
+      isAvailable: !gameStarted,
+    }),
+    [gameStarted, setIsMusicOpen],
+  );
+
   return (
-    <GameProvider>
+    <MusicSelectorContext.Provider value={musicCtx}>
       <div style={{ color: t.color.text, minHeight: '100vh' }}>
         <LayoutHeader />
         <main>
@@ -271,11 +293,25 @@ const LayoutInner = () => {
         <LayoutVolumeFab />
         <LayoutInfoFab />
         <LayoutAdminSpyFab />
+        <SettingsFab />
         <GameResultPopup />
+        <audio ref={audioRef} onEnded={handleMusicEnd} />
+        {isMusicOpen && !gameStarted && (
+          <MusicSelector
+            onClose={() => setIsMusicOpen(false)}
+            onSelect={handleMusicSelect}
+          />
+        )}
       </div>
-    </GameProvider>
+    </MusicSelectorContext.Provider>
   );
 };
+
+const LayoutInner = () => (
+  <GameProvider>
+    <LayoutInnerContent />
+  </GameProvider>
+);
 
 const Layout = () => {
   const location = useLocation();
