@@ -7,7 +7,7 @@ import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import './Layout.css';
 
-const SELECTED_MUSIC_KEY = 'escapeBoxSelectedMusic';
+const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -51,34 +51,68 @@ const LayoutHeader = () => {
 const LayoutMusicFab = () => {
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playlistIndex, setPlaylistIndex] = useState(0);
 
-  // Charger la musique sauvegardée au montage
+  // Interface pour les musiques sélectionnées
+  interface SelectedMusic {
+    label: string;
+    file: string;
+  }
+
+  // Charger les musiques sauvegardées au montage
   useEffect(() => {
-    const savedMusicFile = localStorage.getItem(SELECTED_MUSIC_KEY);
-    if (savedMusicFile && audioRef.current) {
-      audioRef.current.src = savedMusicFile;
-      audioRef.current.play().catch(() => {
-        // L'autoplay peut être bloqué par le navigateur
-      });
+    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
+    if (savedMusics && audioRef.current) {
+      try {
+        const musics: SelectedMusic[] = JSON.parse(savedMusics);
+        if (musics.length > 0) {
+          audioRef.current.src = musics[0].file;
+          audioRef.current.play().catch(() => {
+            // L'autoplay peut être bloqué par le navigateur
+          });
+          setPlaylistIndex(0);
+        }
+      } catch (e) {
+        console.error('Erreur lors du chargement des musiques sauvegardées', e);
+      }
     }
   }, []);
 
-  const handleMusicSelect = (_musicLabel: string, musicFile: string) => {
+  const handleMusicSelect = (musics: SelectedMusic[]) => {
+    if (musics.length === 0) return;
+
     // Sauvegarder dans localStorage
-    localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
-    
-    // Jouer la musique
+    localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
+
+    // Jouer la première musique
     if (audioRef.current) {
-      audioRef.current.src = musicFile;
+      audioRef.current.src = musics[0].file;
       audioRef.current.play().catch(() => {
         // L'autoplay peut être bloqué par le navigateur
       });
+      setPlaylistIndex(0);
+    }
+  };
+
+  // Passer à la musique suivante quand la musique actuelle finit
+  const handleMusicEnd = () => {
+    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
+    if (savedMusics && audioRef.current) {
+      try {
+        const musics: SelectedMusic[] = JSON.parse(savedMusics);
+        const nextIndex = (playlistIndex + 1) % musics.length;
+        audioRef.current.src = musics[nextIndex].file;
+        audioRef.current.play().catch(() => {});
+        setPlaylistIndex(nextIndex);
+      } catch (e) {
+        console.error('Erreur lors de la lecture de la musique suivante', e);
+      }
     }
   };
 
   return (
     <>
-      <audio ref={audioRef} loop />
+      <audio ref={audioRef} onEnded={handleMusicEnd} />
       <button
         type="button"
         onClick={() => setIsMusicOpen(true)}
