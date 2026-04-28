@@ -13,27 +13,34 @@ interface MusicSelectorProps {
   onSelect: (musics: SelectedMusic[]) => void;
 }
 
-const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(() => {
-    const saved = localStorage.getItem('escapeBoxSelectedMusics');
-    const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
-    
-    if (saved) {
-      try {
-        const musics: SelectedMusic[] = JSON.parse(saved);
-        musics.forEach((music, index) => {
-          if (index < 4) {
-            defaultSelected[index] = music;
-          }
-        });
-      } catch (e) {
-        console.error('Erreur lors du chargement des musiques sauvegardées', e);
-      }
+const loadDefaultMusics = () => {
+  const saved = localStorage.getItem('escapeBoxSelectedMusics');
+  const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
+  
+  if (saved) {
+    try {
+      const musics: SelectedMusic[] = JSON.parse(saved);
+      musics.forEach((music, index) => {
+        if (index < 4) {
+          defaultSelected[index] = music;
+        }
+      });
+    } catch (e) {
+      console.error('Erreur lors du chargement des musiques sauvegardées', e);
     }
-    return defaultSelected;
-  });
+  }
+  return defaultSelected;
+};
+
+const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
+  const [initialMusics] = useState<(SelectedMusic | null)[]>(loadDefaultMusics);
+  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(initialMusics);
   const [isValidated, setIsValidated] = useState(false);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  
+  // Vérifier si la sélection a été modifiée par rapport à l'état initial
+  const hasChanges = JSON.stringify(selectedMusics) !== JSON.stringify(initialMusics);
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -88,8 +95,6 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
     }
     // Filtrer les musiques non vides
     const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
-    
-    if (musicsToSave.length === 0) return;
     
     // Sauvegarder dans localStorage
     localStorage.setItem('escapeBoxSelectedMusics', JSON.stringify(musicsToSave));
@@ -224,7 +229,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
             onClick={handleValidate}
             className="music-selector-validate"
             data-testid="music-selector-validate"
-            disabled={selectedMusics.every((m) => m === null) || isValidated}
+            disabled={!hasChanges || isValidated}
           >
             Valider
           </button>
