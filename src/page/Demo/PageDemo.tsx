@@ -15,8 +15,8 @@ const DemoSetup: React.FC = () => {
   const { allCodesSet } = useCodes();
 
   return (
-    <div className="App" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
-      <h1 data-testid="demo-title" style={{ color: t.color.primary }}>MODE DEMO</h1>
+    <div className="App">
+      <h1 data-testid="demo-title">MODE DEMO</h1>
       <p data-testid="demo-duration">Durée de la partie: 15 minutes</p>
 
       <Combinations
@@ -38,9 +38,8 @@ const DemoSetup: React.FC = () => {
 };
 
 const DemoGame: React.FC = () => {
-  const t = useTheme();
   return (
-    <div data-testid="demo-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
+    <div data-testid="demo-game-screen">
       <div data-testid="demo-timer">
         <Chrono initialTime={900} />
       </div>

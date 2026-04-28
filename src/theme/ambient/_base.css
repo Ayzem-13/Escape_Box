@@ -1,0 +1,210 @@
+/* AMBIENT — base partagée
+   Principe : la scène atmosphérique (fond, brouillard, lumière) vit dans
+   les pseudo-éléments fixed du conteneur. Le contenu reste sobre et lisible. */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English+SC&family=Share+Tech+Mono&display=swap');
+
+html[data-escape-theme] { scrollbar-width: none; }
+html[data-escape-theme] ::-webkit-scrollbar { display: none; }
+html[data-escape-theme] body { overflow-x: hidden; }
+
+.escape-ambient {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.escape-ambient > * {
+  position: relative;
+  z-index: 2;
+}
+
+.escape-ambient::before,
+.escape-ambient::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.escape-ambient::before { z-index: 0; }
+.escape-ambient::after  { z-index: 1; }
+
+.escape-ambient main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(72px, 12vh, 112px) clamp(20px, 4vw, 32px) clamp(72px, 12vh, 112px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.escape-ambient .App {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(16px, 3vh, 28px);
+}
+
+.escape-ambient .App p {
+  margin: 0;
+  opacity: 0.75;
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  letter-spacing: 0.02em;
+}
+
+/* Boutons : surface sobre, hover propre, pas de halo agressif */
+.escape-ambient .button {
+  position: relative;
+  cursor: pointer;
+  width: clamp(240px, 60vw, 380px);
+  min-height: 52px;
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+.escape-ambient .button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.escape-ambient .button:active:not(:disabled) {
+  transform: translateY(0);
+}
+.escape-ambient .button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Header : boutons compacts */
+.escape-ambient .layout-header .button {
+  width: auto;
+  min-height: 0;
+  padding: 7px 14px;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+}
+
+/* Tokens / tabs : feedback léger */
+.escape-ambient .code-input-token,
+.escape-ambient .code-input-tab {
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.escape-ambient .code-input-token:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.escape-ambient .code-input-token:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.escape-ambient .code-input-slot[data-active='true'] {
+  animation: slot-pulse 2s ease-in-out infinite;
+}
+
+/* Chrono — base neutre, chaque thème surcharge */
+.escape-ambient .chrono-container {
+  background: var(--color-bg);
+  border: 1px solid var(--color-primary);
+  color: var(--color-text);
+  border-radius: 4px;
+  padding: 10px 18px;
+}
+.escape-ambient .chrono-display {
+  font-family: inherit;
+  color: var(--color-primary);
+  letter-spacing: 0.06em;
+}
+.escape-ambient .chrono-container.warning {
+  animation: chrono-warning 1.4s ease-in-out infinite;
+}
+
+/* Info popup — fond clair pour lire les images encrées en noir */
+.escape-ambient .info-popup-page {
+  background: #ede5d2;
+  border-color: var(--color-primary);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+/* Toasts */
+.Toastify__toast {
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 4px !important;
+  font-family: inherit !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+}
+.Toastify__toast-body { color: var(--color-text) !important; }
+.Toastify__close-button {
+  color: var(--color-text) !important;
+  opacity: 0.5;
+}
+.Toastify__close-button:hover { opacity: 1; }
+.Toastify__progress-bar {
+  background: var(--color-primary) !important;
+  height: 2px !important;
+}
+.Toastify__toast-icon svg { fill: var(--color-primary) !important; }
+.Toastify__toast--success { border-left: 3px solid #6a9c5e !important; }
+.Toastify__toast--error   { border-left: 3px solid #c25151 !important; }
+.Toastify__toast--warning { border-left: 3px solid #c2945e !important; }
+.Toastify__toast--info    { border-left: 3px solid var(--color-primary) !important; }
+
+/* Animations — une seule entrée discrète, pas de cascade */
+@keyframes scene-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-soft); }
+  50%      { box-shadow: 0 0 0 6px transparent; }
+}
+@keyframes chrono-warning {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.escape-ambient main { animation: scene-fade-in 600ms ease both; }
+.escape-ambient .popup-content,
+.escape-ambient .info-popup-content { animation: pop-in 220ms ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .escape-ambient::before,
+  .escape-ambient::after,
+  .escape-ambient main,
+  .escape-ambient .popup-content,
+  .escape-ambient .info-popup-content,
+  .escape-ambient .code-input-slot[data-active='true'],
+  .escape-ambient .chrono-container.warning {
+    animation: none !important;
+  }
+}
