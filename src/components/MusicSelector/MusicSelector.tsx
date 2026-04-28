@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
 import './MusicSelector.css';
 
@@ -32,20 +32,59 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
     return defaultSelected;
   });
   const [isValidated, setIsValidated] = useState(false);
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof Audio !== 'undefined') {
+      audioRef.current = new Audio();
+      audioRef.current.onended = () => setPlayingIndex(null);
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
+    };
+  }, []);
+
+  const togglePlay = (index: number, file: string) => {
+    if (!audioRef.current) return;
+    if (playingIndex === index) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    } else {
+      audioRef.current.src = file;
+      audioRef.current.play().catch(e => console.error('Erreur de lecture audio', e));
+      setPlayingIndex(index);
+    }
+  };
 
   const handleMusicChange = (index: number, label: string, file: string) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = { label, file };
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleRemoveMusic = (index: number) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = null;
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleValidate = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    }
     // Filtrer les musiques non vides
     const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
     
@@ -123,6 +162,18 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                     </option>
                   ))}
                 </select>
+                {selectedMusic && (
+                  <button
+                    type="button"
+                    className={`music-selector-preview ${playingIndex === index ? 'playing' : ''}`}
+                    onClick={() => togglePlay(index, selectedMusic.file)}
+                    title={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    aria-label={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    disabled={isValidated}
+                  >
+                    {playingIndex === index ? '⏸️' : '▶️'}
+                  </button>
+                )}
                 {selectedMusic && (
                   <button
                     type="button"
