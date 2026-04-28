@@ -1,32 +1,13 @@
 import React from 'react';
 import { useGame } from '../../context/GameContext';
-import { useGameTheme } from '../../theme/GameThemeContext';
-import type { ThemeKey } from '../../theme/themes';
 import './GameResultPopup.css';
 
-const FLAVOR: Record<ThemeKey, { won: string; lost: string }> = {
-  ancientTomb: {
-    won: 'Le sarcophage cède. Vous quittez le tombeau, le trésor scellé entre vos mains, tandis que la torche s\'éteint derrière vous.',
-    lost: 'Les pierres se referment dans un grondement sourd. Le tombeau ne rendra plus jamais ses secrets — ni votre dépouille.',
-  },
-  hauntedManor: {
-    won: 'Les esprits relâchent leur emprise. Au dernier coup de minuit, la grille du manoir s\'ouvre et vous laisse partir.',
-    lost: 'La bougie meurt. Les murs respirent une dernière fois, satisfaits. Le manoir vient d\'accueillir un nouveau pensionnaire.',
-  },
-  secretLab: {
-    won: 'Verrouillage neutralisé. Toutes les caméras s\'éteignent une à une. Aucune trace de votre passage ne sera jamais reconstituée.',
-    lost: 'PROTOCOLE DE CONFINEMENT ENGAGÉ. Le laboratoire s\'isole du reste du monde. Les portes ne se rouvriront pas.',
-  },
-};
-
 const GameResultPage: React.FC = () => {
-  const { gameResult, resetGame, restartGame } = useGame();
-  const { themeKey } = useGameTheme();
+  const { gameResult, resetGame } = useGame();
 
   if (!gameResult) return null;
 
   const isWin = gameResult === 'won';
-  const flavor = FLAVOR[themeKey][isWin ? 'won' : 'lost'];
 
   return (
     <div
@@ -64,21 +45,11 @@ const GameResultPage: React.FC = () => {
         {isWin ? 'VOUS AVEZ GAGNÉ' : 'VOUS AVEZ PERDU'}
       </h1>
 
-      <p className="game-result-flavor">{flavor}</p>
-
       <div className="game-result-actions">
         <button
           type="button"
-          onClick={restartGame}
-          className="game-result-btn game-result-btn--primary"
-          data-testid="game-result-restart"
-        >
-          REJOUER
-        </button>
-        <button
-          type="button"
           onClick={resetGame}
-          className="game-result-btn"
+          className="game-result-btn game-result-btn--primary"
           data-testid="game-result-close"
         >
           QUITTER
