@@ -72,7 +72,7 @@
 }
 
 .code-input-grid[data-category='symbols'] {
-  grid-template-columns: repeat(4, 44px);
+  grid-template-columns: repeat(5, 44px);
 }
 
 .code-input-grid[data-category='letters'] {
@@ -80,6 +80,10 @@
 }
 
 .code-input-grid[data-category='numbers'] {
+  grid-template-columns: repeat(5, 44px);
+}
+
+.code-input-grid[data-category='roman_numerals'] {
   grid-template-columns: repeat(5, 44px);
 }
 
@@ -97,6 +101,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.code-input-grid[data-category='symbols'] .code-input-token {
+  font-size: 1.3rem;
+  line-height: 1;
+  font-family: 'Arial Unicode MS', 'Segoe UI Symbol', sans-serif;
 }
 
 .code-input-token:hover:not(:disabled) {

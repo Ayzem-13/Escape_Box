@@ -12,3 +12,35 @@
   gap: var(--spacing-sm);
   margin-top: var(--spacing-md);
 }
+
+.defined-combination {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.defined-combination p {
+  margin: 0 0 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.defined-codes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.defined-code {
+  padding: 10px 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -143,3 +143,32 @@
 .layout-music-fab:active {
   transform: scale(0.95);
 }
+
+.layout-spy-fab {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  left: var(--spacing-lg);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-base), transform var(--transition-fast);
+}
+
+.layout-spy-fab:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+}
+
+.layout-spy-fab:active {
+  transform: scale(0.95);
+}

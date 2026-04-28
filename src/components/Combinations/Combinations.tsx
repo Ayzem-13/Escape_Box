@@ -14,7 +14,7 @@ const Combinations: React.FC<CombinationsProps> = ({
   testIdPrefix,
   resetToastMessage = 'Combinaisons réinitialisées.',
 }) => {
-  const { mode, slotCount, allCodesSet, filledCount, clearCodes } = useCodes();
+  const { mode, slotCount, allCodesSet, filledCount, clearCodes, codes } = useCodes();
   const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
 
   const prefix = testIdPrefix ?? mode;
@@ -49,6 +49,19 @@ const Combinations: React.FC<CombinationsProps> = ({
       </div>
 
       {isCodePopupOpen && <CodePopup onClose={() => setIsCodePopupOpen(false)} />}
+
+      {(
+        <div className="defined-combination" data-testid={`${prefix}-defined-combination`}>
+          <p>Combinaison(s) définie(s) :</p>
+          <div className="defined-codes">
+            {codes.map((code, index) => (
+              <span key={index} className="defined-code">
+                {code ? code : <em>Non définie</em>}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

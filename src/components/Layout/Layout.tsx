@@ -12,6 +12,7 @@ import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
+import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import { AmbientDecorations } from '../../theme/decorations';
 import { InfoIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
@@ -83,13 +84,11 @@ const LayoutMusicFab = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playlistIndex, setPlaylistIndex] = useState(0);
 
-  // Interface pour les musiques sélectionnées
   interface SelectedMusic {
     label: string;
     file: string;
   }
 
-  // Charger les musiques sauvegardées au montage
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
     if (savedMusics && audioRef.current) {
@@ -97,10 +96,7 @@ const LayoutMusicFab = () => {
         const musics: SelectedMusic[] = JSON.parse(savedMusics);
         if (musics.length > 0) {
           audioRef.current.src = musics[0].file;
-          audioRef.current.play().catch(() => {
-            // L'autoplay peut être bloqué par le navigateur
-          });
-          setPlaylistIndex(0);
+          audioRef.current.play().catch(() => {});
         }
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
@@ -111,20 +107,15 @@ const LayoutMusicFab = () => {
   const handleMusicSelect = (musics: SelectedMusic[]) => {
     if (musics.length === 0) return;
 
-    // Sauvegarder dans localStorage
     localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
 
-    // Jouer la première musique
     if (audioRef.current) {
       audioRef.current.src = musics[0].file;
-      audioRef.current.play().catch(() => {
-        // L'autoplay peut être bloqué par le navigateur
-      });
+      audioRef.current.play().catch(() => {});
       setPlaylistIndex(0);
     }
   };
 
-  // Passer à la musique suivante quand la musique actuelle finit
   const handleMusicEnd = () => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
     if (savedMusics && audioRef.current) {
@@ -230,6 +221,26 @@ const LayoutInfoFab = () => {
   );
 };
 
+const LayoutAdminSpyFab = () => {
+  const [isSpyOpen, setIsSpyOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsSpyOpen(true)}
+        className="layout-spy-fab"
+        aria-label="Voir les mots de passe"
+        title="Voir les codes"
+        data-testid="layout-spy-btn"
+      >
+        🔒
+      </button>
+      {isSpyOpen && <AdminSpyPopup onClose={() => setIsSpyOpen(false)} />}
+    </>
+  );
+};
+
 const LayoutInner = ({ themeKey }: { themeKey: ThemeKey }) => {
   const t = useTheme();
   return (
@@ -243,6 +254,7 @@ const LayoutInner = ({ themeKey }: { themeKey: ThemeKey }) => {
         <LayoutThemeFab />
         <LayoutMusicFab />
         <LayoutInfoFab />
+        <LayoutAdminSpyFab />
       </div>
     </GameProvider>
   );
@@ -252,7 +264,6 @@ const Layout = () => {
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Theme is stored per route so each mode keeps its own theme
   const [themePerMode, setThemePerMode] = useState<Record<string, ThemeKey>>(
     () => loadThemePerMode(),
   );
@@ -274,7 +285,6 @@ const Layout = () => {
 
   const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
 
-  // Apply CSS vars to the layout container only (not :root → home page unaffected)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -284,8 +294,6 @@ const Layout = () => {
     }
   }, [theme]);
 
-  // Mark <html> with the active theme so html/body bg matches the ambiance
-  // (fixes the black band above the page). Cleanup on unmount restores home.
   useEffect(() => {
     document.documentElement.dataset.escapeTheme = themeKey;
     return () => {

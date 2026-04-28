@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
 import './MusicSelector.css';
 
@@ -13,42 +13,78 @@ interface MusicSelectorProps {
 }
 
 const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>([null, null, null]);
-  const [isValidated, setIsValidated] = useState(false);
-
-  // Charger les musiques sauvegardées
-  useEffect(() => {
+  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(() => {
     const saved = localStorage.getItem('escapeBoxSelectedMusics');
+    const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
+    
     if (saved) {
       try {
         const musics: SelectedMusic[] = JSON.parse(saved);
-        // Remplir les dropdowns avec les musiques sauvegardées
-        const newSelected = [null, null, null] as (SelectedMusic | null)[];
         musics.forEach((music, index) => {
-          if (index < 3) {
-            newSelected[index] = music;
+          if (index < 4) {
+            defaultSelected[index] = music;
           }
         });
-        setSelectedMusics(newSelected);
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
       }
     }
+    return defaultSelected;
+  });
+  const [isValidated, setIsValidated] = useState(false);
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof Audio !== 'undefined') {
+      audioRef.current = new Audio();
+      audioRef.current.onended = () => setPlayingIndex(null);
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
+    };
   }, []);
+
+  const togglePlay = (index: number, file: string) => {
+    if (!audioRef.current) return;
+    if (playingIndex === index) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    } else {
+      audioRef.current.src = file;
+      audioRef.current.play().catch(e => console.error('Erreur de lecture audio', e));
+      setPlayingIndex(index);
+    }
+  };
 
   const handleMusicChange = (index: number, label: string, file: string) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = { label, file };
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleRemoveMusic = (index: number) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = null;
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleValidate = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    }
     // Filtrer les musiques non vides
     const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
     
@@ -81,7 +117,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
       aria-label="Sélectionner les musiques"
     >
       <div className="music-selector-content">
-        <h2 className="music-selector-title">Sélectionnez jusqu'à 3 musiques</h2>
+        <h2 className="music-selector-title">Sélectionnez jusqu'à 4 musiques</h2>
         
         {isValidated && (
           <div className="music-selector-validation" data-testid="music-validation">
@@ -89,14 +125,22 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
           </div>
         )}
         
-        {/* Dropdowns pour les 3 musiques */}
+        {/* Dropdowns pour les 4 musiques */}
         <div className="music-selector-dropdowns">
-          {selectedMusics.map((selectedMusic, index) => (
-            <div key={index} className="music-selector-dropdown-group">
-              <label className="music-selector-dropdown-label">
-                Musique {index + 1}
-              </label>
-              <div className="music-selector-dropdown-wrapper">
+          {selectedMusics.map((selectedMusic, index) => {
+            const timeRanges = [
+              'de 0 à 15 min',
+              'de 15 à 30 min',
+              'de 30 à 45 min',
+              'de 45 à 60 min'
+            ];
+            
+            return (
+              <div key={index} className="music-selector-dropdown-group">
+                <label className="music-selector-dropdown-label">
+                  Musique {index + 1} ({timeRanges[index]})
+                </label>
+                <div className="music-selector-dropdown-wrapper">
                 <select
                   className="music-selector-dropdown"
                   value={selectedMusic ? selectedMusic.file : ''}
@@ -121,6 +165,18 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 {selectedMusic && (
                   <button
                     type="button"
+                    className={`music-selector-preview ${playingIndex === index ? 'playing' : ''}`}
+                    onClick={() => togglePlay(index, selectedMusic.file)}
+                    title={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    aria-label={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    disabled={isValidated}
+                  >
+                    {playingIndex === index ? '⏸️' : '▶️'}
+                  </button>
+                )}
+                {selectedMusic && (
+                  <button
+                    type="button"
                     className="music-selector-dropdown-clear"
                     onClick={() => handleRemoveMusic(index)}
                     data-testid={`music-remove-${index}`}
@@ -132,7 +188,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 )}
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         {/* Résumé des musiques sélectionnées */}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './AdminPopup.css';
 
 interface AdminPopupProps {
@@ -6,17 +6,12 @@ interface AdminPopupProps {
 }
 
 export const AdminPopup: React.FC<AdminPopupProps> = ({ onClose }) => {
-  const [password, setPassword] = useState('0000');
-
-  useEffect(() => {
-    // Récupère ou initialise le mot de passe admin
+  const [password, setPassword] = useState(() => {
     const saved = localStorage.getItem('adminPassword');
-    if (saved) {
-      setPassword(saved);
-    } else {
-      localStorage.setItem('adminPassword', '0000');
-    }
-  }, []);
+    if (saved) return saved;
+    localStorage.setItem('adminPassword', '0000');
+    return '0000';
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // On ne garde que les chiffres et on limite à 4 caractères
