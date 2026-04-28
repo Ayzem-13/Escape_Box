@@ -45,6 +45,9 @@
     }
   },
   "dependencies": {
+    "@fontsource/cinzel": "^5.2.8",
+    "@fontsource/im-fell-english-sc": "^5.2.6",
+    "@fontsource/share-tech-mono": "^5.2.7",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",

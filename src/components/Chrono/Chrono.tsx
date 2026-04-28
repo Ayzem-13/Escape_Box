@@ -12,12 +12,14 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const { session } = useGame();
   const [time, setTime] = useState(initialTime);
   const [isWarning, setIsWarning] = useState(false);
+  const [prevReset, setPrevReset] = useState({ session, initialTime });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const warningInterval = 900; // 15 minutes in seconds
 
-  useEffect(() => {
+  if (prevReset.session !== session || prevReset.initialTime !== initialTime) {
+    setPrevReset({ session, initialTime });
     setTime(initialTime);
-  }, [session, initialTime]);
+  }
 
   useEffect(() => {
     audioRef.current = new Audio(bipSound);
@@ -47,8 +49,9 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   useEffect(() => {
     const handlePenalty = () => {
       setTime(prevTime => Math.max(0, prevTime - 60));
+      toast.warning('Pénalité ! -1 minute');
     };
-    
+
     window.addEventListener('chrono-penalty', handlePenalty as EventListener);
     return () => {
       window.removeEventListener('chrono-penalty', handlePenalty as EventListener);
