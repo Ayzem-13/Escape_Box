@@ -150,7 +150,6 @@ html[data-escape-theme='ancientTomb'] body {
     inset 0 0 0 4px rgba(20, 14, 6, 0.85),
     inset 0 0 0 5px rgba(212, 168, 87, 0.45),
     0 6px 18px rgba(0, 0, 0, 0.75);
-  position: fixed;
 }
 .escape-ambient[data-theme='ancientTomb'] .chrono-container::before {
   content: '';

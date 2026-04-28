@@ -1,14 +1,20 @@
 /* Chrono — base neutre, chaque thème surcharge dans son fichier ambient */
 .chrono-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  margin: 0 auto;
   padding: 10px 18px;
   border-radius: 4px;
   background: var(--color-bg);
   color: var(--color-text);
   border: 1px solid var(--color-primary);
   box-shadow: var(--shadow-md);
+  width: fit-content;
+}
+
+[data-testid$='-timer'] {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(20px, 4vh, 36px);
 }
 
 .chrono-display {
@@ -35,21 +41,9 @@
 
 @media (max-width: 600px) {
   .chrono-container {
-    position: static !important;
-    top: auto !important;
-    right: auto !important;
-    left: auto !important;
-    margin: 8px auto 12px !important;
+    margin: 8px auto 12px;
     padding: 6px 18px;
-    display: block;
-    width: fit-content;
     max-width: 90%;
-  }
-
-  [data-testid$='-timer'] {
-    width: 100%;
-    display: flex;
-    justify-content: center;
   }
 
   .chrono-display {

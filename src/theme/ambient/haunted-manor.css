@@ -195,7 +195,6 @@ html[data-escape-theme='hauntedManor'] body {
     /* Ombre projetée */
     0 8px 22px rgba(0, 0, 0, 0.85),
     0 0 24px rgba(255, 175, 80, 0.18);
-  position: fixed;
 }
 .escape-ambient[data-theme='hauntedManor'] .chrono-container::before {
   content: '';

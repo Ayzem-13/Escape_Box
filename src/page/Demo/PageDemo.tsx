@@ -43,7 +43,7 @@ const DemoGame: React.FC = () => {
       <div data-testid="demo-timer">
         <Chrono initialTime={900} />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column-reverse', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
         <FoundCodesIndicator />
         <CodeTester testIdPrefix="demo" />
       </div>

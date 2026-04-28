@@ -21,10 +21,11 @@
   background-position: center;
   background-size: contain;
   opacity: 0.2;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, background-image 0.3s;
 }
 
 .found-codes-indicator-dot[data-found='true'] {
+  background-image: url('/silhouette-de-trou-de-serrure-trouve.png');
   opacity: 1;
 }
 
