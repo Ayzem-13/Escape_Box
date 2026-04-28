@@ -53,7 +53,11 @@ export const theme = {
   },
 } as const;
 
-export type Theme = typeof theme;
+type WidenStrings<T> = {
+  [K in keyof T]: T[K] extends string ? string : WidenStrings<T[K]>;
+};
+
+export type Theme = WidenStrings<typeof theme>;
 
 const kebab = (s: string) => s.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 

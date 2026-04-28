@@ -1,17 +1,22 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import MusicSelector from '../components/MusicSelector/MusicSelector'
 import { MUSIC_OPTIONS } from '../config/musicOptions'
 
 const SAVED_KEY = 'escapeBoxSelectedMusics'
 
+interface SelectedMusic {
+  label: string
+  file: string
+}
+
 describe('MusicSelector', () => {
-  let onClose: ReturnType<typeof vi.fn>
-  let onSelect: ReturnType<typeof vi.fn>
+  let onClose: ReturnType<typeof vi.fn<() => void>>
+  let onSelect: ReturnType<typeof vi.fn<(musics: SelectedMusic[]) => void>>
 
   beforeEach(() => {
-    onClose = vi.fn()
-    onSelect = vi.fn()
+    onClose = vi.fn<() => void>()
+    onSelect = vi.fn<(musics: SelectedMusic[]) => void>()
   })
 
   const renderSelector = () =>
