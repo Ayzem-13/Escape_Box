@@ -12,16 +12,18 @@
 }
 
 .code-indicator-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-pill);
-  border: 2px solid var(--color-primary);
-  background-color: transparent;
-  transition: background-color var(--transition-base);
+  width: 28px;
+  height: 28px;
+  background-image: url('/silhouette-de-trou-de-serrure.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.2;
+  transition: opacity var(--transition-base), transform var(--transition-base);
 }
 
 .code-indicator-dot[data-filled='true'] {
-  background-color: var(--color-primary);
+  opacity: 1;
 }
 
 .code-indicator-count {
