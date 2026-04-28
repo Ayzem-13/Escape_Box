@@ -149,6 +149,242 @@
   border-color: var(--color-primary-hover);
 }
 
+.morse-alphabet-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: var(--spacing-sm);
+}
+
+.morse-alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.morse-alphabet-item {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  text-align: center;
+  transition: all 200ms ease;
+}
+
+.morse-alphabet-item:hover {
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-primary-soft);
+}
+
+.morse-letter {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+}
+
+.morse-code {
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  color: var(--color-text-muted);
+  word-spacing: 0.25em;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.morse-alphabet-container {
+  width: 100%;
+  padding: var(--spacing-md) 0;
+}
+
+.morse-alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.morse-alphabet-item {
+  padding: var(--spacing-sm);
+  background-color: var(--color-surface-variant);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  transition: all 300ms ease;
+  cursor: default;
+}
+
+.morse-alphabet-item:hover {
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.morse-letter {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.morse-code {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+/* Cipher Disk Styles */
+.cipher-disk-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+}
+
+.cipher-disk-wrapper {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: var(--spacing-md) auto;
+}
+
+.cipher-disk-outer,
+.cipher-disk-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cipher-disk-outer {
+  z-index: 1;
+}
+
+.cipher-disk-inner {
+  z-index: 2;
+  transition: transform 200ms ease;
+}
+
+.cipher-disk-ring {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+}
+
+.cipher-disk-ring.outer-ring {
+  border-color: var(--color-primary);
+  background: radial-gradient(circle, var(--color-surface), var(--color-surface-variant));
+}
+
+.cipher-disk-ring.inner-ring {
+  border-color: var(--color-primary-soft);
+  background: radial-gradient(circle, var(--color-primary-soft-20), var(--color-surface-variant));
+  width: 85%;
+  height: 85%;
+  border-width: 1px;
+}
+
+.cipher-disk-ring.numeric.outer-ring {
+  border-color: var(--color-accent);
+}
+
+.cipher-disk-ring.numeric.inner-ring {
+  border-color: var(--color-accent-soft);
+}
+
+.cipher-disk-label {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.cipher-disk-letter {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transform-origin: 0 0;
+}
+
+.cipher-disk-pointer {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  z-index: 3;
+}
+
+.cipher-disk-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.cipher-disk-btn {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  min-width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cipher-disk-btn:hover {
+  background-color: var(--color-primary-dark);
+  transform: scale(1.05);
+}
+
+.cipher-disk-btn:active {
+  transform: scale(0.95);
+}
+
+.cipher-disk-display {
+  flex: 1;
+  text-align: center;
+  min-width: 160px;
+}
+
+.cipher-disk-shift {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: monospace;
+}
+
 @keyframes info-popup-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
