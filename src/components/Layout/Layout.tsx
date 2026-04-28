@@ -13,6 +13,7 @@ import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
+import LayoutVolumeFab from '../VolumeControl/VolumeControl';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
 import '../../theme/ambient/index.css';
@@ -266,6 +267,7 @@ const LayoutInner = () => {
         </main>
         <LayoutThemeFab />
         <LayoutMusicFab />
+        <LayoutVolumeFab />
         <LayoutInfoFab />
         <LayoutAdminSpyFab />
       </div>
