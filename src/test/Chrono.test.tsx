@@ -55,4 +55,30 @@ describe('Chrono', () => {
     render(<Chrono initialTime={60} />)
     expect(screen.getByTestId('chrono')).toBeInTheDocument()
   })
+
+  describe('bip d\'avertissement', () => {
+    it('joue le bip au démarrage si initialTime tombe sur un palier 15 min', () => {
+      const playSpy = vi
+        .spyOn(HTMLMediaElement.prototype, 'play')
+        .mockImplementation(() => Promise.resolve())
+      try {
+        render(<Chrono initialTime={3600} />)
+        expect(playSpy).toHaveBeenCalled()
+      } finally {
+        playSpy.mockRestore()
+      }
+    })
+
+    it('ne joue pas le bip à un instant hors palier', () => {
+      const playSpy = vi
+        .spyOn(HTMLMediaElement.prototype, 'play')
+        .mockImplementation(() => Promise.resolve())
+      try {
+        render(<Chrono initialTime={500} />)
+        expect(playSpy).not.toHaveBeenCalled()
+      } finally {
+        playSpy.mockRestore()
+      }
+    })
+  })
 })
