@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../../theme/theme';
 import bipSound from '../../assets/sounds/bip.mp3';
 import './Chrono.css';
 
@@ -10,7 +9,6 @@ interface ChronoProps {
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const [time, setTime] = useState(initialTime);
   const [isWarning, setIsWarning] = useState(false);
-  const t = useTheme();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const warningInterval = 900; // 15 minutes in seconds
 
@@ -60,19 +58,8 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
     <div
       className={`chrono-container ${isWarning ? 'warning' : ''}`}
       data-testid="chrono"
-      style={{
-        backgroundColor: t.color.bgInverse,
-        color: t.color.textInverse,
-        borderColor: t.color.primary,
-        boxShadow: t.shadow.md,
-        borderRadius: t.radius.lg,
-      }}
     >
-      <div
-        className="chrono-display"
-        data-testid="chrono-display"
-        style={{ color: t.color.primary, fontFamily: t.font.mono }}
-      >
+      <div className="chrono-display" data-testid="chrono-display">
         {formatTime(time)}
       </div>
     </div>

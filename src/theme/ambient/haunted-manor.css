@@ -1,186 +1,268 @@
-/* 🦇 Manoir Hanté */
+/* 🕯️ Manoir Hanté — manoir victorien gothique : papier peint bourgogne fané,
+   chandeliers, boiseries sombres, toiles d'araignée et poussière.
+   Palette CHAUDE désaturée (or terne sur bourgogne) — distincte du Tombeau
+   par sa dominante rouge/violet et son motif damassé baroque. */
 
 html[data-escape-theme='hauntedManor'],
 html[data-escape-theme='hauntedManor'] body {
-  background: #07030c;
+  background: #0a0608;
 }
 
 .escape-ambient[data-theme='hauntedManor'] {
   font-family: 'IM Fell English SC', 'Garamond', 'Georgia', serif;
-  color: #e8d8e8;
+  color: #d8c2a4;
 }
 
+/* Couche 1 : papier peint damassé bourgogne + boiseries + halo de chandelier */
 .escape-ambient[data-theme='hauntedManor']::before {
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 180, 90, 0.10), transparent 18%),
-    radial-gradient(circle at 80% 18%, rgba(255, 180, 90, 0.09), transparent 16%),
-    radial-gradient(circle at 50% 65%, rgba(160, 27, 58, 0.18), transparent 35%),
-    radial-gradient(ellipse 4% 12% at 20% -2%, rgba(160, 27, 58, 0.25), transparent 70%),
-    radial-gradient(ellipse 4% 8%  at 78% -2%, rgba(160, 27, 58, 0.20), transparent 70%),
-    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 25%, rgba(0, 0, 0, 0.85) 100%),
-    repeating-linear-gradient(45deg,  transparent 0 22px, rgba(160, 27, 58, 0.07) 22px 23px, transparent 23px 46px),
-    repeating-linear-gradient(-45deg, transparent 0 22px, rgba(160, 27, 58, 0.07) 22px 23px, transparent 23px 46px),
-    linear-gradient(180deg, #15091e 0%, #0a0510 60%, #07030c 100%);
-  animation: candleFlicker 3.2s ease-in-out infinite;
+    /* Vignette gothique profonde */
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 16%, rgba(0, 0, 0, 0.92) 100%),
+    /* Halo de chandelier en haut (lumière de bougie) */
+    radial-gradient(ellipse 50% 35% at 50% 12%, rgba(255, 175, 80, 0.32), transparent 72%),
+    /* Reflet de bougie sur le sol en bois */
+    radial-gradient(ellipse 75% 28% at 50% 100%, rgba(140, 60, 35, 0.45), transparent 70%),
+    /* Toile d'araignée dans le coin supérieur gauche */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'><g fill='none' stroke='%23d8c2a4' stroke-width='0.7' opacity='0.18'><path d='M0 0 L120 80 M0 0 L80 120 M0 0 L130 40 M0 0 L40 130 M0 0 L100 100'/><path d='M30 20 Q50 35 65 25 Q80 38 95 30 Q108 45 125 38'/><path d='M20 30 Q35 50 25 65 Q38 80 30 95 Q45 108 38 125'/><path d='M40 30 Q60 50 50 70 Q70 85 60 100'/><path d='M30 40 Q50 60 70 50 Q85 70 100 60'/></g></svg>"),
+    /* Papier peint damassé baroque (motif fleuri victorien) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='220' viewBox='0 0 160 220'><g fill='none' stroke='%23c69a55' stroke-width='1' opacity='0.16'><path d='M80 30 Q60 50 80 70 Q100 50 80 30 Z' fill='%23c69a55' fill-opacity='0.12'/><path d='M80 30 Q50 60 50 90 Q50 110 80 110 Q110 110 110 90 Q110 60 80 30'/><path d='M80 70 Q70 90 80 110 Q90 90 80 70'/><circle cx='80' cy='90' r='4' fill='%23c69a55' fill-opacity='0.25'/><path d='M50 90 Q30 100 35 120 Q45 130 60 125'/><path d='M110 90 Q130 100 125 120 Q115 130 100 125'/><path d='M80 110 Q70 130 80 145 Q90 130 80 110'/><path d='M0 140 Q20 160 0 180 Q-20 160 0 140 Z' fill='%23c69a55' fill-opacity='0.12'/><path d='M0 140 Q-30 170 -30 200 Q-30 220 0 220 Q30 220 30 200 Q30 170 0 140'/><path d='M0 180 Q-10 200 0 220 Q10 200 0 180'/><circle cx='0' cy='200' r='4' fill='%23c69a55' fill-opacity='0.25'/><path d='M160 140 Q180 160 160 180 Q140 160 160 140 Z' fill='%23c69a55' fill-opacity='0.12'/><path d='M160 140 Q130 170 130 200 Q130 220 160 220 Q190 220 190 200 Q190 170 160 140'/><circle cx='160' cy='200' r='4' fill='%23c69a55' fill-opacity='0.25'/><path d='M40 0 Q50 10 40 25 M120 0 Q110 10 120 25' stroke-width='0.8'/><path d='M40 195 Q50 205 40 220 M120 195 Q110 205 120 220' stroke-width='0.8'/></g></svg>"),
+    /* Lambris vertical (boiserie sombre) — 3 panneaux par rangée */
+    repeating-linear-gradient(90deg,
+      transparent 0 198px,
+      rgba(0, 0, 0, 0.45) 198px 200px,
+      transparent 200px 220px),
+    /* Plinthe sombre (frise basse) */
+    linear-gradient(180deg, transparent 0%, transparent 78%, rgba(20, 8, 12, 0.6) 82%, rgba(15, 5, 8, 0.9) 100%),
+    /* Grain de papier vieilli (taches d'humidité) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.06 0 0 0 0 0.05 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    /* Base — bourgogne profond fondu vers noir */
+    linear-gradient(180deg, #2a1218 0%, #1a0e12 55%, #0a0608 100%);
+  background-size:
+    auto, auto, auto,
+    320px 320px,
+    160px 220px,
+    220px 100%,
+    auto,
+    280px 280px,
+    auto;
+  background-position:
+    0 0, 0 0, 0 0,
+    top left,
+    0 0,
+    0 0,
+    0 100%,
+    0 0,
+    0 0;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat,
+    no-repeat,
+    repeat,
+    repeat-x,
+    no-repeat,
+    repeat,
+    no-repeat;
+  animation: candle-flicker 4.5s ease-in-out infinite;
 }
 
+/* Couche 2 : poussière flottante + brume de bougie + flash d'orage lointain */
 .escape-ambient[data-theme='hauntedManor']::after {
   background:
-    radial-gradient(ellipse 120% 25% at 50% 100%, rgba(232, 216, 232, 0.10), transparent 70%),
-    linear-gradient(90deg,
-      transparent 0%,
-      rgba(232, 216, 232, 0.05) 30%,
-      rgba(232, 216, 232, 0.09) 50%,
-      rgba(232, 216, 232, 0.05) 70%,
-      transparent 100%);
-  background-size: 100% 100%, 200% 100%;
+    /* Flash d'orage à travers les fenêtres (côté gauche) */
+    radial-gradient(ellipse 60% 100% at -5% 30%, rgba(180, 200, 230, 0.08), transparent 50%),
+    /* Voile bourgogne au sol (humidité, atmosphère lourde) */
+    radial-gradient(ellipse 130% 50% at 50% 105%, rgba(80, 25, 35, 0.32), transparent 70%),
+    /* Halo chaleur bougie diffus */
+    radial-gradient(ellipse 60% 40% at 50% 18%, rgba(255, 200, 130, 0.10), transparent 75%),
+    /* Toile d'araignée coin haut-droit */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'><g fill='none' stroke='%23d8c2a4' stroke-width='0.6' opacity='0.18'><path d='M260 0 L140 70 M260 0 L180 110 M260 0 L130 35 M260 0 L210 120 M260 0 L160 95'/><path d='M230 18 Q210 32 195 24 Q180 36 165 28 Q150 42 135 35'/><path d='M240 28 Q225 48 235 62 Q220 78 230 92'/><path d='M220 28 Q200 48 210 68 Q190 82 200 100'/></g></svg>"),
+    /* Particules de poussière en suspension (signature manoir) */
+    radial-gradient(2px 2px at 12% 22%, rgba(255, 220, 170, 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 28% 60%, rgba(255, 220, 170, 0.55), transparent 60%),
+    radial-gradient(2.2px 2.2px at 46% 32%, rgba(255, 220, 170, 0.6), transparent 60%),
+    radial-gradient(1.4px 1.4px at 62% 78%, rgba(255, 220, 170, 0.5), transparent 60%),
+    radial-gradient(2px 2px at 78% 50%, rgba(255, 220, 170, 0.55), transparent 60%),
+    radial-gradient(1.3px 1.3px at 88% 24%, rgba(255, 220, 170, 0.5), transparent 60%),
+    radial-gradient(1.8px 1.8px at 36% 90%, rgba(255, 220, 170, 0.45), transparent 60%),
+    radial-gradient(1.2px 1.2px at 70% 14%, rgba(255, 220, 170, 0.45), transparent 60%);
+  background-size:
+    auto, auto, auto,
+    260px 260px,
+    auto, auto, auto, auto, auto, auto, auto, auto;
+  background-position:
+    0 0, 0 0, 0 0,
+    top right,
+    0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat,
+    no-repeat,
+    no-repeat, no-repeat, no-repeat, no-repeat,
+    no-repeat, no-repeat, no-repeat, no-repeat;
   animation:
-    fogDrift 22s ease-in-out infinite alternate,
-    ambient-floor-haze 7s ease-in-out infinite;
-  opacity: 0.85;
+    manor-drift 38s linear infinite,
+    storm-flash 17s ease-in-out infinite;
+  opacity: 0.9;
   mix-blend-mode: screen;
 }
 
 .escape-ambient[data-theme='hauntedManor'] h1,
 .escape-ambient[data-theme='hauntedManor'] h2 {
-  font-family: 'UnifrakturMaguntia', 'Garamond', serif;
-  letter-spacing: 0.04em;
-  color: #c41e3f;
+  font-family: 'IM Fell English SC', 'Garamond', serif;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #f0d8a8;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   text-shadow:
-    0 0 14px rgba(196, 30, 63, 0.6),
-    0 0 28px rgba(196, 30, 63, 0.35),
-    0 4px 14px rgba(0, 0, 0, 0.95);
+    0 0 20px rgba(255, 175, 80, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.95);
 }
 
 .escape-ambient[data-theme='hauntedManor'] .button {
-  font-family: 'IM Fell English SC', 'Garamond', serif;
-  letter-spacing: 0.08em;
-  color: #e8d8e8;
-  border: 1px solid #a01b3a;
-  background: linear-gradient(180deg, rgba(50, 18, 36, 0.92), rgba(20, 5, 15, 0.96));
-  box-shadow:
-    inset 0 0 0 1px rgba(232, 216, 232, 0.1),
-    inset 0 1px 0 rgba(232, 216, 232, 0.08),
-    0 0 22px rgba(160, 27, 58, 0.3),
-    0 8px 22px rgba(0, 0, 0, 0.85);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  color: #d8c2a4;
+  border-color: rgba(140, 60, 60, 0.55);
+  background: rgba(26, 14, 18, 0.65);
 }
 .escape-ambient[data-theme='hauntedManor'] .button:hover:not(:disabled) {
-  border-color: #c41e3f;
-  box-shadow:
-    inset 0 0 0 1px rgba(232, 216, 232, 0.18),
-    0 0 36px rgba(196, 30, 63, 0.55),
-    0 10px 30px rgba(0, 0, 0, 0.9);
+  border-color: rgba(198, 154, 85, 0.85);
+  background: rgba(198, 154, 85, 0.10);
+  color: #f0d8a8;
 }
 
 .escape-ambient[data-theme='hauntedManor'] .popup-overlay,
 .escape-ambient[data-theme='hauntedManor'] .info-popup-overlay {
-  background: rgba(5, 0, 10, 0.82);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 6, 8, 0.92);
+  backdrop-filter: blur(6px);
 }
 .escape-ambient[data-theme='hauntedManor'] .popup-content,
 .escape-ambient[data-theme='hauntedManor'] .info-popup-content {
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(196, 30, 63, 0.18), transparent 60%),
-    linear-gradient(180deg, #22132f, #07030c);
-  border: 1px solid #a01b3a;
-  box-shadow:
-    inset 0 0 0 1px rgba(232, 216, 232, 0.08),
-    0 0 0 4px rgba(160, 27, 58, 0.18),
-    0 0 36px rgba(196, 30, 63, 0.45),
-    0 30px 80px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(180deg, #2a1820, #14080c);
+  border: 1px solid rgba(198, 154, 85, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.92);
 }
 .escape-ambient[data-theme='hauntedManor'] .popup-title {
-  font-family: 'UnifrakturMaguntia', serif;
-  color: #c41e3f;
-  text-shadow: 0 0 14px rgba(196, 30, 63, 0.55), 0 2px 6px rgba(0, 0, 0, 0.9);
+  font-family: 'IM Fell English SC', serif;
+  color: #f0d8a8;
+  letter-spacing: 0.05em;
 }
 .escape-ambient[data-theme='hauntedManor'] .info-popup-page {
-  background: #ede2e8;
-  border-color: #a01b3a;
+  background: #ede0c4;
+  border-color: rgba(198, 154, 85, 0.5);
 }
 
 .escape-ambient[data-theme='hauntedManor'] .code-input-slot {
-  background: #07030c;
-  border: 2px solid #a01b3a;
-  color: #e8d8e8;
-  box-shadow:
-    inset 0 0 14px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(196, 30, 63, 0.2);
+  background: rgba(15, 8, 12, 0.85);
+  border: 1px solid rgba(198, 154, 85, 0.55);
+  color: #f0d8a8;
 }
-
 .escape-ambient[data-theme='hauntedManor'] .code-input-token {
-  background: linear-gradient(180deg, #a01b3a 0%, #5a0f22 100%);
-  color: #f5e1e8;
-  border: 1px solid rgba(232, 216, 232, 0.18);
-  font-weight: 700;
-  box-shadow:
-    inset 0 1px 0 rgba(232, 216, 232, 0.25),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.5),
-    0 4px 10px rgba(0, 0, 0, 0.8),
-    0 0 14px rgba(196, 30, 63, 0.5);
+  background: rgba(198, 154, 85, 0.10);
+  color: #f0d8a8;
+  border: 1px solid rgba(198, 154, 85, 0.5);
+}
+.escape-ambient[data-theme='hauntedManor'] .code-input-token:hover:not(:disabled) {
+  background: rgba(198, 154, 85, 0.20);
 }
 
 .escape-ambient[data-theme='hauntedManor'] .code-input-tab {
-  border-color: #a01b3a;
-  color: #e8d8e8;
+  border-color: rgba(198, 154, 85, 0.5);
+  color: #d8c2a4;
 }
 .escape-ambient[data-theme='hauntedManor'] .code-input-tab[aria-selected='true'] {
-  background: linear-gradient(180deg, #a01b3a, #5a0f22);
-  color: #f5e1e8;
+  background: rgba(198, 154, 85, 0.18);
+  color: #f0d8a8;
+  border-color: rgba(198, 154, 85, 0.85);
 }
 
-.escape-ambient[data-theme='hauntedManor'] ::-webkit-scrollbar { width: 10px; }
-.escape-ambient[data-theme='hauntedManor'] ::-webkit-scrollbar-track {
-  background: #07030c;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
-}
-.escape-ambient[data-theme='hauntedManor'] ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #a01b3a, #5a0f22);
-  border-radius: 5px;
-  box-shadow: 0 0 6px rgba(196, 30, 63, 0.4);
-}
-
+/* Chrono Manoir — montre à gousset en laiton patiné, cadran émaillé */
 .escape-ambient[data-theme='hauntedManor'] .chrono-container {
-  background: linear-gradient(180deg, rgba(50, 18, 36, 0.95), rgba(20, 5, 15, 0.98));
-  border: 1px solid #a01b3a;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background:
+    /* Reflet bougie en haut du cadran */
+    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(255, 175, 80, 0.22), transparent 65%),
+    /* Cadran émaillé crème vieilli */
+    radial-gradient(ellipse 100% 100% at 50% 50%, #f0e2c4 0%, #d8c2a0 60%, #a89070 100%);
+  border: none;
   box-shadow:
-    inset 0 0 0 1px rgba(232, 216, 232, 0.08),
-    0 0 24px rgba(196, 30, 63, 0.45),
-    0 8px 22px rgba(0, 0, 0, 0.85);
+    /* Anneau de laiton extérieur */
+    inset 0 0 0 2px #8a5a2a,
+    inset 0 0 0 5px #c69a55,
+    inset 0 0 0 7px #6e4520,
+    inset 0 0 0 9px rgba(40, 22, 12, 0.9),
+    /* Reflet poli haut */
+    inset 0 3px 4px rgba(255, 230, 180, 0.4),
+    /* Ombre creuse bas */
+    inset 0 -3px 6px rgba(0, 0, 0, 0.4),
+    /* Ombre projetée */
+    0 8px 22px rgba(0, 0, 0, 0.85),
+    0 0 24px rgba(255, 175, 80, 0.18);
+  position: fixed;
+}
+.escape-ambient[data-theme='hauntedManor'] .chrono-container::before {
+  content: '';
+  position: absolute;
+  inset: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(110, 70, 30, 0.45);
+  pointer-events: none;
 }
 .escape-ambient[data-theme='hauntedManor'] .chrono-display {
   font-family: 'IM Fell English SC', 'Garamond', serif;
-  color: #c41e3f;
-  text-shadow: 0 0 14px rgba(196, 30, 63, 0.6), 0 2px 6px rgba(0, 0, 0, 0.9);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: #2a1810;
+  text-shadow:
+    0 1px 0 rgba(255, 240, 200, 0.5),
+    0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+.escape-ambient[data-theme='hauntedManor'] .chrono-container.warning {
+  animation: manor-tick 1s ease-in-out 3;
+}
+@keyframes manor-tick {
+  0%, 100% { box-shadow:
+    inset 0 0 0 2px #8a5a2a,
+    inset 0 0 0 5px #c69a55,
+    inset 0 0 0 7px #6e4520,
+    inset 0 0 0 9px rgba(40, 22, 12, 0.9),
+    inset 0 3px 4px rgba(255, 230, 180, 0.4),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.4),
+    0 8px 22px rgba(0, 0, 0, 0.85),
+    0 0 24px rgba(255, 175, 80, 0.18); }
+  50% { box-shadow:
+    inset 0 0 0 2px #8a5a2a,
+    inset 0 0 0 5px #c25151,
+    inset 0 0 0 7px #6e2020,
+    inset 0 0 0 9px rgba(40, 12, 12, 0.9),
+    inset 0 3px 4px rgba(255, 230, 180, 0.4),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.4),
+    0 8px 22px rgba(0, 0, 0, 0.85),
+    0 0 32px rgba(194, 81, 81, 0.5); }
 }
 
 html[data-escape-theme='hauntedManor'] .Toastify__toast {
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(196, 30, 63, 0.18), transparent 60%),
-    linear-gradient(180deg, #22132f, #07030c) !important;
-  color: #e8d8e8 !important;
-  border: 1px solid #a01b3a !important;
+  background: linear-gradient(180deg, #2a1820, #14080c) !important;
+  color: #d8c2a4 !important;
+  border: 1px solid rgba(198, 154, 85, 0.55) !important;
   font-family: 'IM Fell English SC', 'Garamond', serif !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(232, 216, 232, 0.08),
-    0 0 28px rgba(196, 30, 63, 0.4),
-    0 12px 28px rgba(0, 0, 0, 0.85) !important;
 }
-html[data-escape-theme='hauntedManor'] .Toastify__toast-body { color: #e8d8e8 !important; }
-html[data-escape-theme='hauntedManor'] .Toastify__progress-bar { background: #c41e3f !important; }
+html[data-escape-theme='hauntedManor'] .Toastify__progress-bar { background: #c69a55 !important; }
 
-@keyframes candleFlicker {
-  0%, 100% { opacity: 1;    filter: brightness(1); }
-  10%      { opacity: 0.75; filter: brightness(0.92); }
-  25%      { opacity: 1.06; filter: brightness(1.08); }
-  40%      { opacity: 0.85; filter: brightness(0.95); }
-  55%      { opacity: 1;    filter: brightness(1.02); }
-  70%      { opacity: 0.68; filter: brightness(0.88); }
-  85%      { opacity: 1.03; filter: brightness(1.05); }
+@keyframes candle-flicker {
+  0%, 100% { opacity: 1; }
+  15%      { opacity: 0.92; }
+  22%      { opacity: 1.04; }
+  38%      { opacity: 0.88; }
+  55%      { opacity: 1.02; }
+  72%      { opacity: 0.94; }
+  88%      { opacity: 1.03; }
 }
-
-@keyframes fogDrift {
-  0%   { background-position: 0% 0%, 0% 0%; }
-  100% { background-position: 0% 0%, 100% 0%; }
+@keyframes manor-drift {
+  0%   { transform: translate3d(0, -8px, 0); }
+  100% { transform: translate3d(20px, 22px, 0); }
+}
+@keyframes storm-flash {
+  0%, 92%, 100% { filter: brightness(1); }
+  93%           { filter: brightness(1.4); }
+  94%           { filter: brightness(1.05); }
+  95%           { filter: brightness(1.5); }
+  96%           { filter: brightness(1); }
 }

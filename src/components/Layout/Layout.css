@@ -16,7 +16,7 @@
   height: 56px;
   border-radius: var(--radius-pill);
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: #0a0608;
   border: none;
   font-family: 'Georgia', serif;
   font-style: italic;
@@ -48,7 +48,7 @@
   height: 56px;
   border-radius: var(--radius-pill);
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: #0a0608;
   border: none;
   font-size: 1.4rem;
   cursor: pointer;
@@ -120,7 +120,7 @@
   height: 56px;
   border-radius: var(--radius-pill);
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: #0a0608;
   border: none;
   font-family: 'Georgia', serif;
   font-style: italic;
@@ -152,7 +152,7 @@
   height: 56px;
   border-radius: var(--radius-pill);
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: #0a0608;
   border: none;
   font-size: 1.4rem;
   cursor: pointer;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { ThemeContext, themeToCssVars, useTheme } from '../../theme/theme';
 import {
@@ -13,7 +13,6 @@ import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
-import { AmbientDecorations } from '../../theme/decorations';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
 import '../../theme/ambient/index.css';
@@ -244,11 +243,10 @@ const LayoutAdminSpyFab = () => {
   );
 };
 
-const LayoutInner = ({ themeKey }: { themeKey: ThemeKey }) => {
+const LayoutInner = () => {
   const t = useTheme();
   return (
     <GameProvider>
-      <AmbientDecorations themeKey={themeKey} />
       <div style={{ color: t.color.text, minHeight: '100vh' }}>
         <LayoutHeader />
         <main>
@@ -274,7 +272,7 @@ const Layout = () => {
   const themeKey: ThemeKey =
     themePerMode[location.pathname] ?? DEFAULT_THEME_KEY;
 
-  const setThemeKey = (key: ThemeKey) => {
+  const setThemeKey = useCallback((key: ThemeKey) => {
     setThemePerMode((prev) => {
       const next = { ...prev, [location.pathname]: key };
       try {
@@ -284,7 +282,7 @@ const Layout = () => {
       }
       return next;
     });
-  };
+  }, [location.pathname]);
 
   const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
 
@@ -304,7 +302,7 @@ const Layout = () => {
     };
   }, [themeKey]);
 
-  const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey]);
+  const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey, setThemeKey]);
 
   return (
     <GameThemeContext.Provider value={gameThemeValue}>
@@ -314,7 +312,7 @@ const Layout = () => {
           className="escape-ambient"
           data-theme={themeKey}
         >
-          <LayoutInner themeKey={themeKey} />
+          <LayoutInner />
         </div>
       </ThemeContext.Provider>
     </GameThemeContext.Provider>

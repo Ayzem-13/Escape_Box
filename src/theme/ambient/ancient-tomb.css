@@ -1,202 +1,191 @@
-/* 🏺 Tombeau Antique */
+/* 🏺 Tombeau Antique — chambre funéraire éclairée à la torche
+   Décor visible : hiéroglyphes gravés, blocs de pierre, sable doré */
 
 html[data-escape-theme='ancientTomb'],
 html[data-escape-theme='ancientTomb'] body {
-  background: #120800;
+  background: #0a0703;
 }
 
 .escape-ambient[data-theme='ancientTomb'] {
   font-family: 'IM Fell English SC', 'Cinzel', 'Georgia', serif;
-  color: #f5e9c8;
+  color: #d8c79c;
 }
 
+/* Couche 1 : décor de la salle (hiéroglyphes + blocs de pierre) */
 .escape-ambient[data-theme='ancientTomb']::before {
   background:
-    linear-gradient(115deg,
-      transparent 0%,
-      rgba(255, 200, 110, 0.05) 18%,
-      transparent 22%,
-      transparent 38%,
-      rgba(255, 200, 110, 0.04) 50%,
-      transparent 56%),
-    radial-gradient(ellipse 60% 50% at 50% 30%, rgba(255, 170, 60, 0.22), transparent 70%),
-    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.7) 100%),
-    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(140, 80, 30, 0.4), transparent 60%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='%23d4a857' opacity='0.07'><circle cx='12' cy='14' r='3'/><path d='M24 10h7v10h-7z'/><path d='M44 11l5 5-5 5-5-5z'/><path d='M58 10h8v10h-8z'/><path d='M10 36c4 0 4 6 0 6s-4-6 0-6z'/><path d='M24 36h8v8h-8z'/><circle cx='46' cy='40' r='3'/><path d='M58 35h8v10h-8z'/><path d='M8 60h12v5h-12z'/><path d='M28 58l5 4-5 4-5-4z'/><path d='M44 60h6v8h-6z'/><circle cx='62' cy='62' r='3'/></g></svg>"),
-    repeating-linear-gradient(27deg,  transparent 0 8px, rgba(80, 50, 20, 0.18) 8px 9px, transparent 9px 22px),
-    repeating-linear-gradient(-63deg, transparent 0 14px, rgba(40, 20, 0, 0.22) 14px 15px, transparent 15px 30px),
-    radial-gradient(rgba(140, 100, 50, 0.18) 1px, transparent 1px) 0 0 / 4px 4px,
-    linear-gradient(180deg, #2a1d0c 0%, #1a0f04 60%, #120800 100%);
+    /* Vignette dramatique */
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 18%, rgba(0, 0, 0, 0.92) 100%),
+    /* Halo de torche puissant en haut */
+    radial-gradient(ellipse 65% 45% at 50% 18%, rgba(255, 175, 70, 0.32), transparent 70%),
+    /* Reflet ambré au sol */
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(160, 90, 30, 0.45), transparent 70%),
+    /* Hiéroglyphes gravés sur le mur (visibles) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><g fill='%23d4a857' opacity='0.16'><path d='M30 18c0-7-12-7-12 0 0 5 5 7 6 9v7h-7v3h7v17h3V37h7v-3h-7v-7c1-2 6-4 3-9z'/><path d='M75 25c10-9 22-9 32 0-10 9-22 9-32 0z' fill='none' stroke='%23d4a857' stroke-width='1.5'/><circle cx='91' cy='25' r='3'/><ellipse cx='140' cy='25' rx='11' ry='6'/><path d='M140 18v14M133 22l7 4 7-4M133 28l7-3 7 3' fill='none' stroke='%23d4a857' stroke-width='1.2'/><path d='M22 95l16-22 16 22z' fill='none' stroke='%23d4a857' stroke-width='1.5'/><path d='M75 90q5-5 10 0t10 0 10 0' fill='none' stroke='%23d4a857' stroke-width='1.4'/><rect x='130' y='80' width='18' height='28' rx='8' fill='none' stroke='%23d4a857' stroke-width='1.3'/><line x1='133' y1='86' x2='145' y2='86' stroke='%23d4a857' stroke-width='1'/><line x1='133' y1='92' x2='145' y2='92' stroke='%23d4a857' stroke-width='1'/><line x1='133' y1='98' x2='145' y2='98' stroke='%23d4a857' stroke-width='1'/><circle cx='35' cy='150' r='8' fill='none' stroke='%23d4a857' stroke-width='1.4'/><circle cx='35' cy='150' r='3'/><path d='M75 145h20M85 138v14M80 152l5 -7 5 7' fill='none' stroke='%23d4a857' stroke-width='1.4'/><path d='M130 138l8 7 -8 7M138 145h12' fill='none' stroke='%23d4a857' stroke-width='1.4'/></g></svg>"),
+    /* Mortier horizontal (lignes de blocs de pierre) */
+    repeating-linear-gradient(0deg,
+      transparent 0 60px,
+      rgba(0, 0, 0, 0.35) 60px 62px),
+    /* Mortier vertical (joints des blocs, alterné) */
+    repeating-linear-gradient(90deg,
+      transparent 0 110px,
+      rgba(0, 0, 0, 0.28) 110px 111px),
+    /* Grain de pierre/sable (noise procédural) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0 0.05 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    /* Gradient pierre */
+    linear-gradient(180deg, #2a1d10 0%, #14100a 60%, #0a0703 100%);
   background-size:
-    auto, auto, auto, auto,
-    80px 80px,
-    auto, auto, 4px 4px,
+    auto, auto, auto,
+    180px 180px,
+    auto, auto,
+    200px 200px,
     auto;
-  animation: torchFlicker 4.5s ease-in-out infinite;
+  animation: tomb-flicker 5s ease-in-out infinite;
 }
 
+/* Couche 2 : poussière en suspension + rai de lumière de torche */
 .escape-ambient[data-theme='ancientTomb']::after {
-  background-image:
-    radial-gradient(1.5px 1.5px at 12% 18%, rgba(245, 220, 160, 0.85), transparent 60%),
-    radial-gradient(1px 1px at 27% 64%,     rgba(245, 220, 160, 0.70), transparent 60%),
-    radial-gradient(2px 2px at 44% 30%,     rgba(245, 220, 160, 0.60), transparent 60%),
-    radial-gradient(1px 1px at 63% 80%,     rgba(245, 220, 160, 0.70), transparent 60%),
-    radial-gradient(1.5px 1.5px at 78% 50%, rgba(245, 220, 160, 0.60), transparent 60%),
-    radial-gradient(1px 1px at 90% 22%,     rgba(245, 220, 160, 0.80), transparent 60%),
-    radial-gradient(2px 2px at 35% 90%,     rgba(245, 220, 160, 0.7),  transparent 60%),
-    radial-gradient(1px 1px at 72% 12%,     rgba(245, 220, 160, 0.6),  transparent 60%);
-  animation: dustDrift 24s linear infinite;
-  opacity: 0.6;
+  background:
+    /* Rai de lumière diagonal (torche) */
+    linear-gradient(108deg,
+      transparent 36%,
+      rgba(255, 200, 110, 0.07) 44%,
+      rgba(255, 200, 110, 0.04) 50%,
+      transparent 58%),
+    /* Particules de poussière */
+    radial-gradient(2px 2px at 12% 18%, rgba(245, 210, 140, 0.7), transparent 60%),
+    radial-gradient(1.4px 1.4px at 28% 64%, rgba(245, 210, 140, 0.55), transparent 60%),
+    radial-gradient(2.2px 2.2px at 46% 30%, rgba(245, 210, 140, 0.6), transparent 60%),
+    radial-gradient(1.4px 1.4px at 64% 78%, rgba(245, 210, 140, 0.5), transparent 60%),
+    radial-gradient(2px 2px at 80% 50%, rgba(245, 210, 140, 0.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 90% 22%, rgba(245, 210, 140, 0.5), transparent 60%),
+    radial-gradient(1.6px 1.6px at 36% 90%, rgba(245, 210, 140, 0.45), transparent 60%);
+  animation: dust-drift 32s linear infinite;
+  opacity: 0.7;
   mix-blend-mode: screen;
 }
 
 .escape-ambient[data-theme='ancientTomb'] h1,
 .escape-ambient[data-theme='ancientTomb'] h2 {
   font-family: 'Cinzel', 'Georgia', serif;
-  font-weight: 900;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #f5d99c;
-  text-shadow:
-    0 0 1px #d4a857,
-    0 2px 0 #1a0f04,
-    0 4px 0 rgba(0, 0, 0, 0.6),
-    0 0 28px rgba(255, 170, 60, 0.5),
-    0 8px 24px rgba(0, 0, 0, 0.8);
+  color: #f0d28e;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  text-shadow: 0 0 24px rgba(255, 175, 70, 0.4), 0 2px 6px rgba(0, 0, 0, 0.85);
 }
 
 .escape-ambient[data-theme='ancientTomb'] .button {
-  font-family: 'Cinzel', 'Georgia', serif;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #f5e9c8;
-  border: 2px solid #d4a857;
-  background: linear-gradient(180deg, #5a3d1c 0%, #3d2a14 50%, #2a1d0c 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 220, 150, 0.35),
-    inset 0 -3px 0 rgba(0, 0, 0, 0.55),
-    inset 0 0 18px rgba(80, 50, 20, 0.4),
-    0 6px 16px rgba(0, 0, 0, 0.7),
-    0 0 24px rgba(212, 168, 87, 0.15);
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 200, 100, 0.3);
+  color: #d8c79c;
+  border-color: rgba(212, 168, 87, 0.55);
+  background: rgba(20, 16, 10, 0.55);
 }
 .escape-ambient[data-theme='ancientTomb'] .button:hover:not(:disabled) {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 220, 150, 0.5),
-    inset 0 -3px 0 rgba(0, 0, 0, 0.55),
-    0 8px 24px rgba(0, 0, 0, 0.8),
-    0 0 32px rgba(212, 168, 87, 0.45);
+  border-color: rgba(212, 168, 87, 0.95);
+  background: rgba(212, 168, 87, 0.08);
 }
 
 .escape-ambient[data-theme='ancientTomb'] .popup-overlay,
 .escape-ambient[data-theme='ancientTomb'] .info-popup-overlay {
-  background: rgba(15, 8, 0, 0.82);
-  backdrop-filter: blur(3px);
+  background: rgba(10, 7, 3, 0.85);
+  backdrop-filter: blur(4px);
 }
 .escape-ambient[data-theme='ancientTomb'] .popup-content,
 .escape-ambient[data-theme='ancientTomb'] .info-popup-content {
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(212, 168, 87, 0.15), transparent 60%),
-    linear-gradient(180deg, #3d2a14, #1a0f04);
-  border: 2px solid #d4a857;
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 0 0 4px rgba(212, 168, 87, 0.2),
-    0 0 32px rgba(212, 168, 87, 0.35),
-    0 30px 80px rgba(0, 0, 0, 0.85);
+  background: linear-gradient(180deg, #2a2114, #14100a);
+  border: 1px solid rgba(212, 168, 87, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
 }
 .escape-ambient[data-theme='ancientTomb'] .popup-title {
   font-family: 'Cinzel', serif;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #f5d99c;
+  color: #f0d28e;
 }
 .escape-ambient[data-theme='ancientTomb'] .info-popup-page {
-  background: #f4ecd6;
-  border-color: #d4a857;
+  background: #ede5d2;
+  border-color: rgba(212, 168, 87, 0.5);
 }
 
 .escape-ambient[data-theme='ancientTomb'] .code-input-slot {
-  background: #0f0700;
-  border: 2px solid #d4a857;
-  color: #f5e9c8;
-  box-shadow:
-    inset 0 0 12px rgba(0, 0, 0, 0.85),
-    0 0 0 1px rgba(0, 0, 0, 0.6);
+  background: rgba(15, 10, 6, 0.85);
+  border: 1px solid rgba(212, 168, 87, 0.55);
+  color: #f0d28e;
 }
-
 .escape-ambient[data-theme='ancientTomb'] .code-input-token {
-  background: linear-gradient(180deg, #d4a857 0%, #a87a32 100%);
-  color: #1a0f04;
-  border: 1px solid #f5e9c8;
-  font-weight: 800;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 230, 180, 0.55),
-    inset 0 -2px 0 rgba(80, 50, 20, 0.6),
-    0 4px 8px rgba(0, 0, 0, 0.7),
-    0 0 12px rgba(212, 168, 87, 0.4);
+  background: rgba(212, 168, 87, 0.12);
+  color: #f0d28e;
+  border: 1px solid rgba(212, 168, 87, 0.55);
+}
+.escape-ambient[data-theme='ancientTomb'] .code-input-token:hover:not(:disabled) {
+  background: rgba(212, 168, 87, 0.22);
 }
 
 .escape-ambient[data-theme='ancientTomb'] .code-input-tab {
-  border-color: #d4a857;
-  color: #f5e9c8;
+  border-color: rgba(212, 168, 87, 0.5);
+  color: #d8c79c;
 }
 .escape-ambient[data-theme='ancientTomb'] .code-input-tab[aria-selected='true'] {
-  background: linear-gradient(180deg, #d4a857, #a87a32);
-  color: #1a0f04;
-  border-color: #f5e9c8;
+  background: rgba(212, 168, 87, 0.2);
+  color: #f0d28e;
+  border-color: #d4a857;
 }
 
-.escape-ambient[data-theme='ancientTomb'] ::-webkit-scrollbar { width: 12px; }
-.escape-ambient[data-theme='ancientTomb'] ::-webkit-scrollbar-track {
-  background: #0f0700;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
-}
-.escape-ambient[data-theme='ancientTomb'] ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #d4a857, #8a6a2a);
-  border: 2px solid #0f0700;
-  border-radius: 6px;
-}
-
+/* Chrono Tombeau — tablette de pierre gravée façon cartouche égyptien */
 .escape-ambient[data-theme='ancientTomb'] .chrono-container {
-  background: linear-gradient(180deg, #3d2a14, #1a0f04);
-  border: 2px solid #d4a857;
+  padding: 14px 28px;
+  border-radius: 2px;
+  background:
+    /* Reflet de torche sur la pierre */
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255, 175, 70, 0.18), transparent 70%),
+    /* Grain de pierre */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0 0.05 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg, #3a2a18 0%, #1f1409 100%);
+  border: 1px solid rgba(212, 168, 87, 0.6);
   box-shadow:
-    inset 0 1px 0 rgba(255, 220, 150, 0.25),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.55),
-    0 0 22px rgba(212, 168, 87, 0.3),
-    0 6px 16px rgba(0, 0, 0, 0.7);
+    inset 0 1px 0 rgba(212, 168, 87, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
+    inset 0 0 0 4px rgba(20, 14, 6, 0.85),
+    inset 0 0 0 5px rgba(212, 168, 87, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.75);
+  position: fixed;
+}
+.escape-ambient[data-theme='ancientTomb'] .chrono-container::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(212, 168, 87, 0.3);
+  pointer-events: none;
 }
 .escape-ambient[data-theme='ancientTomb'] .chrono-display {
   font-family: 'Cinzel', serif;
-  color: #f5d99c;
-  text-shadow: 0 0 10px rgba(255, 170, 60, 0.6), 0 2px 0 #1a0f04;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #f0d28e;
+  text-shadow:
+    0 0 10px rgba(255, 175, 70, 0.5),
+    0 1px 0 rgba(0, 0, 0, 0.9),
+    0 -1px 0 rgba(80, 50, 20, 0.8);
 }
 
 html[data-escape-theme='ancientTomb'] .Toastify__toast {
-  background: linear-gradient(180deg, #3d2a14, #1a0f04) !important;
-  color: #f5e9c8 !important;
-  border: 2px solid #d4a857 !important;
+  background: linear-gradient(180deg, #2a2114, #14100a) !important;
+  color: #d8c79c !important;
+  border: 1px solid rgba(212, 168, 87, 0.55) !important;
   font-family: 'IM Fell English SC', 'Cinzel', 'Georgia', serif !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 220, 150, 0.25),
-    0 0 24px rgba(212, 168, 87, 0.35),
-    0 12px 28px rgba(0, 0, 0, 0.8) !important;
 }
-html[data-escape-theme='ancientTomb'] .Toastify__toast-body { color: #f5e9c8 !important; }
 html[data-escape-theme='ancientTomb'] .Toastify__progress-bar { background: #d4a857 !important; }
 
-@keyframes torchFlicker {
-  0%, 100% { filter: brightness(1)    contrast(1); }
-  20%      { filter: brightness(0.93) contrast(1.04); }
-  35%      { filter: brightness(1.07) contrast(0.97); }
-  55%      { filter: brightness(0.96) contrast(1.02); }
-  75%      { filter: brightness(1.04) contrast(0.99); }
+@keyframes tomb-flicker {
+  0%, 100% { opacity: 1; }
+  20%      { opacity: 0.92; }
+  35%      { opacity: 1.04; }
+  60%      { opacity: 0.95; }
+  80%      { opacity: 1.02; }
 }
-
-@keyframes dustDrift {
-  0%   { transform: translate3d(0, -30px, 0); }
-  100% { transform: translate3d(40px, 30px, 0); }
+@keyframes dust-drift {
+  0%   { transform: translate3d(0, -10px, 0); }
+  100% { transform: translate3d(28px, 24px, 0); }
 }

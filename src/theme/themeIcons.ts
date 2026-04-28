@@ -1,6 +1,8 @@
 import { type ComponentType } from 'react';
 import { type ThemeKey } from './themes';
-import { AncientTombIcon, HauntedManorIcon, SecretLabIcon } from './icons';
+import AncientTombIcon from './icons/AncientTombIcon';
+import HauntedManorIcon from './icons/HauntedManorIcon';
+import SecretLabIcon from './icons/SecretLabIcon';
 
 type IconProps = {
   size?: number;
