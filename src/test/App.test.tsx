@@ -26,4 +26,12 @@ describe('App (page d\'accueil)', () => {
     expect(link).toHaveAttribute('href', '/demo')
     expect(link).toHaveTextContent('Commencer mode démo')
   })
+
+  it('affiche le lien vers /tutos avec le bon libellé', () => {
+    renderWithRouter(<App />)
+
+    const link = screen.getByTestId('home-link-tutos')
+    expect(link).toHaveAttribute('href', '/tutos')
+    expect(link).toHaveTextContent('Tutos')
+  })
 })

@@ -13,6 +13,7 @@ import App from './App.tsx'
 import PageDemo from './page/Demo/PageDemo.tsx'
 import PageNormal from './page/Nomal/PageNormal.tsx'
 import PageCredits from './page/Credits/PageCredits.tsx'
+import PageTutos from './page/Tutos/PageTutos.tsx'
 import Layout from './components/Layout/Layout.tsx'
 
 const router = createHashRouter([
@@ -23,6 +24,10 @@ const router = createHashRouter([
   {
     path: '/credits',
     element: <PageCredits />,
+  },
+  {
+    path: '/tutos',
+    element: <PageTutos />,
   },
   {
     element: <Layout />,

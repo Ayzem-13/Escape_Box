@@ -11,5 +11,6 @@ test.describe('Page d\'accueil', () => {
     await expect(home.subtitle).toBeVisible()
     await expect(home.normalLink).toHaveAttribute('href', '/normal')
     await expect(home.demoLink).toHaveAttribute('href', '/demo')
+    await expect(home.tutosLink).toHaveAttribute('href', '/tutos')
   })
 })

@@ -25,6 +25,9 @@ function App() {
           <Link to="/demo" className="button" data-testid="home-link-demo">
             Commencer mode démo
           </Link>
+          <Link to="/tutos" className="button" data-testid="home-link-tutos">
+            Tutos
+          </Link>
         </div>
 
         <Link

@@ -6,6 +6,7 @@ export class HomePage {
   readonly subtitle: Locator
   readonly normalLink: Locator
   readonly demoLink: Locator
+  readonly tutosLink: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -13,6 +14,7 @@ export class HomePage {
     this.subtitle = page.getByTestId('home-subtitle')
     this.normalLink = page.getByTestId('home-link-normal')
     this.demoLink = page.getByTestId('home-link-demo')
+    this.tutosLink = page.getByTestId('home-link-tutos')
   }
 
   async goto() {
