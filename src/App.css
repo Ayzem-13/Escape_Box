@@ -3,14 +3,131 @@
 }
 
 .App-header {
-  background-color: var(--color-black);
+  background: 
+    radial-gradient(circle at 15% 40%, rgba(139, 90, 43, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 85% 70%, rgba(101, 67, 33, 0.15) 0%, transparent 50%),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0, 0, 0, 0.05) 2px, rgba(0, 0, 0, 0.05) 4px),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.05) 2px, rgba(0, 0, 0, 0.05) 4px),
+    linear-gradient(to bottom, #2a2420 0%, #1f1a16 50%, #15110d 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: var(--color-white);
+  color: #e8ddd0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brick wall texture overlay */
+.App-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, 
+      transparent, transparent 60px, 
+      rgba(139, 90, 43, 0.08) 60px, rgba(139, 90, 43, 0.08) 120px),
+    repeating-linear-gradient(90deg, 
+      transparent, transparent 50%, 
+      rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.08) 100%);
+  background-size: 100% 120px, 200px 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.App-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(45deg, 
+      rgba(139, 69, 19, 0.04) 0px, 
+      rgba(139, 69, 19, 0.04) 1px, 
+      transparent 1px, 
+      transparent 2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.App-header > * {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(10px 10px 16px rgba(0, 0, 0, 0.6)) drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.4));
+}
+
+.App-header h1 {
+  color: var(--color-primary);
+  margin: 0;
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  transform: rotate(-5deg) skewY(-1deg);
+  max-width: 90%;
+  line-height: 1.1;
+  position: relative;
+  animation: polaroidFloat 3s ease-in-out infinite;
+}
+
+.App-header h1::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
+  background: #3a3028;
+  border: 8px solid #5a4a40;
+  transform: rotate(-2deg);
+  box-shadow: 
+    0 0 0 1px rgba(0, 0, 0, 0.8),
+    14px 20px 30px rgba(0, 0, 0, 0.7),
+    -2px -2px 8px rgba(100, 80, 60, 0.3);
+  z-index: -1;
+}
+
+@keyframes polaroidFloat {
+  0%, 100% { transform: rotate(-5deg) skewY(-1deg) translateY(0); }
+  50% { transform: rotate(-5deg) skewY(-1deg) translateY(-8px); }
+}
+
+.App-header p {
+  color: #c9b8a8;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 20px 0;
+  transform: rotate(2deg);
+  position: relative;
+  animation: noteFloat 3.5s ease-in-out infinite 0.3s;
+}
+
+.App-header p::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  background: #4a3f38;
+  border: 2px dashed rgba(139, 90, 43, 0.6);
+  transform: rotate(3deg);
+  z-index: -1;
+  box-shadow: 
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    8px 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes noteFloat {
+  0%, 100% { transform: rotate(2deg) translateX(0); }
+  50% { transform: rotate(2deg) translateX(4px); }
 }
 
 .button-container {
@@ -32,6 +149,7 @@
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s;
+  
 }
 
 .button:hover {
@@ -42,4 +160,89 @@
   background-color: #cccccc;
   color: #666666;
   cursor: not-allowed;
+}
+
+/* Styles spécifiques pour les boutons de la page d'accueil */
+.App-header .button-container {
+  gap: 35px;
+  margin-top: 35px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.App-header .button {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d7fa8 100%);
+  border: 3px solid rgba(139, 90, 43, 0.5);
+  box-shadow: 
+    10px 14px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(100, 180, 210, 0.3),
+    -2px -2px 6px rgba(0, 0, 0, 0.5);
+  padding: 16px 36px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 8px 0;
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  text-transform: uppercase;
+}
+
+.App-header .button:nth-child(1) {
+  transform: rotate(-6deg);
+  animation: tagFloat 2.5s ease-in-out infinite;
+}
+
+.App-header .button:nth-child(2) {
+  transform: rotate(5deg);
+  animation: tagFloat 2.8s ease-in-out infinite 0.2s;
+}
+
+.App-header .button:nth-child(3) {
+  transform: rotate(-2deg);
+  animation: tagFloat 2.6s ease-in-out infinite 0.1s;
+}
+
+.App-header .button::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #5a4a40;
+  border-radius: 50%;
+  box-shadow: 
+    20px 0 0 #5a4a40,
+    -20px 0 0 #5a4a40,
+    0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes tagFloat {
+  0%, 100% { transform: rotate(var(--rotation, 0deg)) translateY(0); }
+  50% { transform: rotate(var(--rotation, 0deg)) translateY(-6px); }
+}
+
+.App-header .button:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, #0a5f85 100%);
+  transform: rotate(var(--rotation, -6deg)) scale(1.08);
+  box-shadow: 
+    14px 18px 32px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(100, 180, 210, 0.4),
+    -3px -3px 8px rgba(0, 0, 0, 0.6);
+}
+
+.App-header .button:active {
+  transform: rotate(var(--rotation, -6deg)) scale(0.95);
+}
+
+.App-header .button:disabled {
+  background: linear-gradient(135deg, #6a5a50 0%, #4a3a30 100%);
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: 
+    6px 8px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(100, 100, 100, 0.2);
 }
