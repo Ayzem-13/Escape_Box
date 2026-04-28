@@ -20,10 +20,10 @@ function App() {
         <p data-testid="home-subtitle">Prêt à relever le défi ?</p>
         <div className="button-container" style={{ gap: t.spacing.lg, marginTop: t.spacing.lg }}>
           <Link to="/normal" className="button" data-testid="home-link-normal">
-            Commencer une partie
+            Commencer (mode normal)
           </Link>
           <Link to="/demo" className="button" data-testid="home-link-demo">
-            Commencer mode démo
+            Commencer (mode démo)
           </Link>
         </div>
 
