@@ -1,50 +1,76 @@
 .admin-spy-popup-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background: var(--color-overlay, rgba(0, 0, 0, 0.7));
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1500;
+  padding: var(--spacing-md);
+  backdrop-filter: blur(3px);
+  animation: admin-spy-fade 180ms ease;
 }
 
 .admin-spy-popup-content {
-  background: #242424;
-  padding: 2rem;
-  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  color: white;
+  gap: var(--spacing-lg);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 32px var(--color-primary-soft),
+    var(--shadow-lg);
   text-align: center;
-  min-width: 300px;
+  min-width: 320px;
+  max-width: 440px;
+  width: 100%;
+  animation: admin-spy-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.admin-spy-popup-content h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .admin-spy-input {
-  padding: 0.5rem;
+  padding: 0.6rem 0.5rem;
   font-size: 2rem;
   text-align: center;
   letter-spacing: 0.5rem;
-  width: 180px;
-  border-radius: 4px;
-  border: 1px solid #666;
-  background: #333;
-  color: white;
+  width: 200px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-primary);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
   align-self: center;
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
 .admin-spy-input:focus {
-  outline: 2px solid #646cff;
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
 }
 
 .admin-spy-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.admin-spy-buttons .button {
+  flex: 1;
+  min-width: 140px;
 }
 
 .admin-spy-codes-list {
@@ -52,11 +78,28 @@
   flex-direction: column;
   gap: 0.5rem;
   text-align: left;
-  background: #111;
-  padding: 1rem;
-  border-radius: 6px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-soft);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
 }
 
 .admin-spy-code-item {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}
+
+.admin-spy-code-item strong {
+  color: var(--color-primary);
+}
+
+@keyframes admin-spy-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes admin-spy-pop {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }

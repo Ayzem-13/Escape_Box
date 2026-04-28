@@ -1,0 +1,15 @@
+export { default as PaletteIcon } from './PaletteIcon';
+export { default as MusicIcon } from './MusicIcon';
+export { default as InfoIcon } from './InfoIcon';
+export { default as ChevronLeftIcon } from './ChevronLeftIcon';
+export { default as ChevronRightIcon } from './ChevronRightIcon';
+export { default as XIcon } from './XIcon';
+export { default as ArrowLeftIcon } from './ArrowLeftIcon';
+export { default as SquareIcon } from './SquareIcon';
+export { default as LockIcon } from './LockIcon';
+export { default as PlayIcon } from './PlayIcon';
+export { default as PauseIcon } from './PauseIcon';
+export { default as CheckIcon } from './CheckIcon';
+export { default as AncientTombIcon } from './AncientTombIcon';
+export { default as HauntedManorIcon } from './HauntedManorIcon';
+export { default as SecretLabIcon } from './SecretLabIcon';

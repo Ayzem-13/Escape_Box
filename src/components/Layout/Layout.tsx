@@ -1,7 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { ThemeContext, themeToCssVars, useTheme } from '../../theme/theme';
-import { availableThemes, type ThemeKey } from '../../theme/themes';
+import {
+  availableThemes,
+  DEFAULT_THEME_KEY,
+  THEME_LABELS,
+  type ThemeKey,
+} from '../../theme/themes';
 import { GameThemeContext, useGameTheme } from '../../theme/GameThemeContext';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
@@ -9,19 +14,35 @@ import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import LayoutVolumeFab from '../VolumeControl/VolumeControl';
+import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
+import { THEME_ICONS } from '../../theme/themeIcons';
+import '../../theme/ambient/index.css';
 import './Layout.css';
 
 const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
+const THEME_PER_MODE_KEY = 'escapeBoxThemePerMode';
 
-const THEME_LABELS: Record<ThemeKey, string> = {
-  light: '☀️ Blue Sky',
-  dark: '🌙 Midnight',
-  nature: '🌿 Forest',
+const isThemeKey = (value: unknown): value is ThemeKey =>
+  typeof value === 'string' && value in availableThemes;
+
+const loadThemePerMode = (): Record<string, ThemeKey> => {
+  try {
+    const raw = localStorage.getItem(THEME_PER_MODE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const out: Record<string, ThemeKey> = {};
+    for (const [route, value] of Object.entries(parsed)) {
+      if (isThemeKey(value)) out[route] = value;
+    }
+    return out;
+  } catch {
+    return {};
+  }
 };
 
 const LayoutHeader = () => {
   const t = useTheme();
-  const { gameStarted, resetGame } = useGame();
+  const { gameStarted, resetGame, restartGame } = useGame();
 
   return (
     <div
@@ -38,13 +59,22 @@ const LayoutHeader = () => {
       }}
     >
       {gameStarted && (
-        <button
-          onClick={resetGame}
-          className="button"
-          data-testid="layout-stop-btn"
-        >
-          ARRÊTER LA PARTIE
-        </button>
+        <>
+          <button
+            onClick={restartGame}
+            className="button"
+            data-testid="layout-restart-btn"
+          >
+            RECOMMENCER LA PARTIE
+          </button>
+          <button
+            onClick={resetGame}
+            className="button"
+            data-testid="layout-stop-btn"
+          >
+            ARRÊTER LA PARTIE
+          </button>
+        </>
       )}
       <Link
         to="/"
@@ -59,51 +89,46 @@ const LayoutHeader = () => {
 };
 
 const LayoutMusicFab = () => {
+  const { gameStarted } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playlistIndex, setPlaylistIndex] = useState(0);
 
-  // Interface pour les musiques sélectionnées
   interface SelectedMusic {
     label: string;
     file: string;
   }
 
-  // Effectuer le démarrage de la première musique de façon différée pour éviter setPlaylistIndex(0) synchronisé dans l'effet
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
-    if (savedMusics && audioRef.current) {
+    
+    if (gameStarted && savedMusics && audioRef.current) {
       try {
         const musics: SelectedMusic[] = JSON.parse(savedMusics);
         if (musics.length > 0) {
           audioRef.current.src = musics[0].file;
-          audioRef.current.play().catch(() => {
-            // L'autoplay peut être bloqué par le navigateur
-          });
+          audioRef.current.play().catch(() => {});
+          const handler = setTimeout(() => {
+            setPlaylistIndex(0);
+          }, 0);
+          return () => clearTimeout(handler);
         }
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
       }
+    } else if (!gameStarted && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
-  }, []);
+  }, [gameStarted]);
 
   const handleMusicSelect = (musics: SelectedMusic[]) => {
     if (musics.length === 0) return;
 
-    // Sauvegarder dans localStorage
     localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
-
-    // Jouer la première musique
-    if (audioRef.current) {
-      audioRef.current.src = musics[0].file;
-      audioRef.current.play().catch(() => {
-        // L'autoplay peut être bloqué par le navigateur
-      });
-      setPlaylistIndex(0);
-    }
+    setPlaylistIndex(0);
   };
 
-  // Passer à la musique suivante quand la musique actuelle finit
   const handleMusicEnd = () => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
     if (savedMusics && audioRef.current) {
@@ -126,17 +151,19 @@ const LayoutMusicFab = () => {
   return (
     <>
       <audio ref={audioRef} onEnded={handleMusicEnd} />
-      <button
-        type="button"
-        onClick={() => setIsMusicOpen(true)}
-        className="layout-music-fab"
-        aria-label="Sélectionner une musique"
-        title="Musique"
-        data-testid="layout-music-btn"
-      >
-        ♪
-      </button>
-      {isMusicOpen && (
+      {!gameStarted && (
+        <button
+          type="button"
+          onClick={() => setIsMusicOpen(true)}
+          className="layout-music-fab"
+          aria-label="Sélectionner une musique"
+          title="Musique"
+          data-testid="layout-music-btn"
+        >
+          <MusicIcon size={22} />
+        </button>
+      )}
+      {isMusicOpen && !gameStarted && (
         <MusicSelector
           onClose={handleClose}
           onSelect={handleMusicSelect}
@@ -163,19 +190,23 @@ const LayoutThemeFab = () => {
         title="Thème"
         data-testid="layout-theme-btn"
       >
-        🎨
+        <PaletteIcon size={22} />
       </button>
       {isOpen && (
         <div className="layout-theme-dropdown">
-          {(Object.keys(availableThemes) as ThemeKey[]).map((key) => (
-            <button
-              key={key}
-              className={key === themeKey ? 'active' : ''}
-              onClick={() => { setThemeKey(key); setIsOpen(false); }}
-            >
-              {THEME_LABELS[key]}
-            </button>
-          ))}
+          {(Object.keys(availableThemes) as ThemeKey[]).map((key) => {
+            const Icon = THEME_ICONS[key];
+            return (
+              <button
+                key={key}
+                className={key === themeKey ? 'active' : ''}
+                onClick={() => { setThemeKey(key); setIsOpen(false); }}
+              >
+                <Icon size={18} />
+                <span>{THEME_LABELS[key]}</span>
+              </button>
+            );
+          })}
         </div>
       )}
     </>
@@ -198,7 +229,7 @@ const LayoutInfoFab = () => {
         title="Informations"
         data-testid="layout-info-btn"
       >
-        i
+        <InfoIcon size={22} />
       </button>
       {isInfoOpen && <InfoPopup onClose={() => setIsInfoOpen(false)} />}
     </>
@@ -218,7 +249,7 @@ const LayoutAdminSpyFab = () => {
         title="Voir les codes"
         data-testid="layout-spy-btn"
       >
-        🔒
+        <LockIcon size={22} />
       </button>
       {isSpyOpen && <AdminSpyPopup onClose={() => setIsSpyOpen(false)} />}
     </>
@@ -229,7 +260,7 @@ const LayoutInner = () => {
   const t = useTheme();
   return (
     <GameProvider>
-      <div style={{ backgroundColor: t.color.bg, color: t.color.text, minHeight: '100vh' }}>
+      <div style={{ color: t.color.text, minHeight: '100vh' }}>
         <LayoutHeader />
         <main>
           <Outlet />
@@ -246,19 +277,29 @@ const LayoutInner = () => {
 
 const Layout = () => {
   const location = useLocation();
-  const [themeKey, setThemeKey] = useState<ThemeKey>('light');
-  const [prevPath, setPrevPath] = useState(location.pathname);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Track location changes manually to reset theme without effect cascading
-  if (prevPath !== location.pathname) {
-    setPrevPath(location.pathname);
-    setThemeKey('light'); // Safe because it happens during render to trigger one immediate updated render
-  }
+
+  const [themePerMode, setThemePerMode] = useState<Record<string, ThemeKey>>(
+    () => loadThemePerMode(),
+  );
+
+  const themeKey: ThemeKey =
+    themePerMode[location.pathname] ?? DEFAULT_THEME_KEY;
+
+  const setThemeKey = useCallback((key: ThemeKey) => {
+    setThemePerMode((prev) => {
+      const next = { ...prev, [location.pathname]: key };
+      try {
+        localStorage.setItem(THEME_PER_MODE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, [location.pathname]);
 
   const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
 
-  // Apply CSS vars to the layout container only (not :root → home page unaffected)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -268,12 +309,23 @@ const Layout = () => {
     }
   }, [theme]);
 
-  const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey]);
+  useEffect(() => {
+    document.documentElement.dataset.escapeTheme = themeKey;
+    return () => {
+      delete document.documentElement.dataset.escapeTheme;
+    };
+  }, [themeKey]);
+
+  const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey, setThemeKey]);
 
   return (
     <GameThemeContext.Provider value={gameThemeValue}>
       <ThemeContext.Provider value={theme}>
-        <div ref={containerRef} style={{ minHeight: '100vh' }}>
+        <div
+          ref={containerRef}
+          className="escape-ambient"
+          data-theme={themeKey}
+        >
           <LayoutInner />
         </div>
       </ThemeContext.Provider>

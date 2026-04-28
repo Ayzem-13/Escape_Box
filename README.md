@@ -7,6 +7,7 @@ Un jeu de type "Escape Box" interactif développé avec React, TypeScript, Vite 
 - **Plusieurs modes de jeu :** Mode Normal et Mode Démo pour s'adapter aux différents besoins.
 - **Système de code secret :** Une interface contextuelle (popup) permettant aux joueurs de sélectionner un code de 4 symboles (▲, ▼, 1, 2, A, B, etc.).
 - **Validation de code interactive :** En cours de jeu, les utilisateurs peuvent tester des combinaisons avec des retours visuels (toast) et sonores (succès/échec).
+- **Ambiance musicale évolutive :** Possibilité de sélectionner jusqu'à 4 musiques couvrant chacune un quart d'heure de la partie (0-15 min, 15-30 min, etc.) avec une fonction de pré-écoute intégrée au menu.
 - **Chronomètre & Pénalités :** Suivi dynamique du temps de la partie. Une pénalité de -1 minute s'applique instantanément en cas de code incorrect.
 - **Persistance des données :** Le code secret sélectionné et certains états sont stockés dans le `localStorage` du navigateur.
 - **Interface globale :** Accès rapide aux fonctionnalités clés (comme la définition du code) depuis un menu flottant disponible sur les écrans de jeu.
@@ -81,7 +82,8 @@ Voici les commandes principales pour le développement et la compilation :
     │   ├── Combinations/    # Interface de setup de la partie
     │   ├── FoundCodesIndicator/ # Indicateur in-game des codes valides et trouvés
     │   ├── InfoPopup/       # Alertes et informations textuelles pour les joueurs
-    │   └── Layout/          # Layout de base de l'application
+    │   ├── Layout/          # Layout de base de l'application
+    │   └── MusicSelector/   # Interface de sélection et pré-écoute des musiques avant la partie
     ├── config/              # Fichiers de configuration ou de constantes statiques
     ├── context/             # Gestion des états globaux
     │   ├── CodesContext     # Contexte de gestion des codes saisis

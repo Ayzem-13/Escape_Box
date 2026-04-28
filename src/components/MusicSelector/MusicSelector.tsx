@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
+import { CheckIcon, PauseIcon, PlayIcon, XIcon } from '../../theme/icons';
 import './MusicSelector.css';
 
 interface SelectedMusic {
@@ -12,44 +13,88 @@ interface MusicSelectorProps {
   onSelect: (musics: SelectedMusic[]) => void;
 }
 
-const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(() => {
-    const saved = localStorage.getItem('escapeBoxSelectedMusics');
-    const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
-    
-    if (saved) {
-      try {
-        const musics: SelectedMusic[] = JSON.parse(saved);
-        musics.forEach((music, index) => {
-          if (index < 4) {
-            defaultSelected[index] = music;
-          }
-        });
-      } catch (e) {
-        console.error('Erreur lors du chargement des musiques sauvegardées', e);
-      }
+const loadDefaultMusics = () => {
+  const saved = localStorage.getItem('escapeBoxSelectedMusics');
+  const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
+  
+  if (saved) {
+    try {
+      const musics: SelectedMusic[] = JSON.parse(saved);
+      musics.forEach((music, index) => {
+        if (index < 4) {
+          defaultSelected[index] = music;
+        }
+      });
+    } catch (e) {
+      console.error('Erreur lors du chargement des musiques sauvegardées', e);
     }
-    return defaultSelected;
-  });
+  }
+  return defaultSelected;
+};
+
+const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
+  const [initialMusics] = useState<(SelectedMusic | null)[]>(loadDefaultMusics);
+  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(initialMusics);
   const [isValidated, setIsValidated] = useState(false);
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  
+  // Vérifier si la sélection a été modifiée par rapport à l'état initial
+  const hasChanges = JSON.stringify(selectedMusics) !== JSON.stringify(initialMusics);
+  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof Audio !== 'undefined') {
+      audioRef.current = new Audio();
+      audioRef.current.onended = () => setPlayingIndex(null);
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
+    };
+  }, []);
+
+  const togglePlay = (index: number, file: string) => {
+    if (!audioRef.current) return;
+    if (playingIndex === index) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    } else {
+      audioRef.current.src = file;
+      audioRef.current.play().catch(e => console.error('Erreur de lecture audio', e));
+      setPlayingIndex(index);
+    }
+  };
 
   const handleMusicChange = (index: number, label: string, file: string) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = { label, file };
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleRemoveMusic = (index: number) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = null;
     setSelectedMusics(newSelected);
+    if (playingIndex === index) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
   };
 
   const handleValidate = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayingIndex(null);
+    }
     // Filtrer les musiques non vides
     const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
-    
-    if (musicsToSave.length === 0) return;
     
     // Sauvegarder dans localStorage
     localStorage.setItem('escapeBoxSelectedMusics', JSON.stringify(musicsToSave));
@@ -82,7 +127,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
         
         {isValidated && (
           <div className="music-selector-validation" data-testid="music-validation">
-            ✓ Musiques sélectionnées avec succès !
+            <CheckIcon size={18} /> Musiques sélectionnées avec succès !
           </div>
         )}
         
@@ -126,13 +171,25 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 {selectedMusic && (
                   <button
                     type="button"
+                    className={`music-selector-preview ${playingIndex === index ? 'playing' : ''}`}
+                    onClick={() => togglePlay(index, selectedMusic.file)}
+                    title={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    aria-label={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    disabled={isValidated}
+                  >
+                    {playingIndex === index ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
+                  </button>
+                )}
+                {selectedMusic && (
+                  <button
+                    type="button"
                     className="music-selector-dropdown-clear"
                     onClick={() => handleRemoveMusic(index)}
                     data-testid={`music-remove-${index}`}
                     aria-label={`Supprimer ${selectedMusic.label}`}
                     disabled={isValidated}
                   >
-                    ✕
+                    <XIcon size={16} />
                   </button>
                 )}
               </div>
@@ -172,7 +229,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
             onClick={handleValidate}
             className="music-selector-validate"
             data-testid="music-selector-validate"
-            disabled={selectedMusics.every((m) => m === null) || isValidated}
+            disabled={!hasChanges || isValidated}
           >
             Valider
           </button>

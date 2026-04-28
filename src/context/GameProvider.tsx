@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { toast } from 'react-toastify';
 import { GameContext, type GameContextValue } from './GameContext';
 import { codesStorageKey } from './CodesContext';
 
@@ -19,9 +20,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setSession((s) => s + 1);
   }, []);
 
+  const restartGame = useCallback(() => {
+    toast.info('Partie redémarrée !');
+    setSession((s) => s + 1);
+  }, []);
+
   const value = useMemo<GameContextValue>(
-    () => ({ gameStarted, startGame, resetGame, session }),
-    [gameStarted, startGame, resetGame, session],
+    () => ({ gameStarted, startGame, resetGame, restartGame, session }),
+    [gameStarted, startGame, resetGame, restartGame, session],
   );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
