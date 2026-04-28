@@ -20,6 +20,7 @@ const PageCredits: React.FC = () => {
           Crédits
         </h1>
         <p className="credits-hero-tagline">{CREDITS_TAGLINE}</p>
+        <p className="credits-hero-tagline">Initiative ludopedagogique par Thierry Secqueville, Esimed 2026</p>
       </section>
 
       <section className="credits-section">
