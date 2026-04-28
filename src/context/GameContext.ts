@@ -4,6 +4,7 @@ export type GameContextValue = {
   gameStarted: boolean;
   startGame: () => void;
   resetGame: () => void;
+  restartGame: () => void;
   session: number;
 };
 
