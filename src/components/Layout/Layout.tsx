@@ -7,6 +7,7 @@ import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
+import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import './Layout.css';
 
 const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
@@ -67,7 +68,7 @@ const LayoutMusicFab = () => {
     file: string;
   }
 
-  // Charger les musiques sauvegardées au montage
+  // Effectuer le démarrage de la première musique de façon différée pour éviter setPlaylistIndex(0) synchronisé dans l'effet
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
     if (savedMusics && audioRef.current) {
@@ -78,7 +79,6 @@ const LayoutMusicFab = () => {
           audioRef.current.play().catch(() => {
             // L'autoplay peut être bloqué par le navigateur
           });
-          setPlaylistIndex(0);
         }
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
@@ -204,6 +204,26 @@ const LayoutInfoFab = () => {
   );
 };
 
+const LayoutAdminSpyFab = () => {
+  const [isSpyOpen, setIsSpyOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsSpyOpen(true)}
+        className="layout-spy-fab"
+        aria-label="Voir les mots de passe"
+        title="Voir les codes"
+        data-testid="layout-spy-btn"
+      >
+        🔒
+      </button>
+      {isSpyOpen && <AdminSpyPopup onClose={() => setIsSpyOpen(false)} />}
+    </>
+  );
+};
+
 const LayoutInner = () => {
   const t = useTheme();
   return (
@@ -216,6 +236,7 @@ const LayoutInner = () => {
         <LayoutThemeFab />
         <LayoutMusicFab />
         <LayoutInfoFab />
+        <LayoutAdminSpyFab />
       </div>
     </GameProvider>
   );
@@ -224,12 +245,14 @@ const LayoutInner = () => {
 const Layout = () => {
   const location = useLocation();
   const [themeKey, setThemeKey] = useState<ThemeKey>('light');
+  const [prevPath, setPrevPath] = useState(location.pathname);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Reset theme independently for each route
-  useEffect(() => {
-    setThemeKey('light');
-  }, [location.pathname]);
+  
+  // Track location changes manually to reset theme without effect cascading
+  if (prevPath !== location.pathname) {
+    setPrevPath(location.pathname);
+    setThemeKey('light'); // Safe because it happens during render to trigger one immediate updated render
+  }
 
   const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
 
