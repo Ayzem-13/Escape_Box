@@ -1,0 +1,78 @@
+/* Responsive — adaptations tablette / mobile */
+
+@media (max-width: 900px) {
+  .escape-ambient h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); }
+  .escape-ambient .button { width: clamp(220px, 70vw, 320px); }
+  .layout-info-fab,
+  .layout-music-fab,
+  .layout-theme-fab {
+    width: 48px;
+    height: 48px;
+    bottom: 12px;
+    right: 12px;
+  }
+  .layout-music-fab  { bottom: calc(12px + 60px); }
+  .layout-theme-fab  { bottom: calc(12px + 120px); }
+  .layout-theme-dropdown { bottom: calc(12px + 180px); right: 12px; }
+}
+
+@media (max-width: 600px) {
+  .escape-ambient .ambient-corner { display: none; }
+  .escape-ambient main {
+    padding: clamp(56px, 10vh, 80px) 12px clamp(60px, 10vh, 80px);
+  }
+  .escape-ambient h1 { font-size: clamp(1.5rem, 7vw, 2.2rem); letter-spacing: 0.08em; }
+  .escape-ambient .button {
+    width: 100%;
+    max-width: 320px;
+    padding: 14px 22px;
+    font-size: 0.95rem;
+  }
+  .escape-ambient .popup-content {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-radius: var(--radius-md);
+    width: calc(100vw - 24px);
+  }
+  .escape-ambient .code-input-slot {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  .escape-ambient .code-input-token {
+    width: 38px;
+    height: 38px;
+    font-size: 0.95rem;
+  }
+  .escape-ambient .code-input-grid[data-category='letters'] {
+    grid-template-columns: repeat(6, 38px);
+  }
+  .escape-ambient .code-input-grid[data-category='numbers'] {
+    grid-template-columns: repeat(5, 38px);
+  }
+  .layout-header {
+    top: 8px !important;
+    left: 8px !important;
+    gap: 6px !important;
+  }
+  .layout-header .button {
+    width: auto;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .layout-info-fab,
+  .layout-music-fab,
+  .layout-theme-fab {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .escape-ambient h1 { font-size: 1.3rem; }
+  .escape-ambient .code-input-slot { width: 32px; height: 32px; font-size: 1rem; }
+  .escape-ambient .code-input-token { width: 34px; height: 34px; }
+  .escape-ambient .code-input-grid[data-category='symbols']  { grid-template-columns: repeat(4, 34px); }
+  .escape-ambient .code-input-grid[data-category='letters']  { grid-template-columns: repeat(6, 34px); }
+  .escape-ambient .code-input-grid[data-category='numbers']  { grid-template-columns: repeat(5, 34px); }
+}

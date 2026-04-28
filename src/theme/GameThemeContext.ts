@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { ThemeKey } from './themes';
+import { DEFAULT_THEME_KEY, type ThemeKey } from './themes';
 
 type GameThemeCtx = {
   themeKey: ThemeKey;
@@ -7,7 +7,7 @@ type GameThemeCtx = {
 };
 
 export const GameThemeContext = createContext<GameThemeCtx>({
-  themeKey: 'light',
+  themeKey: DEFAULT_THEME_KEY,
   setThemeKey: () => {},
 });
 
