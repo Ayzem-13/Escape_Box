@@ -15,13 +15,22 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
   const warningInterval = 900; // 15 minutes in seconds
 
   useEffect(() => {
+    audioRef.current = new Audio(bipSound);
+    audioRef.current.preload = 'auto';
+  }, []);
+
+  useEffect(() => {
     if (time > 0) {
       const timerId = setTimeout(() => {
         setTime(time - 1);
       }, 1000);
 
-      if (time % warningInterval === 0) {
-        audioRef.current?.play();
+      if (time % warningInterval === 0 && audioRef.current) {
+        audioRef.current.currentTime = 0;
+        const playResult = audioRef.current.play();
+        if (playResult && typeof playResult.catch === 'function') {
+          playResult.catch(() => {});
+        }
         setIsWarning(true);
         setTimeout(() => setIsWarning(false), 3000); // Flash for 3 seconds
       }
@@ -29,10 +38,6 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
       return () => clearTimeout(timerId);
     }
   }, [time, initialTime]);
-
-  useEffect(() => {
-    audioRef.current = new Audio(bipSound);
-  }, []);
 
   useEffect(() => {
     const handlePenalty = () => {

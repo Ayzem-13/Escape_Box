@@ -1,13 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
+import { SELECTED_MUSIC_KEY } from '../BackgroundMusic/BackgroundMusic';
 import './Layout.css';
-
-const SELECTED_MUSIC_KEY = 'escapeBoxSelectedMusic';
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -48,37 +47,55 @@ const LayoutHeader = () => {
   );
 };
 
-const LayoutMusicFab = () => {
-  const [isMusicOpen, setIsMusicOpen] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+const stopPreview = (audio: HTMLAudioElement | null) => {
+  if (!audio) return;
+  audio.pause();
+  audio.currentTime = 0;
+};
 
-  // Charger la musique sauvegardée au montage
+const LayoutMusicFab = () => {
+  const { gameStarted } = useGame();
+  const [isMusicOpen, setIsMusicOpen] = useState(false);
+  const previewRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
-    const savedMusicFile = localStorage.getItem(SELECTED_MUSIC_KEY);
-    if (savedMusicFile && audioRef.current) {
-      audioRef.current.src = savedMusicFile;
-      audioRef.current.play().catch(() => {
-        // L'autoplay peut être bloqué par le navigateur
-      });
-    }
+    const audio = new Audio();
+    audio.loop = true;
+    audio.volume = 0.4;
+    audio.preload = 'auto';
+    previewRef.current = audio;
+    return () => {
+      stopPreview(audio);
+      audio.src = '';
+      previewRef.current = null;
+    };
   }, []);
 
+  if (gameStarted) return null;
+
   const handleMusicSelect = (_musicLabel: string, musicFile: string) => {
-    // Sauvegarder dans localStorage
-    localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
-    
-    // Jouer la musique
-    if (audioRef.current) {
-      audioRef.current.src = musicFile;
-      audioRef.current.play().catch(() => {
-        // L'autoplay peut être bloqué par le navigateur
-      });
+    try {
+      localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
+    } catch {
+      // ignore (private mode / quota)
     }
+    const audio = previewRef.current;
+    if (audio) {
+      audio.src = musicFile;
+      const result = audio.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch(() => {});
+      }
+    }
+  };
+
+  const handleClose = () => {
+    stopPreview(previewRef.current);
+    setIsMusicOpen(false);
   };
 
   return (
     <>
-      <audio ref={audioRef} loop />
       <button
         type="button"
         onClick={() => setIsMusicOpen(true)}
@@ -91,7 +108,7 @@ const LayoutMusicFab = () => {
       </button>
       {isMusicOpen && (
         <MusicSelector
-          onClose={() => setIsMusicOpen(false)}
+          onClose={handleClose}
           onSelect={handleMusicSelect}
         />
       )}

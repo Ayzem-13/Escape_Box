@@ -9,17 +9,10 @@ interface MusicSelectorProps {
 
 const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
   const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
-  const [isValidated, setIsValidated] = useState(false);
 
   const handleSelect = (label: string, file: string) => {
     setSelectedMusic(label);
     onSelect(label, file);
-    setIsValidated(true);
-    
-    // Fermer après 2 secondes si validé
-    setTimeout(() => {
-      onClose();
-    }, 2000);
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -36,13 +29,13 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
     >
       <div className="music-selector-content">
         <h2 className="music-selector-title">Sélectionnez une ambiance musicale</h2>
-        
-        {isValidated && (
+
+        {selectedMusic && (
           <div className="music-selector-validation" data-testid="music-validation">
-            ✓ Musique sélectionnée avec succès !
+            ✓ Aperçu : {selectedMusic}
           </div>
         )}
-        
+
         <div className="music-selector-options">
           {MUSIC_OPTIONS.map((option) => (
             <button
@@ -53,7 +46,6 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
               }`}
               onClick={() => handleSelect(option.label, option.file)}
               data-testid={`music-option-${option.id}`}
-              disabled={isValidated}
             >
               <span className="music-selector-option-name">{option.label}</span>
             </button>
@@ -66,7 +58,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
           className="music-selector-close"
           data-testid="music-selector-close"
         >
-          {isValidated ? 'Fermeture...' : 'Fermer'}
+          Fermer
         </button>
       </div>
     </div>
