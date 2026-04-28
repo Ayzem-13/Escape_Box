@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
+import { CheckIcon, PauseIcon, PlayIcon, XIcon } from '../../theme/icons';
 import './MusicSelector.css';
 
 interface SelectedMusic {
@@ -121,7 +122,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
         
         {isValidated && (
           <div className="music-selector-validation" data-testid="music-validation">
-            ✓ Musiques sélectionnées avec succès !
+            <CheckIcon size={18} /> Musiques sélectionnées avec succès !
           </div>
         )}
         
@@ -171,7 +172,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                     aria-label={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
                     disabled={isValidated}
                   >
-                    {playingIndex === index ? '⏸️' : '▶️'}
+                    {playingIndex === index ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
                   </button>
                 )}
                 {selectedMusic && (
@@ -183,7 +184,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                     aria-label={`Supprimer ${selectedMusic.label}`}
                     disabled={isValidated}
                   >
-                    ✕
+                    <XIcon size={16} />
                   </button>
                 )}
               </div>
