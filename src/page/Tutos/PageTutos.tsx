@@ -5,11 +5,11 @@ import './PageTutos.css';
 const TUTORIAL_STEPS = [
     {
         title: '1. Choisis ton mode',
-        description: 'Depuis l\'accueil, lance une partie normale ou un mode démo.',
+        description: 'Depuis l\'accueil, lance une partie normale (60 minutes) ou un mode démo (15 minutes).',
     },
     {
         title: '2. Observe les indices',
-        description: 'Teste des combinaisons, et note ce qui fonctionne pour éviter les erreurs.',
+        description: 'En partie, utilise le bouton d\'indices (code Morse, code César), puis note ce qui fonctionne.',
     },
     {
         title: '3. Gère ton chrono',
@@ -19,13 +19,6 @@ const TUTORIAL_STEPS = [
         title: '4. Coordonne l\'équipe',
         description: 'Répartissez les tâches pour progresser plus vite, puis recoupez les trouvailles ensemble.',
     },
-];
-
-const TEAM_ROLES = [
-    'Analyste: lit les indices et reformule les hypothèses clairement.',
-    'Testeur: saisit les combinaisons et valide les retours du système.',
-    'Archiviste: note chaque tentative pour éviter de répéter les mêmes erreurs.',
-    'Gardien du temps: annonce les paliers du chrono et relance l\'équipe.',
 ];
 
 const PageTutos: React.FC = () => {
@@ -70,6 +63,45 @@ const PageTutos: React.FC = () => {
                         </li>
                     ))}
                 </ul>
+            </section>
+
+            <section className="tutos-section" aria-label="duree des modes">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Durée des modes</h2>
+                    <p className="tutos-card-description">
+                        Une partie normale dure 60 minutes. Une partie en mode démo dure 15 minutes.
+                    </p>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="indices en partie">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Indices disponibles en partie</h2>
+                    <p className="tutos-card-description">
+                        Pendant la partie, un bouton d'indices permet d'obtenir des aides de décodage,
+                        notamment pour le code Morse et le code César.
+                    </p>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="theme visuel">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Choix du thème visuel</h2>
+                    <p className="tutos-card-description">
+                        Au lancement d'une partie, le joueur peut définir le thème visuel qu'il souhaite
+                        utiliser pour son expérience de jeu.
+                    </p>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="mot de passe administrateur">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Mot de passe administrateur</h2>
+                    <p className="tutos-card-description">
+                        Depuis la page principale, il est possible de définir le mot de passe administrateur,
+                        qui donne accès au code pendant la partie.
+                    </p>
+                </div>
             </section>
         </div>
     );
