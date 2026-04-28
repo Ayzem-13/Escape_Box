@@ -1,0 +1,47 @@
+.admin-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.admin-popup-content {
+  background: #242424;
+  padding: 2rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  color: white;
+  text-align: center;
+}
+
+.admin-input {
+  padding: 0.5rem;
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: 0.5rem;
+  width: 180px;
+  border-radius: 4px;
+  border: 1px solid #666;
+  background: #333;
+  color: white;
+  align-self: center;
+}
+
+.admin-input:focus {
+  outline: 2px solid #646cff;
+}
+
+.admin-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

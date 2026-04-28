@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
 import './MusicSelector.css';
 
@@ -13,28 +13,25 @@ interface MusicSelectorProps {
 }
 
 const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>([null, null, null]);
-  const [isValidated, setIsValidated] = useState(false);
-
-  // Charger les musiques sauvegardées
-  useEffect(() => {
+  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(() => {
     const saved = localStorage.getItem('escapeBoxSelectedMusics');
+    const defaultSelected = [null, null, null] as (SelectedMusic | null)[];
+    
     if (saved) {
       try {
         const musics: SelectedMusic[] = JSON.parse(saved);
-        // Remplir les dropdowns avec les musiques sauvegardées
-        const newSelected = [null, null, null] as (SelectedMusic | null)[];
         musics.forEach((music, index) => {
           if (index < 3) {
-            newSelected[index] = music;
+            defaultSelected[index] = music;
           }
         });
-        setSelectedMusics(newSelected);
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
       }
     }
-  }, []);
+    return defaultSelected;
+  });
+  const [isValidated, setIsValidated] = useState(false);
 
   const handleMusicChange = (index: number, label: string, file: string) => {
     const newSelected = [...selectedMusics];

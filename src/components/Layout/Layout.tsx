@@ -1,13 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { useTheme } from '../../theme/theme';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { ThemeContext, themeToCssVars, useTheme } from '../../theme/theme';
+import { availableThemes, type ThemeKey } from '../../theme/themes';
+import { GameThemeContext, useGameTheme } from '../../theme/GameThemeContext';
 import { GameProvider } from '../../context/GameProvider';
 import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
+import { AdminSpyPopup } from '../AdminSpyPopup/AdminSpyPopup';
 import './Layout.css';
 
 const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
+
+const THEME_LABELS: Record<ThemeKey, string> = {
+  light: '☀️ Blue Sky',
+  dark: '🌙 Midnight',
+  nature: '🌿 Forest',
+};
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -59,7 +68,7 @@ const LayoutMusicFab = () => {
     file: string;
   }
 
-  // Charger les musiques sauvegardées au montage
+  // Effectuer le démarrage de la première musique de façon différée pour éviter setPlaylistIndex(0) synchronisé dans l'effet
   useEffect(() => {
     const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
     if (savedMusics && audioRef.current) {
@@ -70,7 +79,6 @@ const LayoutMusicFab = () => {
           audioRef.current.play().catch(() => {
             // L'autoplay peut être bloqué par le navigateur
           });
-          setPlaylistIndex(0);
         }
       } catch (e) {
         console.error('Erreur lors du chargement des musiques sauvegardées', e);
@@ -137,6 +145,42 @@ const LayoutMusicFab = () => {
   );
 };
 
+const LayoutThemeFab = () => {
+  const { gameStarted } = useGame();
+  const { themeKey, setThemeKey } = useGameTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (gameStarted) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen((v) => !v)}
+        className="layout-theme-fab"
+        aria-label="Changer le thème"
+        title="Thème"
+        data-testid="layout-theme-btn"
+      >
+        🎨
+      </button>
+      {isOpen && (
+        <div className="layout-theme-dropdown">
+          {(Object.keys(availableThemes) as ThemeKey[]).map((key) => (
+            <button
+              key={key}
+              className={key === themeKey ? 'active' : ''}
+              onClick={() => { setThemeKey(key); setIsOpen(false); }}
+            >
+              {THEME_LABELS[key]}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
+
 const LayoutInfoFab = () => {
   const { gameStarted } = useGame();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -160,9 +204,28 @@ const LayoutInfoFab = () => {
   );
 };
 
-const Layout = () => {
-  const t = useTheme();
+const LayoutAdminSpyFab = () => {
+  const [isSpyOpen, setIsSpyOpen] = useState(false);
 
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsSpyOpen(true)}
+        className="layout-spy-fab"
+        aria-label="Voir les mots de passe"
+        title="Voir les codes"
+        data-testid="layout-spy-btn"
+      >
+        🔒
+      </button>
+      {isSpyOpen && <AdminSpyPopup onClose={() => setIsSpyOpen(false)} />}
+    </>
+  );
+};
+
+const LayoutInner = () => {
+  const t = useTheme();
   return (
     <GameProvider>
       <div style={{ backgroundColor: t.color.bg, color: t.color.text, minHeight: '100vh' }}>
@@ -170,10 +233,49 @@ const Layout = () => {
         <main>
           <Outlet />
         </main>
+        <LayoutThemeFab />
         <LayoutMusicFab />
         <LayoutInfoFab />
+        <LayoutAdminSpyFab />
       </div>
     </GameProvider>
+  );
+};
+
+const Layout = () => {
+  const location = useLocation();
+  const [themeKey, setThemeKey] = useState<ThemeKey>('light');
+  const [prevPath, setPrevPath] = useState(location.pathname);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Track location changes manually to reset theme without effect cascading
+  if (prevPath !== location.pathname) {
+    setPrevPath(location.pathname);
+    setThemeKey('light'); // Safe because it happens during render to trigger one immediate updated render
+  }
+
+  const theme = useMemo(() => availableThemes[themeKey], [themeKey]);
+
+  // Apply CSS vars to the layout container only (not :root → home page unaffected)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const vars = themeToCssVars(theme);
+    for (const [name, value] of Object.entries(vars)) {
+      el.style.setProperty(name, value);
+    }
+  }, [theme]);
+
+  const gameThemeValue = useMemo(() => ({ themeKey, setThemeKey }), [themeKey]);
+
+  return (
+    <GameThemeContext.Provider value={gameThemeValue}>
+      <ThemeContext.Provider value={theme}>
+        <div ref={containerRef} style={{ minHeight: '100vh' }}>
+          <LayoutInner />
+        </div>
+      </ThemeContext.Provider>
+    </GameThemeContext.Provider>
   );
 };
 

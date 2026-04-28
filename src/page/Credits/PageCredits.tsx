@@ -44,6 +44,87 @@ const PageCredits: React.FC = () => {
         </ul>
       </section>
 
+      <section className="credits-section">
+        <h2 className="credits-section-heading">Musique et effets sonores</h2>
+        <ul className="credits-list">
+          <li>Tense Suspense Ambience by AbsoluteSound</li>
+          <li>Suspense Ambience 2 by AbsoluteSound</li>
+          <li>Suspense Tense Atmosphere by AbsoluteSound</li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476685"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Universfield
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476685"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=166944"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Universfield
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=166944"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/users/simplesound-53070346/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=443327"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              SimpleSound
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=443327"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=53909"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              freesound_community
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=53909"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+        </ul>
+      </section>
+
       <footer className="credits-footer">
         <Link
           to="/"

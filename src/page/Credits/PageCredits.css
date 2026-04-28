@@ -209,6 +209,34 @@
 .credits-card-quote::before { content: '“'; margin-right: 4px; }
 .credits-card-quote::after  { content: '”'; margin-left: 4px; }
 
+/* ─────────── Credits List ─────────── */
+
+.credits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 600px;
+  text-align: center;
+}
+
+.credits-list li {
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.95rem;
+  color: var(--color-text-inverse);
+  opacity: 0.8;
+}
+
+.credits-list a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.credits-list a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
 /* ────────────── Footer ────────────── */
 
 .credits-footer {
