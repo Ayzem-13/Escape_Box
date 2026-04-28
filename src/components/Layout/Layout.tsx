@@ -58,6 +58,7 @@ const LayoutHeader = () => {
 };
 
 const LayoutMusicFab = () => {
+  const { gameStarted } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playlistIndex, setPlaylistIndex] = useState(0);
@@ -125,17 +126,19 @@ const LayoutMusicFab = () => {
   return (
     <>
       <audio ref={audioRef} onEnded={handleMusicEnd} />
-      <button
-        type="button"
-        onClick={() => setIsMusicOpen(true)}
-        className="layout-music-fab"
-        aria-label="Sélectionner une musique"
-        title="Musique"
-        data-testid="layout-music-btn"
-      >
-        ♪
-      </button>
-      {isMusicOpen && (
+      {!gameStarted && (
+        <button
+          type="button"
+          onClick={() => setIsMusicOpen(true)}
+          className="layout-music-fab"
+          aria-label="Sélectionner une musique"
+          title="Musique"
+          data-testid="layout-music-btn"
+        >
+          ♪
+        </button>
+      )}
+      {isMusicOpen && !gameStarted && (
         <MusicSelector
           onClose={handleClose}
           onSelect={handleMusicSelect}
