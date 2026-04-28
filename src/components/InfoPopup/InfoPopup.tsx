@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import morseImage from '../../assets/images/International_Morse_Code-fr.svg.png';
 import CaesarChart from '../CaesarChart/CaesarChart';
+import { ChevronLeftIcon, ChevronRightIcon } from '../../theme/icons';
 import './InfoPopup.css';
 
 interface InfoPopupProps {
@@ -75,7 +76,7 @@ const InfoPopup: React.FC<InfoPopupProps> = ({ onClose }) => {
             aria-label="Page précédente"
             data-testid="info-popup-prev"
           >
-            ‹
+            <ChevronLeftIcon size={18} />
           </button>
           <div className="info-popup-page-dots">
             {PAGES.map((p, i) => (
@@ -101,7 +102,7 @@ const InfoPopup: React.FC<InfoPopupProps> = ({ onClose }) => {
             aria-label="Page suivante"
             data-testid="info-popup-next"
           >
-            ›
+            <ChevronRightIcon size={18} />
           </button>
         </div>
 

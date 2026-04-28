@@ -39,7 +39,12 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <RouterProvider router={router} />
-      <ToastContainer position="bottom-right" autoClose={3000} theme="light" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        theme="dark"
+        toastClassName="escape-toast"
+      />
     </ThemeProvider>
   </StrictMode>,
 )

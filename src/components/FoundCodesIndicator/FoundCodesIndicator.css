@@ -14,17 +14,18 @@
 }
 
 .found-codes-indicator-dot {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background-color: #444;
-  border: 1px solid #666;
-  transition: background-color 0.3s;
+  width: 24px;
+  height: 24px;
+  background-image: url('/silhouette-de-trou-de-serrure.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.2;
+  transition: opacity 0.3s;
 }
 
 .found-codes-indicator-dot[data-found='true'] {
-  background-color: #2ecc71;
-  border-color: #27ae60;
+  opacity: 1;
 }
 
 .found-codes-indicator-count {

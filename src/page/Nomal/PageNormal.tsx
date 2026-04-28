@@ -15,8 +15,8 @@ const NormalSetup: React.FC = () => {
   const { allCodesSet } = useCodes();
 
   return (
-    <div className="App" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
-      <h1 data-testid="normal-title" style={{ color: t.color.primary }}>MODE NORMAL</h1>
+    <div className="App">
+      <h1 data-testid="normal-title">MODE NORMAL</h1>
       <p data-testid="normal-duration">Durée de la partie: 60 minutes</p>
 
       <Combinations
@@ -38,9 +38,8 @@ const NormalSetup: React.FC = () => {
 };
 
 const NormalGame: React.FC = () => {
-  const t = useTheme();
   return (
-    <div data-testid="normal-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
+    <div data-testid="normal-game-screen">
       <div data-testid="normal-timer">
         <Chrono initialTime={3600} />
       </div>
