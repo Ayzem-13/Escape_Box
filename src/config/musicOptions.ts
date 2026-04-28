@@ -1,30 +1,34 @@
 // Configuration des musiques disponibles pour le jeu
-import suspenseAmbience2 from '../assets/music/absolutesound-suspense-ambience-2-514627.mp3';
-import suspenseTenseAtmosphere from '../assets/music/absolutesound-suspense-tense-atmosphere-514617.mp3';
-import tenseSuspenseAmbience from '../assets/music/absolutesound-tense-suspense-ambience-514632.mp3';
-
 export interface MusicOption {
   id: string;
   label: string;
   file: string;
 }
 
-export const MUSIC_OPTIONS: readonly MusicOption[] = [
-  {
-    id: 'music-1',
-    label: 'Suspense Ambience 2',
-    file: suspenseAmbience2,
-  },
-  {
-    id: 'music-2',
-    label: 'Suspense Tense Atmosphere',
-    file: suspenseTenseAtmosphere,
-  },
-  {
-    id: 'music-3',
-    label: 'Tense Suspense Ambience',
-    file: tenseSuspenseAmbience,
-  },
-];
+// Import dynamique des musiques du dossier assets/music
+const musicModules = import.meta.glob<{ default: string }>(
+  '../assets/music/*.mp3',
+  { eager: true }
+);
+
+// Générer les options de musique dynamiquement
+export const MUSIC_OPTIONS: readonly MusicOption[] = Object.entries(musicModules)
+  .map(([path, module], index) => {
+    // Extraire le nom du fichier sans l'extension
+    const fileName = path.split('/').pop()?.replace('.mp3', '') || `music-${index}`;
+    
+    return {
+      id: `music-${index + 1}`,
+      label: fileName
+        .replace(/absolutesound-/g, '')
+        .replace(/-/g, ' ')
+        .replace(/^\w/, (c) => c.toUpperCase())
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+      file: module.default,
+    };
+  })
+  .sort((a, b) => a.label.localeCompare(b.label));
 
 export const getMusicLabels = (): string[] => MUSIC_OPTIONS.map((m) => m.label);

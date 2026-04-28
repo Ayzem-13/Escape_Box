@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTheme } from '../../theme/theme';
 import { GameProvider } from '../../context/GameProvider';
@@ -6,6 +6,8 @@ import { useGame } from '../../context/GameContext';
 import InfoPopup from '../InfoPopup/InfoPopup';
 import MusicSelector from '../MusicSelector/MusicSelector';
 import './Layout.css';
+
+const SELECTED_MUSIC_KEY = 'escapeBoxSelectedMusic';
 
 const LayoutHeader = () => {
   const t = useTheme();
@@ -48,9 +50,35 @@ const LayoutHeader = () => {
 
 const LayoutMusicFab = () => {
   const [isMusicOpen, setIsMusicOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Charger la musique sauvegardée au montage
+  useEffect(() => {
+    const savedMusicFile = localStorage.getItem(SELECTED_MUSIC_KEY);
+    if (savedMusicFile && audioRef.current) {
+      audioRef.current.src = savedMusicFile;
+      audioRef.current.play().catch(() => {
+        // L'autoplay peut être bloqué par le navigateur
+      });
+    }
+  }, []);
+
+  const handleMusicSelect = (_musicLabel: string, musicFile: string) => {
+    // Sauvegarder dans localStorage
+    localStorage.setItem(SELECTED_MUSIC_KEY, musicFile);
+    
+    // Jouer la musique
+    if (audioRef.current) {
+      audioRef.current.src = musicFile;
+      audioRef.current.play().catch(() => {
+        // L'autoplay peut être bloqué par le navigateur
+      });
+    }
+  };
 
   return (
     <>
+      <audio ref={audioRef} loop />
       <button
         type="button"
         onClick={() => setIsMusicOpen(true)}
@@ -64,7 +92,7 @@ const LayoutMusicFab = () => {
       {isMusicOpen && (
         <MusicSelector
           onClose={() => setIsMusicOpen(false)}
-          onSelect={(music, file) => console.log('Musique sélectionnée:', music, 'Fichier:', file)}
+          onSelect={handleMusicSelect}
         />
       )}
     </>
