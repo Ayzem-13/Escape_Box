@@ -130,6 +130,18 @@ const PageCredits: React.FC = () => {
               Pixabay
             </a>
           </li>
+
+          <li>
+            Icone by{' '}
+            <a
+              href="https://www.flaticon.com/fr/icones-gratuites/trou-de-serrure"
+              title="trou de serrure icônes"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Flaticon
+            </a>{' '}
+          </li>
         </ul>
       </section>
 
