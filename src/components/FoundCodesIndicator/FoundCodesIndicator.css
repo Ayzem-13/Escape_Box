@@ -32,3 +32,20 @@
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
+
+@media (max-width: 600px) {
+  .found-codes-indicator {
+    margin-block: 4px;
+    font-size: 0.8rem;
+  }
+
+  .found-codes-indicator-dots {
+    gap: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .found-codes-indicator-dot {
+    width: 18px;
+    height: 18px;
+  }
+}

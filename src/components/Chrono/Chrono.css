@@ -32,3 +32,28 @@
     box-shadow: 0 0 18px rgba(194, 81, 81, 0.7);
   }
 }
+
+@media (max-width: 600px) {
+  .chrono-container {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    margin: 8px auto 12px !important;
+    padding: 6px 18px;
+    display: block;
+    width: fit-content;
+    max-width: 90%;
+  }
+
+  [data-testid$='-timer'] {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .chrono-display {
+    font-size: 1.4em;
+    text-align: center;
+  }
+}

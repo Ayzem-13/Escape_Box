@@ -17,16 +17,47 @@
 }
 
 @media (max-width: 600px) {
+  html, body { overflow: hidden; }
   .escape-ambient .ambient-corner { display: none; }
-  .escape-ambient main {
-    padding: clamp(56px, 10vh, 80px) 12px clamp(60px, 10vh, 80px);
+
+  .layout-shell {
+    display: flex;
+    flex-direction: column;
   }
-  .escape-ambient h1 { font-size: clamp(1.5rem, 7vw, 2.2rem); letter-spacing: 0.08em; }
+
+  .layout-shell main {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  .layout-shell .layout-header {
+    order: 2;
+    flex: 0 0 auto;
+  }
+
+  /* Hide layout-header while a modal is open so it does not show above the popup */
+  body:has(
+    .popup-overlay,
+    .music-selector-overlay,
+    .admin-spy-popup-overlay,
+    .admin-popup-overlay,
+    .info-popup-overlay,
+    .settings-fab-overlay
+  ) .layout-header {
+    display: none !important;
+  }
+
+  .escape-ambient main {
+    padding: 16px 8px 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .escape-ambient h1 { font-size: clamp(1.3rem, 6vw, 1.8rem); letter-spacing: 0.06em; }
   .escape-ambient .button {
-    width: 100%;
-    max-width: 320px;
-    padding: 14px 22px;
-    font-size: 0.95rem;
+    width: auto;
+    max-width: none;
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
   .escape-ambient .popup-content {
     padding: var(--spacing-lg) var(--spacing-md);
@@ -34,45 +65,62 @@
     width: calc(100vw - 24px);
   }
   .escape-ambient .code-input-slot {
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
   }
   .escape-ambient .code-input-token {
-    width: 38px;
-    height: 38px;
-    font-size: 0.95rem;
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+  }
+  .escape-ambient .code-input-grid[data-category='symbols'],
+  .escape-ambient .code-input-grid[data-category='numbers'],
+  .escape-ambient .code-input-grid[data-category='roman_numerals'] {
+    grid-template-columns: repeat(5, 34px);
   }
   .escape-ambient .code-input-grid[data-category='letters'] {
-    grid-template-columns: repeat(6, 38px);
-  }
-  .escape-ambient .code-input-grid[data-category='numbers'] {
-    grid-template-columns: repeat(5, 38px);
+    grid-template-columns: repeat(7, 34px);
   }
   .layout-header {
-    top: 8px !important;
-    left: 8px !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 4px 8px 56px !important;
     gap: 6px !important;
+    z-index: auto !important;
+    box-sizing: border-box;
   }
+  .escape-ambient .layout-header .button,
   .layout-header .button {
     width: auto;
-    padding: 8px 14px;
-    font-size: 0.8rem;
-  }
-  .layout-info-fab,
-  .layout-music-fab,
-  .layout-theme-fab {
-    width: 44px;
-    height: 44px;
-    font-size: 1.2rem;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    min-height: 0;
+    line-height: 1.2;
+    border-radius: 6px;
   }
 }
 
 @media (max-width: 380px) {
-  .escape-ambient h1 { font-size: 1.3rem; }
-  .escape-ambient .code-input-slot { width: 32px; height: 32px; font-size: 1rem; }
-  .escape-ambient .code-input-token { width: 34px; height: 34px; }
-  .escape-ambient .code-input-grid[data-category='symbols']  { grid-template-columns: repeat(4, 34px); }
-  .escape-ambient .code-input-grid[data-category='letters']  { grid-template-columns: repeat(6, 34px); }
-  .escape-ambient .code-input-grid[data-category='numbers']  { grid-template-columns: repeat(5, 34px); }
+  .escape-ambient h1 { font-size: 1.2rem; }
+  .escape-ambient .code-input-slot { width: 30px; height: 30px; font-size: 0.95rem; }
+  .escape-ambient .code-input-token { width: 32px; height: 32px; }
+  .escape-ambient .code-input-grid[data-category='symbols'],
+  .escape-ambient .code-input-grid[data-category='numbers'],
+  .escape-ambient .code-input-grid[data-category='roman_numerals'] {
+    grid-template-columns: repeat(5, 32px);
+  }
+  .escape-ambient .code-input-grid[data-category='letters'] {
+    grid-template-columns: repeat(7, 32px);
+  }
 }
