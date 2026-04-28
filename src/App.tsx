@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from './theme/theme';
+import { AdminPopup } from './components/AdminPopup/AdminPopup';
 import './App.css'
 
 function App() {
   const t = useTheme();
+  const [showAdminPopup, setShowAdminPopup] = useState(false);
 
   return (
     <div className="App">
@@ -32,7 +35,18 @@ function App() {
         >
           Crédits
         </Link>
+        
+        <button
+          className="button"
+          data-testid="home-admin-link"
+          style={{ marginTop: t.spacing.md, background: '#444' }}
+          onClick={() => setShowAdminPopup(true)}
+        >
+          Configuration Admin
+        </button>
+
       </header>
+      {showAdminPopup && <AdminPopup onClose={() => setShowAdminPopup(false)} />}
     </div>
   )
 }
