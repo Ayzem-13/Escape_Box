@@ -15,13 +15,13 @@ interface MusicSelectorProps {
 const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
   const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(() => {
     const saved = localStorage.getItem('escapeBoxSelectedMusics');
-    const defaultSelected = [null, null, null] as (SelectedMusic | null)[];
+    const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
     
     if (saved) {
       try {
         const musics: SelectedMusic[] = JSON.parse(saved);
         musics.forEach((music, index) => {
-          if (index < 3) {
+          if (index < 4) {
             defaultSelected[index] = music;
           }
         });
@@ -78,7 +78,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
       aria-label="Sélectionner les musiques"
     >
       <div className="music-selector-content">
-        <h2 className="music-selector-title">Sélectionnez jusqu'à 3 musiques</h2>
+        <h2 className="music-selector-title">Sélectionnez jusqu'à 4 musiques</h2>
         
         {isValidated && (
           <div className="music-selector-validation" data-testid="music-validation">
@@ -86,14 +86,22 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
           </div>
         )}
         
-        {/* Dropdowns pour les 3 musiques */}
+        {/* Dropdowns pour les 4 musiques */}
         <div className="music-selector-dropdowns">
-          {selectedMusics.map((selectedMusic, index) => (
-            <div key={index} className="music-selector-dropdown-group">
-              <label className="music-selector-dropdown-label">
-                Musique {index + 1}
-              </label>
-              <div className="music-selector-dropdown-wrapper">
+          {selectedMusics.map((selectedMusic, index) => {
+            const timeRanges = [
+              'de 0 à 15 min',
+              'de 15 à 30 min',
+              'de 30 à 45 min',
+              'de 45 à 60 min'
+            ];
+            
+            return (
+              <div key={index} className="music-selector-dropdown-group">
+                <label className="music-selector-dropdown-label">
+                  Musique {index + 1} ({timeRanges[index]})
+                </label>
+                <div className="music-selector-dropdown-wrapper">
                 <select
                   className="music-selector-dropdown"
                   value={selectedMusic ? selectedMusic.file : ''}
@@ -129,7 +137,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 )}
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         {/* Résumé des musiques sélectionnées */}
