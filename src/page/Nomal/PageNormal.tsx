@@ -8,6 +8,7 @@ import Combinations from '../../components/Combinations/Combinations';
 import CodeTester from '../../components/CodeTester/CodeTester';
 import '../../App.css';
 import FoundCodesIndicator from '../../components/FoundCodesIndicator/FoundCodesIndicator';
+import BackgroundMusic from '../../components/BackgroundMusic/BackgroundMusic';
 
 const NormalSetup: React.FC = () => {
   const t = useTheme();
@@ -41,6 +42,7 @@ const NormalGame: React.FC = () => {
   const t = useTheme();
   return (
     <div data-testid="normal-game-screen" style={{ backgroundColor: t.color.bg, color: t.color.text }}>
+      <BackgroundMusic />
       <div data-testid="normal-timer">
         <Chrono initialTime={3600} />
       </div>

@@ -1,11 +1,11 @@
 # Escape Box
 
-Un jeu de type "Escape Box" interactif développé avec React, TypeScript et Vite. Ce document est destiné aux développeurs souhaitant comprendre, maintenir ou contribuer au projet.
+Un jeu de type "Escape Box" interactif développé avec React, TypeScript, Vite et Electron (pour un portage en application de bureau). Ce document est destiné aux développeurs souhaitant comprendre, maintenir ou contribuer au projet.
 
 ## 🌟 Fonctionnalités
 
 - **Plusieurs modes de jeu :** Mode Normal et Mode Démo pour s'adapter aux différents besoins.
-- **Système de code secret :** Une interface contextuelle (popup) permettant aux joueurs de sélectionner un code de 4 symboles géométriques (▲, ▼, ■, ●, etc.).
+- **Système de code secret :** Une interface contextuelle (popup) permettant aux joueurs de sélectionner un code de 4 symboles (▲, ▼, 1, 2, A, B, etc.).
 - **Validation de code interactive :** En cours de jeu, les utilisateurs peuvent tester des combinaisons avec des retours visuels (toast) et sonores (succès/échec).
 - **Chronomètre & Pénalités :** Suivi dynamique du temps de la partie. Une pénalité de -1 minute s'applique instantanément en cas de code incorrect.
 - **Persistance des données :** Le code secret sélectionné et certains états sont stockés dans le `localStorage` du navigateur.
@@ -13,8 +13,10 @@ Un jeu de type "Escape Box" interactif développé avec React, TypeScript et Vit
 
 ## 🛠️ Stack Technique
 
-- **Cœur :** [React 18](https://react.dev/) / [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool :** [Vite](https://vitejs.dev/)
+- **Cœur :** [React 19](https://react.dev/) / [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool web :** [Vite](https://vitejs.dev/)
+- **Application Desktop :** [Electron](https://www.electronjs.org/) (via [Vite Plugin Electron](https://github.com/electron-vite/vite-plugin-electron))
+- **Génération d'exécutables :** Electron Packager / Electron Builder
 - **Routage :** [React Router](https://reactrouter.com/) (gestion de la navigation)
 - **Tests Unitaires :** [Vitest](https://vitest.dev/) & [React Testing Library](https://testing-library.com/react)
 - **Tests E2E :** [Playwright](https://playwright.dev/)
@@ -40,14 +42,22 @@ Un jeu de type "Escape Box" interactif développé avec React, TypeScript et Vit
 
 ## 📜 Scripts NPM Disponibles
 
-Voici les commandes principales pour le développement :
+Voici les commandes principales pour le développement et la compilation :
 
-- `npm run dev` : Lance le serveur de développement Vite.
-- `npm run build` : Compile l'application TypeScript et génère le build de production.
+### 💻 Développement Web / Web build
+- `npm run dev` : Lance le serveur de développement Vite (version web).
+- `npm run build` ou `npm run build:web` : Compile l'application TypeScript et génère le build de production pour le web.
 - `npm run preview` : Lance un serveur web local pour prévisualiser le build.
+
+### 🖥️ Développement et génération d'exécutable (Electron)
+- `npm run electron:dev` : Lance le serveur de développement Electron. 
+- `npm run build:exe` : Compile et génère un exécutable standard (dossier avec l'exécutable).
+- `npm run build:exe:portable` : Compile et génère une version *portable* (un seul `.exe` sans installation, via Electron Builder).
+
+### 🧪 Tests et Qualité
 - `npm run lint` : Lance l'analyse statique du code selon la configuration d'ESLint.
-- `npm test` : Lance la suite de tests unitaires avec Vitest en mode interactif.
-- **Playwright** : Lancez les tests End-to-End via la commande standard `npx playwright test`.
+- `npm test` : Lance la suite de tests unitaires avec Vitest (il existe aussi `test:ui` et `test:coverage`).
+- `npm run test:e2e` : Lance les tests End-to-End avec Playwright (il existe aussi `test:e2e:ui` et d'autres variantes dans le *package.json*).
 
 ## 📁 Architecture du Projet
 
@@ -55,10 +65,14 @@ Voici les commandes principales pour le développement :
 ├── e2e/                     # Tests End-to-End (Playwright)
 │   ├── pages/               # Page Objects (POM) pour abstraire l'UI E2E
 │   └── *.spec.ts            # Fichiers de test E2E (scénarios)
+├── electron/                # Scripts de la partie Bureau (Desktop)
+│   ├── main.ts              # Point d'entrée du processus principal d'Electron
+│   └── preload.ts           # Scripts de preload pour la communication IPC
 ├── public/                  # Assets statiques distribués tels quels
 └── src/
     ├── assets/              # Fichiers médias statiques (images, effets sonores)
     ├── components/          # Composants React isolés et réutilisables
+    │   ├── CaesarChart/     # Composants d'affichage du diagramme de code César
     │   ├── Chrono/          # Gestion du temps et des pénalités
     │   ├── Code/            # Popup pour la définition initiale des codes
     │   ├── CodeIndicator/   # Indicateurs visuels pour le menu pre-game
@@ -66,11 +80,14 @@ Voici les commandes principales pour le développement :
     │   ├── CodeTester/      # Interface In-Game pour tester des codes, sons et pénalités
     │   ├── Combinations/    # Interface de setup de la partie
     │   ├── FoundCodesIndicator/ # Indicateur in-game des codes valides et trouvés
+    │   ├── InfoPopup/       # Alertes et informations textuelles pour les joueurs
     │   └── Layout/          # Layout de base de l'application
+    ├── config/              # Fichiers de configuration ou de constantes statiques
     ├── context/             # Gestion des états globaux
     │   ├── CodesContext     # Contexte de gestion des codes saisis
     │   └── GameContext      # Contexte de l'état général du jeu
     ├── page/                # Composants de Page liés au Routeur
+    │   ├── Credits/         # Page des crédits
     │   ├── Demo/            # Logique spécifique de la Démo
     │   └── Nomal/           # Logique spécifique du mode Normal 
     ├── test/                # Configuration et fichiers de tests Unitaires
