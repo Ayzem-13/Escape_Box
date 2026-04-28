@@ -20,7 +20,7 @@ const THEME_LABELS: Record<ThemeKey, string> = {
 
 const LayoutHeader = () => {
   const t = useTheme();
-  const { gameStarted, resetGame } = useGame();
+  const { gameStarted, resetGame, restartGame } = useGame();
 
   return (
     <div
@@ -37,13 +37,22 @@ const LayoutHeader = () => {
       }}
     >
       {gameStarted && (
-        <button
-          onClick={resetGame}
-          className="button"
-          data-testid="layout-stop-btn"
-        >
-          ARRÊTER LA PARTIE
-        </button>
+        <>
+          <button
+            onClick={restartGame}
+            className="button"
+            data-testid="layout-restart-btn"
+          >
+            RECOMMENCER LA PARTIE
+          </button>
+          <button
+            onClick={resetGame}
+            className="button"
+            data-testid="layout-stop-btn"
+          >
+            ARRÊTER LA PARTIE
+          </button>
+        </>
       )}
       <Link
         to="/"

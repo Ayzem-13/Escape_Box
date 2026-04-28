@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
+import { useGame } from '../../context/GameContext';
 import { useTheme } from '../../theme/theme';
 import bipSound from '../../assets/sounds/bip.mp3';
 import './Chrono.css';
@@ -8,11 +10,16 @@ interface ChronoProps {
 }
 
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
+  const { session } = useGame();
   const [time, setTime] = useState(initialTime);
   const [isWarning, setIsWarning] = useState(false);
   const t = useTheme();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const warningInterval = 900; // 15 minutes in seconds
+
+  useEffect(() => {
+    setTime(initialTime);
+  }, [session, initialTime]);
 
   useEffect(() => {
     audioRef.current = new Audio(bipSound);
