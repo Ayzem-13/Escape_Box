@@ -1,5 +1,11 @@
 const VOLUME_STORAGE_KEY = 'escapeBoxVolume';
 
+/** Musique de playlist (stress) — plus bas pour laisser le lit « sons » ressortir. */
+const GAME_MUSIC_FACTOR = 0.32;
+
+/** Lit sons / meme en boucle sous la musique de jeu. */
+const AMBIENT_BED_FACTOR = 0.55;
+
 class VolumeManager {
   private currentVolume: number = 100;
   private listeners: ((volume: number) => void)[] = [];
@@ -44,11 +50,20 @@ class VolumeManager {
 
   applyVolumeToAllAudio(): void {
     const volumeValue = this.currentVolume / 100;
-    
+
+    const applyToElement = (audio: HTMLAudioElement) => {
+      let mul = 1;
+      if (audio.dataset.escapeAmbientBed === 'true') {
+        mul = AMBIENT_BED_FACTOR;
+      } else if (audio.dataset.escapeGameMusic === 'true') {
+        mul = GAME_MUSIC_FACTOR;
+      }
+      audio.volume = Math.min(1, volumeValue * mul);
+    };
+
     // Apply to all <audio> elements in the DOM
-    const audioElements = document.querySelectorAll('audio');
-    audioElements.forEach((audio) => {
-      audio.volume = volumeValue;
+    document.querySelectorAll('audio').forEach((audio) => {
+      applyToElement(audio);
     });
 
     // Apply to tracked Audio instances

@@ -251,6 +251,13 @@
   color: var(--color-text);
 }
 
+.music-selector-dropdown option.music-selector-dropdown-section-heading {
+  font-weight: 700;
+  font-style: normal;
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
 .music-selector-dropdown-clear {
   background-color: transparent;
   color: var(--color-primary);

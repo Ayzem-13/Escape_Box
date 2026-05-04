@@ -85,10 +85,10 @@ describe('Layout — bouton musique', () => {
     pickAndValidateOneTrackNormal()
     fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
-    const audio = playSpy.mock.contexts[
-      playSpy.mock.contexts.length - 1
-    ] as HTMLAudioElement
-    expect(audio.src).toContain(MUSIC_OPTIONS[0].file.split('/').pop()!)
+    const gameAudio = screen.getByTestId('layout-game-music') as HTMLAudioElement
+    expect(gameAudio.src).toContain(MUSIC_OPTIONS[0].file.split('/').pop()!)
+    const bed = screen.getByTestId('layout-ambient-bed') as HTMLAudioElement
+    expect(bed.loop).toBe(true)
   })
 
   it('charge la sélection sauvegardée et la joue au démarrage de la partie', () => {
@@ -99,11 +99,9 @@ describe('Layout — bouton musique', () => {
     renderLayout()
     fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
-    const audio = playSpy.mock.contexts[
-      playSpy.mock.contexts.length - 1
-    ] as HTMLAudioElement
+    const gameAudio = screen.getByTestId('layout-game-music') as HTMLAudioElement
     const playlist = readStoredMusicPlaylist(JSON.stringify(seeded))
-    expect(audio.src).toContain(playlist[0].file.split('/').pop()!)
+    expect(gameAudio.src).toContain(playlist[0].file.split('/').pop()!)
   })
 
   it('ferme le popup automatiquement 2s après validation', () => {

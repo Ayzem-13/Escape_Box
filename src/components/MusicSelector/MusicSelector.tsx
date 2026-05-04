@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MUSIC_OPTIONS } from '../../config/musicOptions';
+import { MUSIC_OPTION_GROUPS, MUSIC_OPTIONS } from '../../config/musicOptions';
 import {
   SELECTED_MUSICS_KEY_NORMAL,
   NORMAL_SEGMENT_OPTIONS,
@@ -274,10 +274,25 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({
                   data-testid={`music-dropdown-${index}`}
                 >
                   <option value="">-- Aucune musique --</option>
-                  {MUSIC_OPTIONS.map((option) => (
-                    <option key={option.id} value={option.file}>
-                      {option.label}
-                    </option>
+                  {/*
+                    Pas d’<optgroup> : WebKit Safari duplique parfois les options en tête de liste.
+                    En-têtes = options désactivées (liste plate).
+                  */}
+                  {MUSIC_OPTION_GROUPS.map((group) => (
+                    <React.Fragment key={`stress-${group.stressLevel}`}>
+                      <option
+                        disabled
+                        value={`__section-${group.stressLevel}__`}
+                        className="music-selector-dropdown-section-heading"
+                      >
+                        — {group.groupLabel} —
+                      </option>
+                      {group.options.map((option) => (
+                        <option key={option.id} value={option.file}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </select>
                 {selectedMusic && (

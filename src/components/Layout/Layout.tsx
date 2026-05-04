@@ -25,6 +25,8 @@ import SettingsFab from '../SettingsFab/SettingsFab';
 import GameResultPopup from '../GameResultPopup/GameResultPopup';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
+import gameAmbientBedUrl from '../../assets/sounds/ONE MINUTE of the Funniest Meme Sounds For Edits  NO COPYRIGHT.mp3';
+import volumeManager from '../../services/volumeManager';
 import '../../theme/ambient/index.css';
 import './Layout.css';
 
@@ -100,15 +102,21 @@ const useMusicEngine = (selectedMusicsKey: string, isDemoRoute: boolean) => {
   const { gameStarted, chronoRemainingSec, chronoInitialSec } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const ambientBedRef = useRef<HTMLAudioElement | null>(null);
   const lastAppliedTrackIdxRef = useRef<number>(-1);
   const lastLogicalFileRef = useRef<string | null>(null);
 
   useEffect(() => {
     const audioEl = audioRef.current;
+    const ambientEl = ambientBedRef.current;
     if (!gameStarted) {
       if (audioEl) {
         audioEl.pause();
         audioEl.currentTime = 0;
+      }
+      if (ambientEl) {
+        ambientEl.pause();
+        ambientEl.currentTime = 0;
       }
       lastAppliedTrackIdxRef.current = -1;
       lastLogicalFileRef.current = null;
@@ -158,6 +166,29 @@ const useMusicEngine = (selectedMusicsKey: string, isDemoRoute: boolean) => {
     chronoInitialSec,
   ]);
 
+  /** Lit sonore en boucle : seulement si une playlist est configurée et la partie tourne. */
+  useEffect(() => {
+    const bed = ambientBedRef.current;
+    if (!gameStarted || !bed) return;
+
+    const raw = localStorage.getItem(selectedMusicsKey);
+    if (!raw) {
+      bed.pause();
+      bed.currentTime = 0;
+      return;
+    }
+
+    const { tracks } = readMusicPlaybackConfig(raw, isDemoRoute);
+    if (tracks.length === 0) {
+      bed.pause();
+      bed.currentTime = 0;
+      return;
+    }
+
+    volumeManager.applyVolumeToAllAudio();
+    bed.play().catch(() => {});
+  }, [gameStarted, selectedMusicsKey, isDemoRoute]);
+
   const handleMusicSelect = () => {};
 
   const handleMusicEnd = () => {
@@ -169,6 +200,7 @@ const useMusicEngine = (selectedMusicsKey: string, isDemoRoute: boolean) => {
 
   return {
     audioRef,
+    ambientBedRef,
     handleMusicEnd,
     handleMusicSelect,
     isMusicOpen,
@@ -292,6 +324,7 @@ const LayoutInnerContent = () => {
     : SELECTED_MUSICS_KEY_NORMAL;
   const {
     audioRef,
+    ambientBedRef,
     handleMusicEnd,
     handleMusicSelect,
     isMusicOpen,
@@ -321,7 +354,21 @@ const LayoutInnerContent = () => {
         <LayoutAdminSpyFab />
         <SettingsFab />
         <GameResultPopup />
-        <audio ref={audioRef} onEnded={handleMusicEnd} />
+        <audio
+          ref={audioRef}
+          onEnded={handleMusicEnd}
+          data-testid="layout-game-music"
+          data-escape-game-music="true"
+        />
+        <audio
+          ref={ambientBedRef}
+          src={gameAmbientBedUrl}
+          loop
+          preload="auto"
+          data-testid="layout-ambient-bed"
+          data-escape-ambient-bed="true"
+          aria-hidden="true"
+        />
         {isMusicOpen && !gameStarted && (
           <MusicSelector
             onClose={() => setIsMusicOpen(false)}
