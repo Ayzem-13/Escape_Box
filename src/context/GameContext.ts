@@ -10,6 +10,12 @@ export type GameContextValue = {
   session: number;
   gameResult: GameResult;
   setGameResult: (result: GameResult) => void;
+  /** Temps restant affiché par le chronomètre (`null` si hors partie ou chrono absent). */
+  chronoRemainingSec: number | null;
+  /** Durée initiale du chrono au démarrage de la partie. */
+  chronoInitialSec: number | null;
+  setChronoTick: (remainingSec: number, initialSec: number) => void;
+  clearChronoTick: () => void;
 };
 
 export const GameContext = createContext<GameContextValue | null>(null);

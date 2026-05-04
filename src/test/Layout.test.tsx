@@ -4,8 +4,9 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import Layout from '../components/Layout/Layout'
 import { useGame } from '../context/GameContext'
 import { MUSIC_OPTIONS } from '../config/musicOptions'
+import { readStoredMusicPlaylist, SELECTED_MUSICS_KEY_DEMO, SELECTED_MUSICS_KEY_NORMAL } from '../config/musicStorage'
 
-const SAVED_KEY = 'escapeBoxSelectedMusics'
+const SAVED_KEY = SELECTED_MUSICS_KEY_NORMAL
 
 const TriggerStart = () => {
   const { startGame } = useGame()
@@ -16,21 +17,24 @@ const TriggerStart = () => {
   )
 }
 
-const renderLayout = () =>
+const renderLayout = (initialPath = '/') =>
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<TriggerStart />} />
+          <Route path="/demo" element={<TriggerStart />} />
         </Route>
       </Routes>
     </MemoryRouter>,
   )
 
-const pickAndValidate = (file: string) => {
+/** Mode normal : découpage 1 morceau puis choix de la piste. */
+const pickAndValidateOneTrackNormal = () => {
   fireEvent.click(screen.getByTestId('layout-music-btn'))
+  fireEvent.click(screen.getByTestId('music-segment-count-1'))
   fireEvent.change(screen.getByTestId('music-dropdown-0'), {
-    target: { value: file },
+    target: { value: MUSIC_OPTIONS[0].file },
   })
   fireEvent.click(screen.getByTestId('music-selector-validate'))
 }
@@ -43,10 +47,12 @@ describe('Layout — bouton musique', () => {
       .spyOn(HTMLMediaElement.prototype, 'play')
       .mockImplementation(() => Promise.resolve())
     vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+    localStorage.clear()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
+    localStorage.clear()
   })
 
   it('affiche le bouton ♪ hors partie', () => {
@@ -62,15 +68,21 @@ describe('Layout — bouton musique', () => {
 
   it('persiste la sélection dans localStorage à la validation', () => {
     renderLayout()
-    pickAndValidate(MUSIC_OPTIONS[0].file)
-    const stored = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]')
-    expect(stored).toHaveLength(1)
-    expect(stored[0].file).toBe(MUSIC_OPTIONS[0].file)
+    pickAndValidateOneTrackNormal()
+    const raw = localStorage.getItem(SAVED_KEY)
+    expect(raw).toBeTruthy()
+    const stored = JSON.parse(raw!) as {
+      segmentCount: number
+      tracks: { file: string }[]
+    }
+    expect(stored.segmentCount).toBe(1)
+    expect(stored.tracks).toHaveLength(1)
+    expect(stored.tracks[0].file).toBe(MUSIC_OPTIONS[0].file)
   })
 
   it('démarre la lecture de la première musique au démarrage de la partie après validation', () => {
     renderLayout()
-    pickAndValidate(MUSIC_OPTIONS[0].file)
+    pickAndValidateOneTrackNormal()
     fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
     const audio = playSpy.mock.contexts[
@@ -87,13 +99,18 @@ describe('Layout — bouton musique', () => {
     renderLayout()
     fireEvent.click(screen.getByTestId('trigger-start'))
     expect(playSpy).toHaveBeenCalled()
+    const audio = playSpy.mock.contexts[
+      playSpy.mock.contexts.length - 1
+    ] as HTMLAudioElement
+    const playlist = readStoredMusicPlaylist(JSON.stringify(seeded))
+    expect(audio.src).toContain(playlist[0].file.split('/').pop()!)
   })
 
   it('ferme le popup automatiquement 2s après validation', () => {
     vi.useFakeTimers()
     try {
       renderLayout()
-      pickAndValidate(MUSIC_OPTIONS[0].file)
+      pickAndValidateOneTrackNormal()
       expect(screen.getByTestId('music-dropdown-0')).toBeInTheDocument()
       act(() => {
         vi.advanceTimersByTime(2000)
@@ -114,9 +131,29 @@ describe('Layout — bouton musique', () => {
     expect(screen.queryByTestId('music-dropdown-0')).not.toBeInTheDocument()
     expect(localStorage.getItem(SAVED_KEY)).toBeNull()
   })
+
+  it('sur /demo, le sélecteur n\'expose qu\'un seul dropdown et persiste sous la clé démo', () => {
+    renderLayout('/demo')
+    fireEvent.click(screen.getByTestId('layout-music-btn'))
+    expect(screen.getByTestId('music-dropdown-0')).toBeInTheDocument()
+    expect(screen.queryByTestId('music-dropdown-1')).not.toBeInTheDocument()
+    fireEvent.change(screen.getByTestId('music-dropdown-0'), {
+      target: { value: MUSIC_OPTIONS[0].file },
+    })
+    fireEvent.click(screen.getByTestId('music-selector-validate'))
+    const demoStored = JSON.parse(
+      localStorage.getItem(SELECTED_MUSICS_KEY_DEMO) || '[]',
+    )
+    expect(demoStored).toHaveLength(1)
+    expect(localStorage.getItem(SELECTED_MUSICS_KEY_NORMAL)).toBeNull()
+  })
 })
 
 describe('Layout — bouton thème', () => {
+  beforeEach(() => localStorage.clear())
+
+  afterEach(() => localStorage.clear())
+
   it('cache le bouton thème quand la partie est démarrée', () => {
     renderLayout()
     expect(screen.queryByTestId('layout-theme-btn')).toBeInTheDocument()

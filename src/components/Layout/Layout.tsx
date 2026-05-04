@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import {
+  readMusicPlaybackConfig,
+  playbackSegmentIndex,
+  SELECTED_MUSICS_KEY_DEMO,
+  SELECTED_MUSICS_KEY_NORMAL,
+} from '../../config/musicStorage';
 import { ThemeContext, themeToCssVars, useTheme } from '../../theme/theme';
 import {
   availableThemes,
@@ -22,7 +28,6 @@ import { THEME_ICONS } from '../../theme/themeIcons';
 import '../../theme/ambient/index.css';
 import './Layout.css';
 
-const SELECTED_MUSICS_KEY = 'escapeBoxSelectedMusics';
 const THEME_PER_MODE_KEY = 'escapeBoxThemePerMode';
 
 const isThemeKey = (value: unknown): value is ThemeKey =>
@@ -91,59 +96,75 @@ const LayoutHeader = () => {
   );
 };
 
-interface SelectedMusic {
-  label: string;
-  file: string;
-}
-
-const useMusicEngine = () => {
-  const { gameStarted } = useGame();
+const useMusicEngine = (selectedMusicsKey: string, isDemoRoute: boolean) => {
+  const { gameStarted, chronoRemainingSec, chronoInitialSec } = useGame();
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playlistIndex, setPlaylistIndex] = useState(0);
+  const lastAppliedTrackIdxRef = useRef<number>(-1);
+  const lastLogicalFileRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
-
-    if (gameStarted && savedMusics && audioRef.current) {
-      try {
-        const musics: SelectedMusic[] = JSON.parse(savedMusics);
-        if (musics.length > 0) {
-          audioRef.current.src = musics[0].file;
-          audioRef.current.play().catch(() => {});
-          const handler = setTimeout(() => {
-            setPlaylistIndex(0);
-          }, 0);
-          return () => clearTimeout(handler);
-        }
-      } catch (e) {
-        console.error('Erreur lors du chargement des musiques sauvegardées', e);
+    const audioEl = audioRef.current;
+    if (!gameStarted) {
+      if (audioEl) {
+        audioEl.pause();
+        audioEl.currentTime = 0;
       }
-    } else if (!gameStarted && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+      lastAppliedTrackIdxRef.current = -1;
+      lastLogicalFileRef.current = null;
+      return;
     }
-  }, [gameStarted]);
 
-  const handleMusicSelect = (musics: SelectedMusic[]) => {
-    if (musics.length === 0) return;
-    localStorage.setItem(SELECTED_MUSICS_KEY, JSON.stringify(musics));
-    setPlaylistIndex(0);
-  };
+    if (!audioEl) return;
+
+    const raw = localStorage.getItem(selectedMusicsKey);
+    if (!raw) return;
+
+    const { tracks, segmentCount } = readMusicPlaybackConfig(raw, isDemoRoute);
+
+    if (tracks.length === 0) return;
+
+    let targetIdx = 0;
+    if (
+      chronoRemainingSec !== null &&
+      chronoInitialSec !== null &&
+      chronoInitialSec > 0
+    ) {
+      targetIdx = playbackSegmentIndex({
+        remainingSec: chronoRemainingSec,
+        initialSec: chronoInitialSec,
+        segmentCount,
+      });
+    }
+    targetIdx = Math.min(targetIdx, tracks.length - 1);
+
+    const wantFile = tracks[targetIdx].file;
+    if (
+      lastAppliedTrackIdxRef.current === targetIdx &&
+      lastLogicalFileRef.current === wantFile
+    ) {
+      return;
+    }
+
+    lastAppliedTrackIdxRef.current = targetIdx;
+    lastLogicalFileRef.current = wantFile;
+    audioEl.src = wantFile;
+    audioEl.play().catch(() => {});
+  }, [
+    gameStarted,
+    selectedMusicsKey,
+    isDemoRoute,
+    chronoRemainingSec,
+    chronoInitialSec,
+  ]);
+
+  const handleMusicSelect = () => {};
 
   const handleMusicEnd = () => {
-    const savedMusics = localStorage.getItem(SELECTED_MUSICS_KEY);
-    if (savedMusics && audioRef.current) {
-      try {
-        const musics: SelectedMusic[] = JSON.parse(savedMusics);
-        const nextIndex = (playlistIndex + 1) % musics.length;
-        audioRef.current.src = musics[nextIndex].file;
-        audioRef.current.play().catch(() => {});
-        setPlaylistIndex(nextIndex);
-      } catch (e) {
-        console.error('Erreur lors de la lecture de la musique suivante', e);
-      }
-    }
+    const el = audioRef.current;
+    if (!el || !gameStarted) return;
+    el.currentTime = 0;
+    el.play().catch(() => {});
   };
 
   return {
@@ -264,6 +285,11 @@ const LayoutAdminSpyFab = () => {
 
 const LayoutInnerContent = () => {
   const t = useTheme();
+  const { pathname } = useLocation();
+  const isDemoRoute = pathname === '/demo';
+  const selectedMusicsKey = isDemoRoute
+    ? SELECTED_MUSICS_KEY_DEMO
+    : SELECTED_MUSICS_KEY_NORMAL;
   const {
     audioRef,
     handleMusicEnd,
@@ -271,7 +297,7 @@ const LayoutInnerContent = () => {
     isMusicOpen,
     setIsMusicOpen,
     gameStarted,
-  } = useMusicEngine();
+  } = useMusicEngine(selectedMusicsKey, isDemoRoute);
 
   const musicCtx = useMemo(
     () => ({
@@ -300,6 +326,8 @@ const LayoutInnerContent = () => {
           <MusicSelector
             onClose={() => setIsMusicOpen(false)}
             onSelect={handleMusicSelect}
+            storageKey={selectedMusicsKey}
+            variant={isDemoRoute ? 'demo' : 'normal'}
           />
         )}
       </div>

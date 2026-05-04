@@ -2,8 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import MusicSelector from '../components/MusicSelector/MusicSelector'
 import { MUSIC_OPTIONS } from '../config/musicOptions'
+import { SELECTED_MUSICS_KEY_DEMO, SELECTED_MUSICS_KEY_NORMAL } from '../config/musicStorage'
 
-const SAVED_KEY = 'escapeBoxSelectedMusics'
+const SAVED_KEY = SELECTED_MUSICS_KEY_NORMAL
 
 interface SelectedMusic {
   label: string
@@ -17,10 +18,15 @@ describe('MusicSelector', () => {
   beforeEach(() => {
     onClose = vi.fn<() => void>()
     onSelect = vi.fn<(musics: SelectedMusic[]) => void>()
+    localStorage.clear()
   })
 
   const renderSelector = () =>
     render(<MusicSelector onClose={onClose} onSelect={onSelect} />)
+
+  const pickSegment = (count: 1 | 2 | 4) => {
+    fireEvent.click(screen.getByTestId(`music-segment-count-${count}`))
+  }
 
   const pickMusic = (slotIndex: number, file: string) => {
     fireEvent.change(screen.getByTestId(`music-dropdown-${slotIndex}`), {
@@ -28,11 +34,27 @@ describe('MusicSelector', () => {
     })
   }
 
-  it('affiche 3 dropdowns vides au montage initial', () => {
+  const validate = () =>
+    fireEvent.click(screen.getByTestId('music-selector-validate'))
+
+  it('affiche les 4 segments par défaut (découpage 15+15+15+15)', () => {
     renderSelector()
+    pickSegment(4)
     expect(screen.getByTestId('music-dropdown-0')).toHaveValue('')
-    expect(screen.getByTestId('music-dropdown-1')).toHaveValue('')
-    expect(screen.getByTestId('music-dropdown-2')).toHaveValue('')
+    expect(screen.getByTestId('music-dropdown-3')).toBeInTheDocument()
+  })
+
+  it('mode démo: un seul emplacement musique', () => {
+    render(
+      <MusicSelector
+        onClose={onClose}
+        onSelect={onSelect}
+        storageKey={SELECTED_MUSICS_KEY_DEMO}
+        variant="demo"
+      />,
+    )
+    expect(screen.getByTestId('music-dropdown-0')).toBeInTheDocument()
+    expect(screen.queryByTestId('music-dropdown-1')).not.toBeInTheDocument()
   })
 
   it('chaque dropdown propose toutes les musiques disponibles', () => {
@@ -46,45 +68,55 @@ describe('MusicSelector', () => {
     })
   })
 
-  it('le bouton Valider est désactivé tant qu\'aucune musique n\'est sélectionnée', () => {
+  it('le bouton Valider est désactivé tant que le découpage courant est incomplet', () => {
     renderSelector()
+    pickMusic(0, MUSIC_OPTIONS[0].file)
     expect(screen.getByTestId('music-selector-validate')).toBeDisabled()
   })
 
-  it('active Valider dès qu\'au moins une musique est sélectionnée', () => {
+  it('active Valider quand tous les emplacements du découpage choisi sont remplis', () => {
     renderSelector()
+    pickSegment(1)
     pickMusic(0, MUSIC_OPTIONS[0].file)
     expect(screen.getByTestId('music-selector-validate')).toBeEnabled()
   })
 
-  it('appelle onSelect avec le tableau des musiques choisies au clic sur Valider', () => {
+  it('découpage 2 : Valider après deux musiques différentes', () => {
     renderSelector()
+    pickSegment(2)
     pickMusic(0, MUSIC_OPTIONS[0].file)
-    if (MUSIC_OPTIONS.length >= 2) pickMusic(1, MUSIC_OPTIONS[1].file)
-    fireEvent.click(screen.getByTestId('music-selector-validate'))
+    pickMusic(1, MUSIC_OPTIONS[1].file)
+    expect(screen.getByTestId('music-selector-validate')).toBeEnabled()
+    validate()
+    expect(onSelect).toHaveBeenCalledTimes(1)
+    expect(onSelect.mock.calls[0][0]).toHaveLength(2)
+  })
+
+  it('appelle onSelect avec les pistes correspondant au découpage 4', () => {
+    renderSelector()
+    pickSegment(4)
+    for (let i = 0; i < 4; i++) {
+      pickMusic(i, MUSIC_OPTIONS[i % MUSIC_OPTIONS.length].file)
+    }
+    validate()
 
     expect(onSelect).toHaveBeenCalledTimes(1)
     const arg = onSelect.mock.calls[0][0]
-    expect(arg[0]).toEqual({
-      label: MUSIC_OPTIONS[0].label,
-      file: MUSIC_OPTIONS[0].file,
-    })
-    if (MUSIC_OPTIONS.length >= 2) {
-      expect(arg[1]).toEqual({
-        label: MUSIC_OPTIONS[1].label,
-        file: MUSIC_OPTIONS[1].file,
-      })
-    }
+    expect(arg).toHaveLength(4)
   })
 
-  it('persiste la sélection dans localStorage à la validation', () => {
+  it('persiste au format objet segmentCount + tracks en mode normal', () => {
     renderSelector()
+    pickSegment(1)
     pickMusic(0, MUSIC_OPTIONS[0].file)
-    fireEvent.click(screen.getByTestId('music-selector-validate'))
+    validate()
 
-    const stored = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]')
-    expect(stored).toHaveLength(1)
-    expect(stored[0]).toEqual({
+    const raw = localStorage.getItem(SAVED_KEY)
+    expect(raw).toBeTruthy()
+    const stored = JSON.parse(raw!) as { segmentCount: number; tracks: SelectedMusic[] }
+    expect(stored.segmentCount).toBe(1)
+    expect(stored.tracks).toHaveLength(1)
+    expect(stored.tracks[0]).toEqual({
       label: MUSIC_OPTIONS[0].label,
       file: MUSIC_OPTIONS[0].file,
     })
@@ -94,8 +126,9 @@ describe('MusicSelector', () => {
     vi.useFakeTimers()
     try {
       renderSelector()
+      pickSegment(1)
       pickMusic(0, MUSIC_OPTIONS[0].file)
-      fireEvent.click(screen.getByTestId('music-selector-validate'))
+      validate()
       expect(onClose).not.toHaveBeenCalled()
       act(() => {
         vi.advanceTimersByTime(2000)
@@ -108,14 +141,16 @@ describe('MusicSelector', () => {
 
   it('affiche le bandeau de validation après le clic sur Valider', () => {
     renderSelector()
+    pickSegment(1)
     pickMusic(0, MUSIC_OPTIONS[0].file)
     expect(screen.queryByTestId('music-validation')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByTestId('music-selector-validate'))
+    validate()
     expect(screen.getByTestId('music-validation')).toBeInTheDocument()
   })
 
-  it('permet de retirer une musique via le bouton ✕', () => {
+  it('permet de retirer une musique via le bouton ✕ (découpage 1)', () => {
     renderSelector()
+    pickSegment(1)
     pickMusic(0, MUSIC_OPTIONS[0].file)
     expect(screen.getByTestId('music-selector-validate')).toBeEnabled()
     fireEvent.click(screen.getByTestId('music-remove-0'))
@@ -125,6 +160,7 @@ describe('MusicSelector', () => {
 
   it('"Annuler" ferme la popup sans valider', () => {
     renderSelector()
+    pickSegment(1)
     pickMusic(0, MUSIC_OPTIONS[0].file)
     fireEvent.click(screen.getByTestId('music-selector-close'))
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -139,15 +175,15 @@ describe('MusicSelector', () => {
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
-  it('précharge la sélection sauvegardée dans localStorage', () => {
+  it('précharge la sélection sauvegardée (ancien format tableau)', () => {
     const seeded = [
       { label: MUSIC_OPTIONS[0].label, file: MUSIC_OPTIONS[0].file },
     ]
     localStorage.setItem(SAVED_KEY, JSON.stringify(seeded))
     renderSelector()
-    expect(screen.getByTestId('music-dropdown-0')).toHaveValue(
-      MUSIC_OPTIONS[0].file,
-    )
+    fireEvent.change(screen.getByTestId(`music-dropdown-0`), {
+      target: { value: MUSIC_OPTIONS[1].file },
+    })
+    expect(screen.getByTestId('music-selector-validate')).toBeEnabled()
   })
 })
-

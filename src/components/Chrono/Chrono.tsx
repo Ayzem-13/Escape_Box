@@ -9,7 +9,7 @@ interface ChronoProps {
 }
 
 const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
-  const { session, setGameResult } = useGame();
+  const { session, setGameResult, setChronoTick, clearChronoTick } = useGame();
   const [time, setTime] = useState(initialTime);
   const [isWarning, setIsWarning] = useState(false);
   const [prevReset, setPrevReset] = useState({ session, initialTime });
@@ -59,6 +59,14 @@ const Chrono: React.FC<ChronoProps> = ({ initialTime }) => {
       window.removeEventListener('chrono-penalty', handlePenalty as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    setChronoTick(time, initialTime);
+  }, [time, initialTime, setChronoTick]);
+
+  useEffect(() => {
+    return () => clearChronoTick();
+  }, [clearChronoTick]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);

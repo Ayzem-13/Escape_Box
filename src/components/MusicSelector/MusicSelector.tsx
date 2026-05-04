@@ -1,30 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MUSIC_OPTIONS } from '../../config/musicOptions';
+import {
+  SELECTED_MUSICS_KEY_NORMAL,
+  NORMAL_SEGMENT_OPTIONS,
+  type NormalSegmentCount,
+  parseNormalMusicStorage,
+  serializeNormalMusicStorage,
+  normalSegmentRangeLabels,
+  type SelectedMusicFile,
+} from '../../config/musicStorage';
 import { CheckIcon, PauseIcon, PlayIcon, XIcon } from '../../theme/icons';
 import './MusicSelector.css';
 
-interface SelectedMusic {
-  label: string;
-  file: string;
-}
-
 interface MusicSelectorProps {
   onClose: () => void;
-  onSelect: (musics: SelectedMusic[]) => void;
+  onSelect: (musics: SelectedMusicFile[]) => void;
+  /** Clé localStorage */
+  storageKey?: string;
+  /** normal = partie 60 min (1 / 2 / 4 segments), demo = une piste démo */
+  variant?: 'normal' | 'demo';
 }
 
-const loadDefaultMusics = () => {
-  const saved = localStorage.getItem('escapeBoxSelectedMusics');
-  const defaultSelected = [null, null, null, null] as (SelectedMusic | null)[];
-  
+const loadDemoTracks = (
+  storageKey: string,
+): (SelectedMusicFile | null)[] => {
+  const defaultSelected = [null] as (SelectedMusicFile | null)[];
+  const saved = localStorage.getItem(storageKey);
   if (saved) {
     try {
-      const musics: SelectedMusic[] = JSON.parse(saved);
-      musics.forEach((music, index) => {
-        if (index < 4) {
-          defaultSelected[index] = music;
-        }
-      });
+      const musics = JSON.parse(saved) as SelectedMusicFile[];
+      if (Array.isArray(musics) && musics.length > 0 && musics[0]) {
+        defaultSelected[0] = musics[0];
+      }
     } catch (e) {
       console.error('Erreur lors du chargement des musiques sauvegardées', e);
     }
@@ -32,15 +39,57 @@ const loadDefaultMusics = () => {
   return defaultSelected;
 };
 
-const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
-  const [initialMusics] = useState<(SelectedMusic | null)[]>(loadDefaultMusics);
-  const [selectedMusics, setSelectedMusics] = useState<(SelectedMusic | null)[]>(initialMusics);
+const MusicSelector: React.FC<MusicSelectorProps> = ({
+  onClose,
+  onSelect,
+  storageKey = SELECTED_MUSICS_KEY_NORMAL,
+  variant = 'normal',
+}) => {
+  const isDemo = variant === 'demo';
+
+  const [initialDemoTracks] = useState<(SelectedMusicFile | null)[]>(
+    () => loadDemoTracks(storageKey),
+  );
+  const [selectedMusicsDemo, setSelectedMusicsDemo] = useState<
+    (SelectedMusicFile | null)[]
+  >(initialDemoTracks);
+
+  const [initialNormalState] = useState(() =>
+    parseNormalMusicStorage(localStorage.getItem(storageKey)),
+  );
+  const [segmentCount, setSegmentCount] = useState<NormalSegmentCount>(
+    initialNormalState.segmentCount,
+  );
+  const [selectedMusicsNormal, setSelectedMusicsNormal] = useState<
+    (SelectedMusicFile | null)[]
+  >(() => [...initialNormalState.tracks]);
+
+  const selectedMusics = isDemo ? selectedMusicsDemo : selectedMusicsNormal;
+  const setSelectedMusics = isDemo
+    ? setSelectedMusicsDemo
+    : setSelectedMusicsNormal;
+
+  const initialSnapshotDemo = JSON.stringify(initialDemoTracks);
+  const initialSnapshotNormal = JSON.stringify({
+    segmentCount: initialNormalState.segmentCount,
+    tracks: initialNormalState.tracks,
+  });
+
   const [isValidated, setIsValidated] = useState(false);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  
-  // Vérifier si la sélection a été modifiée par rapport à l'état initial
-  const hasChanges = JSON.stringify(selectedMusics) !== JSON.stringify(initialMusics);
-  
+
+  const snapshotNow = (): string =>
+    isDemo
+      ? JSON.stringify(selectedMusicsDemo)
+      : JSON.stringify({
+          segmentCount,
+          tracks: selectedMusicsNormal,
+        });
+
+  const hasChanges = isDemo
+    ? snapshotNow() !== initialSnapshotDemo
+    : snapshotNow() !== initialSnapshotNormal;
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -63,7 +112,9 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
       setPlayingIndex(null);
     } else {
       audioRef.current.src = file;
-      audioRef.current.play().catch(e => console.error('Erreur de lecture audio', e));
+      audioRef.current.play().catch((e) =>
+        console.error('Erreur de lecture audio', e),
+      );
       setPlayingIndex(index);
     }
   };
@@ -71,7 +122,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
   const handleMusicChange = (index: number, label: string, file: string) => {
     const newSelected = [...selectedMusics];
     newSelected[index] = { label, file };
-    setSelectedMusics(newSelected);
+    setSelectedMusics(newSelected as (SelectedMusicFile | null)[]);
     if (playingIndex === index) {
       audioRef.current?.pause();
       setPlayingIndex(null);
@@ -88,23 +139,45 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
     }
   };
 
+  const handleSegmentChange = (next: NormalSegmentCount) => {
+    if (playingIndex !== null) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    }
+    setSegmentCount(next);
+    setSelectedMusicsNormal((prev) =>
+      Array.from({ length: next }, (_, i) => prev[i] ?? null),
+    );
+  };
+
+  const allSegmentsFilled =
+    Array.isArray(selectedMusics) && selectedMusics.every((m) => m !== null);
+
   const handleValidate = () => {
+    if (!allSegmentsFilled) return;
+
     if (audioRef.current) {
       audioRef.current.pause();
       setPlayingIndex(null);
     }
-    // Filtrer les musiques non vides
-    const musicsToSave = selectedMusics.filter((m): m is SelectedMusic => m !== null);
-    
-    // Sauvegarder dans localStorage
-    localStorage.setItem('escapeBoxSelectedMusics', JSON.stringify(musicsToSave));
-    
-    // Appeler le callback
+
+    const musicsToSave = selectedMusics.filter(
+      (m): m is SelectedMusicFile => m !== null,
+    );
+
+    if (isDemo) {
+      localStorage.setItem(storageKey, JSON.stringify(musicsToSave));
+    } else {
+      localStorage.setItem(
+        storageKey,
+        serializeNormalMusicStorage(segmentCount, musicsToSave),
+      );
+    }
+
     onSelect(musicsToSave);
-    
+
     setIsValidated(true);
-    
-    // Fermer après 2 secondes
+
     setTimeout(() => {
       onClose();
     }, 2000);
@@ -113,6 +186,16 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
   };
+
+  const rangeLabels = !isDemo
+    ? normalSegmentRangeLabels[segmentCount]
+    : ['pour toute la partie démo (15 min)'];
+
+  const titleText = isDemo
+    ? 'Sélectionnez une musique pour la démo'
+    : 'Musique pour la partie (60 min)';
+
+  const canValidate = hasChanges && allSegmentsFilled;
 
   return (
     <div
@@ -123,35 +206,64 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
       aria-label="Sélectionner les musiques"
     >
       <div className="music-selector-content">
-        <h2 className="music-selector-title">Sélectionnez jusqu'à 4 musiques</h2>
-        
+        <h2 className="music-selector-title">{titleText}</h2>
+
+        {!isDemo && (
+          <fieldset className="music-selector-segments">
+            <legend className="music-selector-segments-legend">
+              Découpage de la partie
+            </legend>
+            <div className="music-selector-segment-options">
+              {NORMAL_SEGMENT_OPTIONS.map((n) => (
+                <label
+                  key={n}
+                  className={`music-selector-segment-label ${
+                    segmentCount === n ? 'music-selector-segment-label--selected' : ''
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="music-segment-count"
+                    value={n}
+                    checked={segmentCount === n}
+                    onChange={() => handleSegmentChange(n)}
+                    disabled={isValidated}
+                    data-testid={`music-segment-count-${n}`}
+                  />
+                  <span className="music-selector-segment-copy">
+                    {n === 1 && '1 musique (60 min)'}
+                    {n === 2 && '2 musiques (30 + 30 min)'}
+                    {n === 4 && '4 musiques (15 + 15 + 15 + 15 min)'}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
         {isValidated && (
-          <div className="music-selector-validation" data-testid="music-validation">
+          <div
+            className="music-selector-validation"
+            data-testid="music-validation"
+          >
             <CheckIcon size={18} /> Musiques sélectionnées avec succès !
           </div>
         )}
-        
-        {/* Dropdowns pour les 4 musiques */}
+
         <div className="music-selector-dropdowns">
-          {selectedMusics.map((selectedMusic, index) => {
-            const timeRanges = [
-              'de 0 à 15 min',
-              'de 15 à 30 min',
-              'de 30 à 45 min',
-              'de 45 à 60 min'
-            ];
-            
-            return (
-              <div key={index} className="music-selector-dropdown-group">
-                <label className="music-selector-dropdown-label">
-                  Musique {index + 1} ({timeRanges[index]})
-                </label>
-                <div className="music-selector-dropdown-wrapper">
+          {selectedMusics.map((selectedMusic, index) => (
+            <div key={index} className="music-selector-dropdown-group">
+              <label className="music-selector-dropdown-label">
+                Musique {index + 1} ({rangeLabels[index] ?? ''})
+              </label>
+              <div className="music-selector-dropdown-wrapper">
                 <select
                   className="music-selector-dropdown"
                   value={selectedMusic ? selectedMusic.file : ''}
                   onChange={(e) => {
-                    const option = MUSIC_OPTIONS.find((m) => m.file === e.target.value);
+                    const option = MUSIC_OPTIONS.find(
+                      (m) => m.file === e.target.value,
+                    );
                     if (option) {
                       handleMusicChange(index, option.label, option.file);
                     } else {
@@ -171,13 +283,23 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 {selectedMusic && (
                   <button
                     type="button"
-                    className={`music-selector-preview ${playingIndex === index ? 'playing' : ''}`}
+                    className={`music-selector-preview ${
+                      playingIndex === index ? 'playing' : ''
+                    }`}
                     onClick={() => togglePlay(index, selectedMusic.file)}
-                    title={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
-                    aria-label={playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'}
+                    title={
+                      playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'
+                    }
+                    aria-label={
+                      playingIndex === index ? 'Mettre en pause' : 'Aperçu audio'
+                    }
                     disabled={isValidated}
                   >
-                    {playingIndex === index ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
+                    {playingIndex === index ? (
+                      <PauseIcon size={16} />
+                    ) : (
+                      <PlayIcon size={16} />
+                    )}
                   </button>
                 )}
                 {selectedMusic && (
@@ -194,26 +316,26 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
                 )}
               </div>
             </div>
-          )})}
+          ))}
         </div>
 
-        {/* Résumé des musiques sélectionnées */}
         {selectedMusics.some((m) => m !== null) && (
           <div className="music-selector-summary">
-            <h3 className="music-selector-summary-title">Résumé de la sélection</h3>
+            <h3 className="music-selector-summary-title">
+              Résumé de la sélection
+            </h3>
             <ol className="music-selector-summary-list">
               {selectedMusics.map((music, index) =>
                 music ? (
                   <li key={index} className="music-selector-summary-item">
                     {music.label}
                   </li>
-                ) : null
+                ) : null,
               )}
             </ol>
           </div>
         )}
 
-        {/* Boutons d'action */}
         <div className="music-selector-actions">
           <button
             type="button"
@@ -229,7 +351,7 @@ const MusicSelector: React.FC<MusicSelectorProps> = ({ onClose, onSelect }) => {
             onClick={handleValidate}
             className="music-selector-validate"
             data-testid="music-selector-validate"
-            disabled={!hasChanges || isValidated}
+            disabled={!canValidate || isValidated}
           >
             Valider
           </button>

@@ -12,6 +12,20 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [session, setSession] = useState(0);
   const [gameResult, setGameResult] = useState<GameResult>(null);
+  const [chronoRemainingSec, setChronoRemainingSec] = useState<number | null>(
+    null,
+  );
+  const [chronoInitialSec, setChronoInitialSec] = useState<number | null>(null);
+
+  const setChronoTick = useCallback((remainingSec: number, initialSec: number) => {
+    setChronoRemainingSec(remainingSec);
+    setChronoInitialSec(initialSec);
+  }, []);
+
+  const clearChronoTick = useCallback(() => {
+    setChronoRemainingSec(null);
+    setChronoInitialSec(null);
+  }, []);
 
   const startGame = useCallback(() => {
     setGameResult(null);
@@ -21,9 +35,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const resetGame = useCallback(() => {
     setGameStarted(false);
     setGameResult(null);
+    clearChronoTick();
     wipeAllCodes();
     setSession((s) => s + 1);
-  }, []);
+  }, [clearChronoTick]);
 
   const restartGame = useCallback(() => {
     toast.info('Partie redémarrée !');
@@ -40,8 +55,23 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       session,
       gameResult,
       setGameResult,
+      chronoRemainingSec,
+      chronoInitialSec,
+      setChronoTick,
+      clearChronoTick,
     }),
-    [gameStarted, startGame, resetGame, restartGame, session, gameResult],
+    [
+      gameStarted,
+      startGame,
+      resetGame,
+      restartGame,
+      session,
+      gameResult,
+      chronoRemainingSec,
+      chronoInitialSec,
+      setChronoTick,
+      clearChronoTick,
+    ],
   );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
