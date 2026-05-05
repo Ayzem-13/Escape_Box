@@ -2,25 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './PageTutos.css';
 
-const TUTORIAL_STEPS = [
-    {
-        title: '1. Choisis ton mode',
-        description: 'Depuis l\'accueil, lance une partie normale (60 minutes) ou un mode démo (15 minutes).',
-    },
-    {
-        title: '2. Observe les indices',
-        description: 'En partie, utilise le bouton d\'indices (code Morse, code César), puis note ce qui fonctionne.',
-    },
-    {
-        title: '3. Gère ton chrono',
-        description: 'Reste concentré: chaque minute compte.',
-    },
-    {
-        title: '4. Coordonne l\'équipe',
-        description: 'Répartissez les tâches pour progresser plus vite, puis recoupez les trouvailles ensemble.',
-    },
-];
-
 const PageTutos: React.FC = () => {
     return (
         <div className="tutos-page" data-testid="tutos-page">
@@ -34,73 +15,115 @@ const PageTutos: React.FC = () => {
                     Tutos
                 </h1>
                 <p className="tutos-hero-subtitle">
-                    Tout ce qu'il faut pour démarrer vite et résoudre vos premières énigmes.
-                </p>
-                <p className="tutos-hero-subtitle">
-                    Le but du jeu est de trouver les bons codes avant la fin du temps, en utilisant les indices
-                    et les outils disponibles pour éliminer les mauvaises pistes.
+                    L'escape box est un outil central pour pouvoir réaliser un escape game.
                 </p>
             </section>
 
-            <section className="tutos-section" aria-label="explication du jeu">
+            <section className="tutos-section" aria-label="phrase d accroche">
                 <div className="tutos-card">
-                    <h2 className="tutos-card-title">Comment se déroule une partie ?</h2>
+                    <h2 className="tutos-card-title">Phrase d'accroche</h2>
                     <p className="tutos-card-description">
-                        Le but est que le joueur propose des combinaisons, puis vérifie ses essais avec les indicateurs de retour.
+                        L'escape box prend en charge un timer, dans deux modes d'utilisations: normal de 1 heure
+                        et démo de 15 minutes.
                     </p>
                     <p className="tutos-card-description">
-                        En une heure, il doit trouver les 3 codes qui débloquent la boîte. Attention: les mauvaises tentatives peuvent faire perdre du temps précieux !
-                        </p>
-                </div>
-            </section>
-
-            <section className="tutos-section">
-                <ul className="tutos-grid" data-testid="tutos-steps-list">
-                    {TUTORIAL_STEPS.map((step) => (
-                        <li key={step.title} className="tutos-card">
-                            <h2 className="tutos-card-title">{step.title}</h2>
-                            <p className="tutos-card-description">{step.description}</p>
-                        </li>
-                    ))}
-                </ul>
-            </section>
-
-            <section className="tutos-section" aria-label="duree des modes">
-                <div className="tutos-card">
-                    <h2 className="tutos-card-title">Durée des modes</h2>
+                        Elle permet de spécifier de 1 à 3 combinaisons de 4 symboles (une combinaison en mode
+                        démo et 3 combinaisons en mode normal).
+                    </p>
                     <p className="tutos-card-description">
-                        Une partie normale dure 60 minutes. Une partie en mode démo dure 15 minutes.
+                        Elle permet également aux joueurs de proposer des combinaisons de 4 symboles.
+                        En cas d'erreur de combinaison proposée, une pénalité de minutes est appliquée
+                        sur le compteur.
                     </p>
                 </div>
             </section>
 
-            <section className="tutos-section" aria-label="indices en partie">
+            <section className="tutos-section" aria-label="configuration">
                 <div className="tutos-card">
-                    <h2 className="tutos-card-title">Indices disponibles en partie</h2>
+                    <h2 className="tutos-card-title">Configuration</h2>
                     <p className="tutos-card-description">
-                        Pendant la partie, un bouton d'indices permet d'obtenir des aides de décodage,
-                        notamment pour le code Morse et le code César.
+                        Cette page présente les options de configuration disponibles avant et pendant la partie.
                     </p>
                 </div>
             </section>
 
-            <section className="tutos-section" aria-label="theme visuel">
+            <section className="tutos-section" aria-label="theme graphique">
                 <div className="tutos-card">
-                    <h2 className="tutos-card-title">Choix du thème visuel</h2>
+                    <h2 className="tutos-card-title">Choix du thème graphique</h2>
                     <p className="tutos-card-description">
-                        Au lancement d'une partie, le joueur peut définir le thème visuel qu'il souhaite
-                        utiliser pour son expérience de jeu.
+                        Il est possible de choisir un thème graphique parmi un certain nombre.
                     </p>
                 </div>
             </section>
 
-            <section className="tutos-section" aria-label="mot de passe administrateur">
+            <section className="tutos-section" aria-label="musique de fond">
                 <div className="tutos-card">
-                    <h2 className="tutos-card-title">Mot de passe administrateur</h2>
+                    <h2 className="tutos-card-title">Musique de fond</h2>
                     <p className="tutos-card-description">
-                        Depuis la page principale, il est possible de définir le mot de passe administrateur,
-                        qui donne accès au code pendant la partie.
+                        Il est possible de choisir une musique de fond (mode démo et mode normal).
                     </p>
+                    <p className="tutos-card-description">
+                        Il est également possible de choisir 2 ou 4 musiques (mode normal) avec une évolution
+                        dans le niveau de stress de la musique (numéro spécifié dans le nom de la musique,
+                        le chiffre le plus élevé étant le plus stressant).
+                    </p>
+                    <p className="tutos-card-description">
+                        Dans le cas du choix de 2 musiques, lors d'une partie, la deuxième musique apparaitra
+                        au bout de 30 minutes.
+                    </p>
+                    <p className="tutos-card-description">
+                        Dans le cas du choix de 4 musiques, lors d'une partie, les musiques se succéderont
+                        toutes les 15 minutes.
+                    </p>
+                    <p className="tutos-card-description">Les musiques disponibles sont:</p>
+                    <ul className="tutos-inline-list">
+                        <li>Suspense Ambience</li>
+                        <li>Suspense Tense Atmosphere</li>
+                        <li>Tense Suspense Ambience</li>
+                        <li>Metallic Ambiance</li>
+                        <li>Horror Trailer</li>
+                        <li>Dark Music Box Tension</li>
+                        <li>Horror Background Atmosphere For Suspense</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="configuration des combinaisons">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Configuration des combinaisons des symboles</h2>
+                    <p className="tutos-card-description">
+                        L'administrateur du jeu configure la ou les combinaisons des symboles selon le mode
+                        (1 ou 4).
+                    </p>
+                    <p className="tutos-card-description">
+                        En cours de partie, l'administrateur peut vérifier les codes spécifiés via un accès
+                        avec un mot de passe.
+                    </p>
+                    <p className="tutos-card-description">
+                        L'administrateur peut changer le mot de passe par défaut (à configurer lors de la
+                        première utilisation).
+                    </p>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="outils de resolution">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Outils de résolution d'énigmes</h2>
+                    <p className="tutos-card-description">
+                        En cours de session de jeu, les joueurs pourront trouver de l'aide pour décrypter
+                        les énigmes, via le bouton Information (code morse, code césar, etc).
+                    </p>
+                </div>
+            </section>
+
+            <section className="tutos-section" aria-label="session de jeu">
+                <div className="tutos-card">
+                    <h2 className="tutos-card-title">Session de jeu</h2>
+                    <p className="tutos-card-description">En cours de session de jeu, l'administrateur peut:</p>
+                    <ul className="tutos-inline-list">
+                        <li>relancer instantanément la session de jeu en redémarrant le timer (conservation des combinaisons renseignées)</li>
+                        <li>stopper la partie (réinitialisation des combinaisons)</li>
+                    </ul>
                 </div>
             </section>
         </div>
