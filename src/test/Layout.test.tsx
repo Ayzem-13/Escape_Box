@@ -87,8 +87,7 @@ describe('Layout — bouton musique', () => {
     expect(playSpy).toHaveBeenCalled()
     const gameAudio = screen.getByTestId('layout-game-music') as HTMLAudioElement
     expect(gameAudio.src).toContain(MUSIC_OPTIONS[0].file.split('/').pop()!)
-    const bed = screen.getByTestId('layout-ambient-bed') as HTMLAudioElement
-    expect(bed.loop).toBe(true)
+    expect(screen.getByTestId('layout-sound-effect')).toBeInTheDocument()
   })
 
   it('charge la sélection sauvegardée et la joue au démarrage de la partie', () => {
