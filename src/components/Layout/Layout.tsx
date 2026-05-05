@@ -25,7 +25,7 @@ import SettingsFab from '../SettingsFab/SettingsFab';
 import GameResultPopup from '../GameResultPopup/GameResultPopup';
 import { InfoIcon, LockIcon, MusicIcon, PaletteIcon } from '../../theme/icons';
 import { THEME_ICONS } from '../../theme/themeIcons';
-import gameAmbientBedUrl from '../../assets/sounds/ONE MINUTE of the Funniest Meme Sounds For Edits  NO COPYRIGHT.mp3';
+import { SOUND_EFFECTS } from '../../config/soundEffects';
 import volumeManager from '../../services/volumeManager';
 import '../../theme/ambient/index.css';
 import './Layout.css';
@@ -315,6 +315,51 @@ const LayoutAdminSpyFab = () => {
   );
 };
 
+// les sons jouent de façon aléatoire toutes les 15 à 35 secondes
+const MIN_SOUND_DELAY = 15000; // 15 seconds
+const MAX_SOUND_DELAY = 35000; // 35 seconds
+
+const useSoundEffects = () => {
+  const { gameStarted } = useGame();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const playRandomSound = () => {
+      const audio = audioRef.current;
+      if (!gameStarted || !audio) {
+        return;
+      }
+
+      const sound =
+        SOUND_EFFECTS[Math.floor(Math.random() * SOUND_EFFECTS.length)];
+      audio.src = sound;
+      audio.play().catch(() => {});
+
+      const nextDelay =
+        Math.random() * (MAX_SOUND_DELAY - MIN_SOUND_DELAY) + MIN_SOUND_DELAY;
+      timeoutRef.current = window.setTimeout(playRandomSound, nextDelay);
+    };
+
+    if (gameStarted) {
+      const initialDelay =
+        Math.random() * (MAX_SOUND_DELAY - MIN_SOUND_DELAY) + MIN_SOUND_DELAY;
+      timeoutRef.current = window.setTimeout(playRandomSound, initialDelay);
+    } else if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [gameStarted]);
+
+  return { soundEffectAudioRef: audioRef };
+};
+
 const LayoutInnerContent = () => {
   const t = useTheme();
   const { pathname } = useLocation();
@@ -324,13 +369,13 @@ const LayoutInnerContent = () => {
     : SELECTED_MUSICS_KEY_NORMAL;
   const {
     audioRef,
-    ambientBedRef,
     handleMusicEnd,
     handleMusicSelect,
     isMusicOpen,
     setIsMusicOpen,
     gameStarted,
   } = useMusicEngine(selectedMusicsKey, isDemoRoute);
+  const { soundEffectAudioRef } = useSoundEffects();
 
   const musicCtx = useMemo(
     () => ({
@@ -361,13 +406,9 @@ const LayoutInnerContent = () => {
           data-escape-game-music="true"
         />
         <audio
-          ref={ambientBedRef}
-          src={gameAmbientBedUrl}
-          loop
-          preload="auto"
-          data-testid="layout-ambient-bed"
-          data-escape-ambient-bed="true"
-          aria-hidden="true"
+          ref={soundEffectAudioRef}
+          data-testid="layout-sound-effect"
+          data-escape-sound-effect="true"
         />
         {isMusicOpen && !gameStarted && (
           <MusicSelector

@@ -30,7 +30,7 @@ function fileNameFromPath(path: string): string {
   return path.split('/').pop()?.replace(/\.mp3$/i, '') ?? '';
 }
 
-/** Libellé dérivé du nom de fichier (sans préfixe « Stress N »), ex. Heuss Barmitzvah, Subway. */
+/** Libellé dérivé du nom de fichier (sans préfixe « Stress N »). */
 function titleFromStressFile(fileName: string): string {
   const withoutPrefix = fileName.replace(/^stress\s+\d+\s+/i, '').trim();
   return withoutPrefix
@@ -82,19 +82,14 @@ type RawEntry = {
   file: string;
   stress: number;
   sortKey: string;
-  isHeuss: boolean;
-  /** Stress 0 : Subway en 2ᵉ après Heuss ; libellé = nom fichier (Subway). */
-  isSubway: boolean;
 };
 
-function usesRealFilenameLabel(entry: RawEntry): boolean {
-  return entry.isHeuss || entry.isSubway;
+function usesRealFilenameLabel(_entry: RawEntry): boolean {
+  return false;
 }
 
-/** Ordre forcé sous stress 0 : Heuss, Subway, puis alpha sur le reste. */
-function stress0OrderRank(entry: RawEntry): number {
-  if (entry.isHeuss) return 0;
-  if (entry.isSubway) return 1;
+/** Ordre forcé sous stress 0. */
+function stress0OrderRank(_entry: RawEntry): number {
   return 2;
 }
 
@@ -102,16 +97,12 @@ const rawEntries: RawEntry[] = Object.entries(musicModules).map(
   ([path, module]) => {
     const fileName = fileNameFromPath(path);
     const stress = parseStressLevel(fileName) ?? 999;
-    const isHeuss = /heuss/i.test(fileName);
-    const isSubway = /subway/i.test(fileName);
     return {
       path,
       fileName,
       file: module.default,
       stress,
       sortKey: fileName.replace(/^stress\s+\d+\s+/i, '').toLowerCase(),
-      isHeuss,
-      isSubway,
     };
   },
 );
