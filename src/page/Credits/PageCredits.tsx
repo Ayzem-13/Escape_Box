@@ -129,6 +129,79 @@ const PageCredits: React.FC = () => {
             >
               Pixabay
             </a>
+
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/fr/users/tanweraman-29554143/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=505142"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Aman Kumar
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=505142"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/fr/users/scottishperson-16626294/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=271985"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Scottish Guy
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=271985"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/fr/users/dragon-studio-38165424/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=359876"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              DRAGON-STUDIO
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=359876"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
+          </li>
+          <li>
+            Sound Effect by{' '}
+            <a
+              href="https://pixabay.com/fr/users/dragon-studio-38165424/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=359876"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              DRAGON-STUDIO
+            </a>{' '}
+            from{' '}
+            <a
+              href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=359876"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pixabay
+            </a>
           </li>
 
           <li>
